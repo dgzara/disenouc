@@ -1,0 +1,76 @@
+{% extends 'pDevParserBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+{%endblock%}
+
+{% block javascript %}
+        <script src="{{ asset('/js/pdev.submit.js') }}"></script>
+{% endblock %}
+
+{%block header%}Sincronizar alumnos y cursos{%endblock%}
+{%block lead%}{%endblock%}
+{%block content %}
+<h3>Alumnos y cursos</h3> 
+
+
+<h4>Sincronización completa</h4>
+<p>- Alumnos desde el año {{desdeYearAlumnos}}.
+<p>- Cursos desde el año {{desdeYearCursos}}.
+<p>- Puede cambiar estos parámetros en <strong>Ajustes</strong>
+<h4>Sincronización normal</h4>
+<p>- Alumnos y cursos desde el año {{ultimoRegular}}, que corresponde al año de ingreso del último alumno regular registrado en el sistema.
+<div id="advertencia">
+<p>Este proceso puede tardar varios minutos (20 minutos por año aproximadamente)
+<p>Debido a lo anterior, es importante mantener esta ventana abierta mientras se realiza la sincronización.
+<p>En caso de error, intente más tarde, si el problema persiste contacte al administrador.
+</div>
+<div id="progressBar" class="clearfix">
+    <div class="pull-right">
+        <a onclick="iniciarSyncMasivo()" class="btn btn-danger">Sincronización completa</a><a onclick="iniciarSync()" class="btn btn-danger">Sincronización normal</a>
+    </div>
+</div>
+<hr>
+
+{% endblock %}
+
+{% block javascriptload %}
+<script type="text/javascript">
+    
+    sync = new p_submitTask();
+    sync.pushUrlPagina("{{urlscorreos.url}}","{{urlscorreos.msj}}...");
+       
+    function iniciarSyncMasivo()
+    {
+        {%for url in urlscursosmasivo %}
+        sync.pushUrlPagina("{{url.url}}","{{url.msj}}...");
+        {%endfor%} 
+        {%for url in urlsalumnosmasivo %}
+        sync.pushUrlPagina("{{url.url}}","{{url.msj}}...");
+        {%endfor%}
+            
+        syncConfirm();
+    }
+    
+    function iniciarSync()
+    {
+        {%for url in urlscursos %}
+        sync.pushUrlPagina("{{url.url}}","{{url.msj}}...");
+        {%endfor%} 
+        {%for url in urlsalumnos %}
+        sync.pushUrlPagina("{{url.url}}","{{url.msj}}...");
+        {%endfor%}
+         
+        syncConfirm();
+    }
+    
+    function syncConfirm()
+    {
+        p_progressBar(0,'Iniciando...');
+        p_confirmOnModal($("#advertencia").html(),function(){sync.begin()},function(){p_progressBar(0,'Cancelado.');},"¡Importante!");
+        
+    }
+</script>
+{%endblock%}

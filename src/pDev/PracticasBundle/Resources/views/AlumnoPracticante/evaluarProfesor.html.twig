@@ -1,0 +1,64 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Evaluar practicante{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    
+    <form class="well form-horizontal" action="{{ path('practicas_alumno_evaluar_profesor', { 'id': idPracticante }) }}" method="post" {{ form_enctype(edit_form) }}>
+        <input type="hidden" name="_method" value="PUT" />
+        
+        {{ form_row(edit_form.tituloInforme) }}
+        
+        <hr/>
+        <h4>Criterios a evaluar</h4>
+        <div>
+            <table class="table table-bordered">
+                <tr>
+                    {% for criterio in edit_form.criterios %}
+                    <th>
+                        {{criterio.vars.value.criterioTipo.nombre}}                            
+                    </th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for criterio in edit_form.criterios %}
+                    <td>{{criterio.vars.value.criterioTipo.descripcion}}</td>                            
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+        <hr/>
+        <h4>Evaluación</h4>
+        <div id="criterios">
+            <table class="table table-bordered table-hover">
+            {% for criterio in edit_form.criterios %}
+            <div class="criterio">                
+                <tr>
+                    <td>
+                        <strong>{{criterio.vars.value.criterioTipo.nombre}}</strong><br>
+                        {{criterio.vars.value.criterioTipo.explicacion}}
+                    </td>
+                    <td style="vertical-align: bottom">{{ form_widget(criterio.valor) }}</td>                            
+                </tr>                               
+            </div>
+            {% endfor %}
+            </table> 
+        </div>
+        <hr/>
+        {{ form_row(edit_form.observaciones) }}        
+        {{ form_rest(edit_form) }}
+        <p>
+            <button class="btn btn-primary pull-right" type="submit">Guardar</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+
+       
+{% endblock %}

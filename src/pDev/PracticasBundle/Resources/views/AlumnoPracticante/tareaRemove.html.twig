@@ -1,0 +1,44 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Eliminar tarea{% endblock %}
+{% block body %}
+
+    <form id="form_tarea" class="form-horizontal form-modal" action="{{ path('practicas_alumno_tarea_remove',{'idProyecto':idProyecto,'idTarea':idTarea}) }}" method="post" {{ form_enctype(edit_form) }}>
+        <h4>¿Esta seguro que desea eliminar esta tarea?</h4>
+        {{ form_widget(edit_form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+<script type="text/javascript">
+    
+    var tasksubmit = new p_submitTask();
+    
+    tasksubmit.pushForm('form_tarea','Eliminando tarea');
+    tasksubmit.onComplete= function(){
+        var refresh_url = '{{path('practicas_alumno_gantt_json',{'id':idPracticante})}}';
+        $.ajax({
+            url: refresh_url,
+            success: function(data){
+                        ganttData = data;
+                        p_gantt_redraw();
+                        p_destroyModal();
+                        $("#eventMessage").text('Guardado.');
+                    }
+        });
+        
+        
+    };
+    
+    function taskBegin(obj)
+    {
+        $("#eventMessage").text('Guardando');
+        jQuery(obj).replaceWith('<a class="btn">Eliminando...</a>');
+        tasksubmit.begin();
+    }
+    
+</script>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a onclick="taskBegin(this);" class="btn btn-primary">Eliminar</a>
+
+{% endblock %}

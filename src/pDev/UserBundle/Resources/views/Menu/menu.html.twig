@@ -1,0 +1,27 @@
+{% for item in items %}
+    {% if item.children|length > 0 %}
+        <li class="dropdown" id="preview-menu">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                {% if item.isActive %}
+                    <strong>{{item.text}}</strong>
+                {% else %}
+                    {{item.text}}
+                {% endif %}
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for subitem in item.children %}
+                    {% if subitem.isActive %}
+                        <li><a href="{{subitem.link}}" class="active">{{subitem.text}}</a></li>
+                    {% else %}
+                        <li><a href="{{subitem.link}}">{{subitem.text}}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+    {% elseif item.isActive %}
+        <li><a href="{{item.link}}"><strong>{{item.text}}</strong></a></li>
+    {% else %}
+        <li><a href="{{item.link}}">{{item.text}}</a></li>
+    {% endif %}
+{% endfor %}

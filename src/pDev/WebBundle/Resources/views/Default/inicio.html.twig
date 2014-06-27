@@ -1,0 +1,69 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+                {{parent()}}
+{%endblock%}
+
+{%block notification%}  
+            
+{%endblock%}
+
+{%block header%}Actualizaciones{%endblock%}
+{%block lead%}Informaciones y anuncios{%endblock%}
+
+{%block content %}
+
+
+<table class="table table-bordered  table-hover">
+    {% for notificacion in actualizaciones %}
+        {% if loop.first %}
+
+        <tbody>
+        {%endif%}
+            <tr>
+                <td>
+                    <div style="float:left;">
+                    {% if notificacion.llave == "broadcast.notice" %}
+                        <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-bullhorn" style="float:left;"></span>
+
+                    {% elseif notificacion.llave == "user.notice" %}    
+                        <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-bell" style="float:left;"></span>       
+
+                    {% elseif notificacion.llave == "user.information" %}    
+                        <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-info-sign" style="float:left;"></span>    
+
+                    {% endif %}      
+                    </div>
+                    
+                    <a class="close onbackground" href="{{ path('notificaciones_leido_ajax', { 'id': notificacion.id }) }}" style="font-size:20px">&times;</a>
+                        
+                    <div style="float:right;margin-right: 10px">
+                        {{ notificacion.created|date('g:i A d-m-Y') }}
+                    </div>
+                    <div style="margin-left:27px;width:590px">
+                        <strong>{{ notificacion.mensaje }}</strong>
+                    </div>    
+                </td>
+            </tr>
+
+        
+    {% else %}
+        <tbody>
+            <tr>
+                <td style="text-align:center">No hay nuevas actualizaciones</td>
+            </tr>
+        
+    {% endfor %}
+        </tbody>
+        <tbody>
+        <tr>
+            <td style="text-align:center"><a href="{{ path('notificaciones_feed', { 'pagina': '1' }) }}" class="loadmore">Ver anteriores</a></td>
+        </tr>
+    </tbody>
+</table>
+    
+
+
+{%endblock%}

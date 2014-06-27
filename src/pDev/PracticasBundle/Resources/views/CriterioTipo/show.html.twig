@@ -1,0 +1,59 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Criterio de evaluación{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+<div class="well no-margin">
+    <a class="btn btn-primary" href="{{ path('practicas_evaluacion_criterios_edit', { 'id': entity.id }) }}">
+            Modificar
+        </a>
+        <a class="btn btn-primary submitform" href="#form_delete">
+            Eliminar
+        </a>
+</div>
+    <table class="table table-bordered">
+        <tbody>
+            
+            <tr>
+                <th>Nombre</th>
+                <td>{{ entity.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Aspecto</th>
+                <td>{{ entity.aspecto }}</td>
+            </tr>
+            <tr>
+                <th>Descripción</th>
+                <td>{{ entity.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Explicación</th>
+                <td>{{ entity.explicacion }}</td>
+            </tr>
+            <tr>
+                <th>Tipo practica</th>
+                <td>{{ entity.tipoPractica }}</td>
+            </tr>
+            <tr>
+                <th>Evaluador</th>
+                <td>{{ entity.tipoEvaluador }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+      
+    
+        <form class="hide" id="form_delete" action="{{ path('practicas_evaluacion_criterios_delete', { 'id': entity.id }) }}" method="post">
+            <input type="hidden" name="_method" value="DELETE" />
+            {{ form_widget(delete_form) }}
+            <button id="_submit" type="submit">Delete</button>
+        </form>
+    
+{% endblock %}

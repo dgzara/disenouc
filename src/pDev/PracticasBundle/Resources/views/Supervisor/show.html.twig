@@ -1,0 +1,75 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Prácticas{%endblock%}
+{%block lead%}Periodo académico {%endblock%}
+
+{%block content %}
+    <h1>Supervisor</h1>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombres</th>
+                <td>{{ entity.nombres }}</td>
+            </tr>
+            <tr>
+                <th>Apellidopaterno</th>
+                <td>{{ entity.apellidoPaterno }}</td>
+            </tr>
+            <tr>
+                <th>Apellidomaterno</th>
+                <td>{{ entity.apellidoMaterno }}</td>
+            </tr>
+            <tr>
+                <th>Rut</th>
+                <td>{{ entity.rut }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ entity.email }}</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>{{ entity.tipo }}</td>
+            </tr>
+            <tr>
+                <th>Emailsecundario</th>
+                <td>{{ entity.emailSecundario }}</td>
+            </tr>
+            <tr>
+                <th>Cargo</th>
+                <td>{{ entity.cargo }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('practicas_supervisor') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('practicas_supervisor_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('practicas_supervisor_delete', { 'id': entity.id }) }}" method="post">
+            <input type="hidden" name="_method" value="DELETE" />
+            {{ form_widget(delete_form) }}
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+{% endblock %}

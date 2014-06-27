@@ -1,0 +1,58 @@
+{% extends 'pDevPracticasBundle:Evaluacion:index.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li class="active"><span class="divider">/</span><a href="{{ path('practicas_evaluacion_criterios') }}">Criterios de evaluación</a></li>
+{%endblock%}
+
+
+{%block header%}Criterios de evaluación{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+<div class="well clearfix no-margin">
+<a class="btn btn-primary" href="{{ path('practicas_evaluacion_criterios_new') }}">
+               <span class="glyphicon glyphicon-plus"></span> Crear nuevo
+            </a>
+</div>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                
+                <th>Nombre</th>
+                <th>Evaluador</th>
+                <th>Tipo practica</th>
+                <th>Aspecto</th>
+                <th>Descripción</th>
+                <th>Explicación</th>                
+                
+                <th>···</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.nombre }}</td>
+                <td>{{ entity.tipoEvaluador }}</td>
+                <td>{{ entity.tipoPractica }}</td>                
+                <td>{{ entity.aspecto }}</td>
+                <td>{{ entity.descripcion }}</td>
+                <td>{{ entity.explicacion }}</td>
+                
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('practicas_evaluacion_criterios_show', { 'id': entity.id }) }}">ver</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('practicas_evaluacion_criterios_edit', { 'id': entity.id }) }}">modificar</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock %}

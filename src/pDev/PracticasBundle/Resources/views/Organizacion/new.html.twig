@@ -1,0 +1,34 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><span class="divider">/</span><a href="{{ path('practicas_organizacion_new') }}">Registrar organización</a></li>
+{%endblock%}
+
+
+{%block header%}Registrar organización{%endblock%}
+{%block lead%}Por favor complete la información de la nueva organización{%endblock%}
+
+{%block content %}
+    <form class="form-well form-horizontal" action="{{ path('practicas_organizacion_create') }}" method="post" {{ form_enctype(form) }}>
+        
+        {{ form_rest(organizacionAlias_form) }}
+        {{ form_rest(form) }}
+        <p class="pull-right">
+            <button class="btn btn-primary" type="submit">Registrar</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+{% endblock %}
+
+{% block javascriptload%}
+<script type="text/javascript">
+    
+    var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
+    var source_url = '{{path('practicas_organizacion_find')}}';
+    var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
+    
+    p_setTypeahead(input_alias,source_url,fillable_base);
+    
+    </script>
+{% endblock %}

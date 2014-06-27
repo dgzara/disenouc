@@ -1,0 +1,30 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><span class="divider">/</span> <a href="{{ path('importa_personas') }}">Importar</a></li>
+{%endblock%}
+
+{% block javascript %}
+        
+{% endblock %}
+
+{%block header%}Importar{%endblock%}
+{%block lead%}{%endblock%}
+{%block content %}
+
+<p>Esta información debe ser importada con un archivo en formato excel (.xls .xlsx) con la siguiente estructura:
+<img src="{{ asset('/img/sync_ejemplo_academicos.png') }}">
+<div class="clearfix">
+<div class="pull-right">
+<a href="{{path('archivo_get',{'idArchivo':'personas'})}}" class="btn btn-info">Descargar Plantilla</a><a href="{{ path('importa_profesores_upload') }}" class="btn btn-danger onmodal">Importar Académicos</a><a href="{{ path('importa_funcionarios_upload') }}" class="btn btn-danger onmodal">Importar Funcionarios</a>
+</div>
+</div>
+
+{% endblock %}
+
+{% block javascriptload %}
+
+{%endblock%}

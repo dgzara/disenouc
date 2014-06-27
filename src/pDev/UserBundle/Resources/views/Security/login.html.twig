@@ -1,0 +1,56 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+{% trans_default_domain "FOSUserBundle" %}
+
+
+{%block breadcrumb%}
+{{parent()}}
+                <li class="active"><span class="divider">/</span><a href="{{ path('fos_user_security_login') }}">Ingresar</a></li>
+{%endblock%}
+                
+{%block navleft%}
+{%endblock%}
+
+{%block header%}Bienvenido{%endblock%}
+{%block lead%}Ingrese sus datos de acceso{%endblock%}
+{%block content %}
+
+{% if error %}
+    <div class="alert alert-error">
+        <a class="close">&times;</a>
+        <h4 class="alert-heading">Error</h4>
+        {{ error|trans({}, 'FOSUserBundle') }}
+    </div>
+{% endif %}
+
+<form  class="form-horizontal form-small form-well" action="{{ path("fos_user_security_check") }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+
+    <div class="control-group">
+        <label for="pdev_userbundle_userbasictype_rut" class="control-label">
+             Correo electrónico
+        </label>
+        <div class="controls">
+            <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" placeholder="usuario@servidor.com"/>
+        </div>
+    </div>
+                
+    <div class="control-group">
+        <label for="pdev_userbundle_userbasictype_rut" class="control-label">
+             Contraseña
+        </label>
+        <div class="controls">
+            <input type="password" id="password" name="_password" required="required" placeholder=""/>
+        </div>
+    </div>
+
+    
+    <p class="pull-right ">
+        
+        <a class="btn" href="{{ path("fos_user_registration_register") }}">Solicitar acceso</a>
+        <input type="submit" id="_submit" name="_submit" value="Ingresar" class="btn btn-primary"/>
+    </p>
+    <div class="clearfix"></div>
+    
+</form>
+<p>
+{% endblock %}

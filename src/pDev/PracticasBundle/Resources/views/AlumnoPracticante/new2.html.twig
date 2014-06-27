@@ -1,0 +1,46 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+
+
+        
+{% block javascript%}
+        
+        
+        
+{% endblock %}
+        
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Plan de práctica{%endblock%}
+{%block lead%}2 de 5: Información de la organización{%endblock%}
+
+{%block content %}
+    <form class="form-well form-horizontal" action="{{ path('practicas_alumno_wizard',{'idPracticante':app.request.get('idPracticante'),'step':3,'idAlumno':idAlumno}) }}" method="post" {{ form_enctype(organizacion_form) }}>
+        {{ form_widget(organizacionAlias_form) }}
+        {{ form_widget(organizacion_form) }}
+        
+        <p>
+            <a href="{{path('practicas_alumno_wizard',{'step':1,'idPracticante':idPracticante,'idAlumno':idAlumno})}}" class="btn btn-primary">Anterior: Información del alumno</a>        
+            <button class="btn btn-primary pull-right" type="submit">Siguiente: Supervisor de la organización</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+ 
+{% endblock %}
+
+{% block javascriptload%}
+<script type="text/javascript">
+    
+    var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
+    var source_url = '{{path('practicas_organizacion_find')}}';
+    var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
+    
+    p_setTypeahead(input_alias,source_url,fillable_base);
+    
+    
+    </script>
+{% endblock %}

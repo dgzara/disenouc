@@ -1,0 +1,17 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Enviar plan de práctica{% endblock %}
+{% block body %}
+
+    <form id="form_enviar" action="{{ path('practicas_alumno_wizard',{'idPracticante':app.request.get('idPracticante'),'step':6,'idOrganizacionAlias':idOrganizacionAlias,'idAlumno':idAlumno,'idSupervisor':idSupervisor}) }}" method="post" {{ form_enctype(form) }}>
+        <h4>¿Seguro que desea enviar este plan de práctica para su aprobación?</h4>
+            
+        {{ form_rest(form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a href="#form_enviar" class="btn btn-primary submitform">Enviar</a>
+
+{% endblock %}

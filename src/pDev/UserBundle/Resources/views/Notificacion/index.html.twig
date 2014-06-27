@@ -1,0 +1,111 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><a href="{{ path('notificaciones') }}">Notificaciones</a></li>
+{%endblock%}
+
+{% block javascript %}
+{% endblock %}
+
+{%block header%}Notificaciones{%endblock%}
+{%block lead%}{{noleidas|length}} notificaciones no leídas{%endblock%}
+
+{%block content %}
+
+    
+<h3>Nuevas</h3>
+        <table class="table table-bordered  table-hover">
+            {% for entity in noleidas %}
+                {% if loop.first %}
+                
+                <tbody>
+                {%endif%}
+                    <tr>
+                        <td>
+                            <div style="float:left;">
+                            {% if entity.llave == "broadcast.notice" %}
+                                <span class="glyphicon glyphicon-margin-right glyphicon-bullhorn" style="float:left;"></span>
+                                
+                            {% elseif entity.llave == "user.notice" %}    
+                                <span class="glyphicon glyphicon-margin-right glyphicon-bell" style="float:left;"></span>       
+                                
+                            {% elseif entity.llave == "user.information" %}    
+                                <span class="glyphicon glyphicon-margin-right glyphicon-info-sign" style="float:left;"></span>    
+                                
+                            {% endif %}      
+                            </div>
+                            <div style="float:right">
+                                <strong>
+                                <a class="onbackground" href="{{ path('notificaciones_leido_ajax', { 'id': entity.id }) }}" style="font-size:20px">&times;</a>
+                                </strong>
+                            </div>
+                            <div style="float:right;margin-right: 10px">
+                                {{ entity.created|date('d-m-Y H:i') }}
+                            </div>
+                            <div style="margin-left:10px;width:610px">
+                                <strong>{{ entity.mensaje }}</strong>
+                            </div>    
+                        </td>
+                    </tr>
+            
+                {% if loop.last %}
+                </tbody>
+                {%endif%}
+            {% else %}
+                <tbody>
+                    <tr>
+                        <td>No tiene notificaciones sin leer</td>
+                    </tr>
+                </tbody>
+            {% endfor %}
+        </table>
+<h4>Anteriores</h4>
+        <table class="table table-bordered table-hover">
+            {% for entity in leidas %}
+                {% if loop.first %}
+                
+                <tbody>
+                {%endif%}
+                    <tr>
+                        <td>
+                            <div style="float:left;">
+                            {% if entity.llave == "broadcast.notice" %}
+                                <span class="glyphicon glyphicon-margin-right glyphicon-bullhorn" style="float:left;"></span>
+                                
+                            {% elseif entity.llave == "user.notice" %}    
+                                <span class="glyphicon glyphicon-margin-right glyphicon-bell" style="float:left;"></span>       
+                                
+                            {% elseif entity.llave == "user.information" %}    
+                                <span class="glyphicon glyphicon-margin-right glyphicon-info-sign" style="float:left;"></span>    
+                                
+                            {% endif %}        
+                            </div>
+                            
+                            <div style="float:right">
+                                {{ entity.created|date('d-m-Y H:i') }}
+                            </div>
+                            <div style="margin-left:10px;width:630px">
+                                {{ entity.mensaje }}
+                            </div>
+                        </td>
+                    </tr>
+            
+                {% if loop.last %}
+                </tbody>
+                {%endif%}
+            {% else %}
+                <tbody>
+                    <tr>
+                        <td>No tiene notificaciones leídas</td>
+                    </tr>
+                </tbody>
+            {% endfor %}
+        </table>
+
+{% endblock %}
+
+{% block javascriptload %}
+{%endblock%}

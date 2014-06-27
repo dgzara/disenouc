@@ -1,0 +1,16 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Aceptar plan de práctica{% endblock %}
+{% block body %}
+
+    <form id="form_acepta" class="form-horizontal form-modal" action="{{ path('practicas_alumno_aceptar',{'id':entity.id}) }}" method="post" {{ form_enctype(form) }}>
+        <h4>¿Aprueba y acepta plan de práctica?</h4>
+        {{ form_rest(form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a href="#form_acepta" class="btn btn-primary submitform">Aceptar</a>
+
+{% endblock %}

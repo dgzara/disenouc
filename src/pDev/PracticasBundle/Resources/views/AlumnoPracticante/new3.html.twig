@@ -1,0 +1,53 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+
+
+        
+{% block javascript%}
+        
+        <link rel="stylesheet" type="text/css" href="{{ asset('/css/gantt/jquery.ganttView.css') }}" />
+        <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>
+        
+        <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>
+        
+{% endblock %}
+        
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Plan de práctica{%endblock%}
+{%block lead%}3 de 5: Supervisor de la práctica{%endblock%}
+
+{%block content %}
+    <form class="form-well form-horizontal" action="{{ path('practicas_alumno_wizard',{'idPracticante':app.request.get('idPracticante'),'step':4,'idOrganizacionAlias':idOrganizacionAlias,'idAlumno':idAlumno}) }}" method="post" {{ form_enctype(supervisor_form) }}>
+        
+        
+        {{ form_widget(supervisor_form) }}
+        
+        <p>
+            <a href="{{path('practicas_alumno_wizard',{'step':2,'idPracticante':idPracticante,'idAlumno':idAlumno,'idOrganizacionAlias':idOrganizacionAlias})}}" class="btn btn-primary">Anterior: Información de la organización</a>        
+            <button class="btn btn-primary pull-right" type="submit">Siguiente: Detalles de la práctica</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+    
+    
+{% endblock %}
+
+{% block javascriptload%}
+<script type="text/javascript">
+    
+    
+    var input_alias = $('input#pdev_practicasbundle_supervisortype_rut');
+    var source_url = '{{path('practicas_supervisor_find')}}';
+    var fillable_base = 'pdev_practicasbundle_supervisortype_';
+    
+    p_setTypeahead(input_alias,source_url,fillable_base,2);
+    
+    
+    
+    </script>
+{% endblock %}

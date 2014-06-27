@@ -1,0 +1,144 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Organización{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        
+        <a href="{{ path('practicas_organizacion_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
+            <span class="glyphicon glyphicon-edit"></span> Modificar
+        </a>
+        <a href="{{ path('practicas_new') }}"  class="pull-left btn btn-primary">
+            <span class="glyphicon glyphicon-plus-sign"></span> Solicitar practicante
+        </a>
+    </div>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Nombres organización</th>
+                <td>
+                    {% for alias in entity.aliases %}
+                        {{alias.nombre}}<br>
+                    {% endfor%}
+                </td>
+            </tr>
+            <tr>
+                <th>RUT organización</th>
+                <td>{{ entity.rut }}</td>
+            </tr>
+            <tr>
+                <th>Rubro</th>
+                <td>{{ entity.rubro }}</td>
+            </tr>
+            <tr>
+                <th>Descripción</th>
+                <td>{{ entity.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>País</th>
+                <td>{{ entity.pais }}</td>
+            </tr>
+            <tr>
+                <th>Dirección web</th>
+                <td>{{ entity.web }}</td>
+            </tr>
+            <tr>
+                <th>Número de personas que trabajan en la organización</th>
+                <td>{{ entity.personasTotal }}</td>
+            </tr>
+            <tr>
+                <th>Antiguedad</th>
+                <td>{{ entity.antiguedad }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    
+<h4>Contactos asociados</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Rut</th>
+                <th>Email</th>
+                <th>Área</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contacto in contactos %}
+            <tr>
+                <td>{{ contacto.nombreCompleto }}</td>
+                <td>{{ contacto.rut }}</td>
+                <td>{{ contacto.email }}</td>                
+                <td>{{ contacto.area }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('persona_show', { 'id': contacto.id,'tipo':'contacto' }) }}">Ver</a>
+                    </li>                    
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron contactos</div>                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    
+   <h4>Supervisores asociados</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Rut</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for supervisor in supervisores %}
+            <tr>
+                <td>{{ supervisor.nombreCompleto }}</td>
+                <td>{{ supervisor.rut }}</td>
+                <td>{{ supervisor.email }}</td>                
+                <td>{{ supervisor.cargo }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('persona_show', { 'id': supervisor.id,'tipo':'supervisor' }) }}">Ver</a>
+                    </li>                    
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron supervisores</div>                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+   
+   
+        <form id="form_delete" class="hide" action="{{ path('practicas_organizacion_delete', { 'id': entity.id }) }}" method="post">
+            <input type="hidden" name="_method" value="DELETE" />
+            {{ form_widget(delete_form) }}
+            <button id="_submit" type="submit">Eliminar</button>
+        </form>
+    
+{% endblock %}

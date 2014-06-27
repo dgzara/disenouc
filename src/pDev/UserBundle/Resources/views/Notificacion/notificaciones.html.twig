@@ -1,0 +1,58 @@
+{% for key, message in app.session.flashbag.all() %}               
+    
+    {% set clase = "info-sign" %}
+    {% set msj = "" %}
+    {%for messag in message%}
+        {% if not loop.first%}{% set msj = msj ~ "<br>"%}{% endif %} 
+        {% set msj = msj ~ messag|raw %}
+    {%endfor%}
+
+    {% if key == "fos_user_success" %}
+        {% set clase = "ok-sign" %}
+        {% set msj = "" %}
+        
+        {%for messag in message%}
+            {% if not loop.first%}{% set msj = msj ~ "<br>"%}{% endif %} 
+            {% set msj = msj ~ messag|trans({}, 'FOSUserBundle') %}
+        {%endfor%}            
+    {% elseif key == "user.success" %}
+        {% set clase = "ok-sign" %}        
+    {% elseif key == "user.error" %}
+        {% set clase = "warning-sign" %}        
+    {% elseif key == "user.alert" %}
+        {% set clase = "exclamation-sign" %}
+    {% elseif key == "user.forbidden" %}
+        {% set clase = "ban-circle" %}
+    {% endif %}
+    
+    <div class="alert alert-default">
+        <a class="close">&times;</a>   
+        <span class="glyphicon glyphicon-margin-right glyphicon-{{clase}}" style="float:left;"></span>
+        <div style="margin-left: 25px;width: 560px;">
+        <strong>
+            {{msj}}
+        </strong>
+        </div>
+    </div>
+{% endfor %}
+
+{% for notificacion in notificaciones %}
+    
+    <div class="alert alert-default">
+        <a class="close onbackground" href="{{ path('notificaciones_leido_ajax', { 'id': notificacion.id }) }}">&times;</a>
+        <div style="float:right">
+        {{ notificacion.created|date('g:i A d-m-Y') }}
+        </div>
+    
+    {% if notificacion.llave == "broadcast.notice" %}
+        <span class="glyphicon glyphicon-margin-right glyphicon-bullhorn" style="float:left;"></span>
+    {% elseif notificacion.llave == "user.notice" %}    
+        <span class="glyphicon glyphicon-margin-right glyphicon-bell" style="float:left;"></span>        
+    {% elseif notificacion.llave == "user.information" %}    
+        <span class="glyphicon glyphicon-margin-right glyphicon-info-sign" style="float:left;"></span>    
+    {% endif %}
+        <div style="margin-left: 25px;width: 560px;">
+        <strong>{{ notificacion.mensaje|raw }}</strong>  
+        </div>
+    </div>
+{% endfor %}

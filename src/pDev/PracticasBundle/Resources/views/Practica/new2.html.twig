@@ -1,0 +1,84 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><span class="divider">/</span><a href="{{ path('practicas_new') }}">Solicitar practicante</a></li>
+{%endblock%}
+
+{% block javascript %}
+        <script src="{{ asset('/js/pdev.submit.js') }}"></script>
+{% endblock %}
+        
+{%block header%}Solicitar practicante{%endblock%}
+{%block lead%}2 de 3: Información de contacto{%endblock%}
+
+{%block content %}
+    
+    
+    <form id="form_contacto" class="form-horizontal form-well " action="{{ path('practicas_new',{'step':3,'idOrganizacion':idOrganizacion}) }}" method="post" {{ form_enctype(externo_form) }}>
+        <div class="control-group">
+            
+        <div class="controls">
+          <label class="checkbox">
+            <input id="optionsCheckbox" type="checkbox">
+            Utilizar mis datos
+          </label>
+        </div>
+    </div>
+    {{ form_rest(externo_form) }}
+        <p class="pull-right">            
+            <button id="_submit" class="hide" type="submit"></button>         
+            <a class="btn" onClick="document.forms.form_contacto.reset()">Limpiar</a>
+            <a href="#form_contacto" class="btn btn-primary submitform">Siguiente: Detalles de práctica</a>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+        
+       
+{% endblock %}
+
+{% block javascriptload%}
+<script type="text/javascript">
+    
+    var checkbox = $('input#optionsCheckbox');
+    var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
+    var source_url = '{{path('user_data')}}';
+    
+    checkbox.change(function () {
+        
+        
+        if(checkbox.prop('checked'))
+        {
+            var selector = '#pdev_practicasbundle_contactotype_';
+            
+            var items = [];
+            map = {};
+
+            $.getJSON(source_url, null, function (data) {
+                    $.each(data, function (i, item) {
+                                        
+                                        items.push(item);
+                                        
+                                });
+                    $.each(items[0], function (i, item) {
+                            
+                            $(selector+i).val(item);                                        
+                    });                    
+                    
+            })
+                                
+            
+        }
+        else
+        {
+            document.forms.form_contacto.reset();
+            
+        }
+    })
+    
+    
+    
+    
+    
+    </script>
+{% endblock %}

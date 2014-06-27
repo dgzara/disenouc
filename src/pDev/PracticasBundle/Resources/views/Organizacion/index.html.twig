@@ -1,0 +1,102 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li class="active"><span class="divider">/</span><a href="{{ path('practicas_organizacion') }}">Organizaciones</a></li>
+{%endblock%}
+
+
+{%block header%}Organizaciones{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    {% set orderBy = app.request.get('orderBy') %}
+{% set order = app.request.get('order') %}
+{% set defaultorder = 'asc' %}
+
+<div id="form_ordenar" class="well no-margin">
+        <div class="btn-group">
+        <a href="{{ path('practicas_organizacion_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-certificate"></span> Registrar organización</a>        
+        </div>
+        <div class="btn-group">
+            <a href="{{ path('practicas_organizacion',{'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombres
+                {% if orderBy == 'nombres' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        <a href="{{ path('practicas_organizacion',{'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a></th>
+                <th>Rut
+                {% if orderBy == 'rut' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        <a href="{{ path('practicas_organizacion',{'page':1,'order':defaultorder,'orderBy':'rut'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a></th>
+                <th>Rubro
+                {% if orderBy == 'rubro' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        <a href="{{ path('practicas_organizacion',{'page':1,'order':defaultorder,'orderBy':'rubro'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a></th>                
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{% for alias in entity.aliases %}{{ alias.nombre }}<br/>{% endfor %}</td>
+                
+                <td>{{ entity.rut }}</td>
+                <td>{{ entity.rubro }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('practicas_organizacion_show', { 'id': entity.id }) }}">Ver</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('practicas_organizacion_edit', { 'id': entity.id }) }}">Editar</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron organizaciones</div>                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% if siguiente or anterior %}
+<div class="pager">
+    <ul>
+        {%if anterior %}
+        <li><a href="{{ path('practicas_organizacion',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
+        {% endif%}
+        
+        {%if siguiente %}
+        <li><a href="{{ path('practicas_organizacion',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
+        {% endif%}
+    </ul>
+</div>
+{% endif %}
+    {% endblock %}

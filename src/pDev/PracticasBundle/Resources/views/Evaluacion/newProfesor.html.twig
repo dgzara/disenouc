@@ -1,0 +1,151 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+        
+{% block javascript%}
+{% endblock %}
+        
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Crear evaluación{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    <form class="well form-horizontal" action="{{ path('practicas_evaluacion_asignar',{'id':idPracticante}) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_row(form.tipo) }}    
+
+        {{ form_row(form.profesorOriginal) }}        
+        
+        <hr/>
+        <h4>Alumnos</h4>
+        <div id="practicantes" data-prototype="{{ form_widget(form.practicantes.vars.prototype)|e }}">
+            {% for practicante in form.practicantes %}
+            <div class="practicante">
+                {{ form_widget(practicante) }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="clearfix"></div>
+        <hr/>
+            {{ form_rest(form) }}
+        <p>
+            <button class="btn btn-primary pull-right" type="submit">Asignar</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+ 
+{% endblock %}
+
+{% block javascriptload%}
+<script type="text/javascript">
+    
+    var input_alias = $('input#pdev_practicasbundle_evaluacionprofesornewtype_practicantes_0_numeroAlumno')
+    
+    
+    var source_url = '{{path('practicas_alumno_find')}}';
+    input_alias.typeahead({
+                source: function (query, process) {
+                        var items = [];
+                        map = {};
+
+                        return $.getJSON(source_url, { query: query }, function (data) {
+                                $.each(data, function (i, item) {
+                                        map[item.label] = item;
+                                        items.push(item.label);
+                                });
+                                return process(items);
+                        });
+                },
+                updater: function (item) {
+                        selectedUser = map[item].value;
+                        
+                        //alert(map[item]['rut'])
+                        
+                        //pdev_practicasbundle_organizaciontype_
+                        
+                        
+                        
+                        return selectedUser;
+                },
+                highlighter: function (item) {
+                        return map[item].label;
+                },
+                matcher: function(item) {
+
+                    var matching = map[item].value.toString().toLocaleLowerCase().indexOf(this.query.toString().toLocaleLowerCase()) != -1;
+                    
+                    return matching;
+
+                },
+        });
+    
+    
+    var $collectionHolder;
+
+    // setup an "add a tag" link
+    var $addTagLink = $('<a class="btn btn-primary pull-right">Agregar practicante</a>');
+    
+    var $newLinkLi = $('<div></div>').append($addTagLink);
+    
+    
+    function addForm($collectionHolder, $newLinkLi) {
+        // Get the data-prototype explained earlier
+        var prototype = $collectionHolder.data('prototype');
+
+        // get the new index
+        var index = $collectionHolder.data('index');
+
+        // Replace '__name__' in the prototype's HTML to
+        // instead be a number based on how many items we have
+        var newForm = prototype.replace(/__name__/g, index);
+
+        // increase the index with one for the next item
+        $collectionHolder.data('index', index + 1);
+
+        // Display the form in the page in an li, before the "Add a tag" link li
+        var $newFormLi = $('<div></div>').append(newForm);
+        $newLinkLi.before($newFormLi);
+        
+        addTagFormDeleteLink($newFormLi);
+    }
+    
+    function addTagFormDeleteLink($tagFormLi) {
+        var $removeFormA = $('<a href="#" class="btn btn-small pull-right" style="margin-top:5px;">eliminar</a>');
+        $tagFormLi.prepend($removeFormA);
+
+        $removeFormA.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // remove the li for the tag form
+            $tagFormLi.remove();
+        });
+    }
+
+    jQuery(document).ready(function() {
+        $collectionHolder = $('#practicantes');
+        $collectionHolder.append($newLinkLi);
+        $collectionHolder.data('index', $collectionHolder.find(':input').length);
+        
+        
+        
+        $addTagLink.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // add a new tag form (see next code block)
+            addForm($collectionHolder, $newLinkLi);
+            
+        });
+        
+        $collectionHolder.find('div.practicante').each(function() {
+            addTagFormDeleteLink($(this));
+        });
+        
+        
+    });
+    
+    </script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+{% block javascript %}
+{% endblock %}
+
+{%block header%}{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+                    {% block fos_user_content %}
+{% endblock %}{% endblock %}
+
+{% block javascriptload %}
+{%endblock%}

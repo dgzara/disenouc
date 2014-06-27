@@ -1,0 +1,196 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li class="active"><span class="divider">/</span><a href="{{ path('practicas_alumno') }}">Practicantes</a></li>
+{%endblock%}
+
+
+{%block header%}Planes de práctica{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+<div id="div_periodo" class="hide" style="margin:0">
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Seleccionar periodo</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form_periodo" class="form-horizontal" action="{{ path('practicas_alumno') }}" method="post" {{ form_enctype(period_form) }}>
+            <div class="control-group" style="margin:0">
+                {{ form_label(period_form.periodo) }}
+                <div class="controls">
+                    {{ form_widget(period_form.periodo) }}
+                    <button type="submit" id="_submit" class="hide"></button>
+            
+                </div></div>
+            {{ form_rest(period_form) }}          
+        </form>
+    </div>
+    <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+    <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
+    </div>
+</div>
+{% set orderBy = app.request.get('orderBy') %}
+{% set estado_actual = app.request.get('estado') %}
+        {% set order = app.request.get('order') %}
+        {% set defaultorder = 'asc' %}
+    
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        {% if not isExterno %}
+            <div class="btn-group">
+            <a href="{{ path('practicas_alumno_wizard',{'idPracticante':'new'}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Crear plan de práctica</a>        
+        </div>
+            {% endif %}
+            
+        <div class="btn-group">
+            <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
+        </div>
+        
+        
+        
+            
+        <div class="btn-group">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span>
+            {% if estado_actual %}
+                Estado: {{estado_actual}}
+            {% else %}
+                Estado: Todos
+            {% endif %}
+            </a>
+            <ul class="dropdown-menu">
+                {% for estado in estados%}
+                    <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'estado':estado.identificador}) }}">{{estado.nombre}}</a></li>
+                {% endfor %}
+                <li class="divider"></li>
+                <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo')}) }}">Ver todas</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
+        </div>
+    </div>
+    
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    {% if orderBy == 'alumno' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        Alumno
+                        <a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'alumno'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a>
+                </th>
+                <th>
+                    {% if orderBy == 'tipo' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        Tipo de práctica
+                        <a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'tipo'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a>
+                </th>
+                <th>
+                {% if orderBy == 'organizacion' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        Organización
+                        <a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'organizacion'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a></th>
+                <th>
+                {% if orderBy == 'fechaInicio' and order == 'asc' %}
+                            {% set defaultorder = 'desc' %}
+                        {% else %}
+                            {% set defaultorder = 'asc' %}
+                        {% endif %}
+                        
+                        Inicio / Término
+                        <a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'fechaInicio'}) }}">
+                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                        </a></th>                
+                <th>Estado</th>
+                <th>···</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.alumno.nombreCompleto }}</td>
+                <td>{{ entity.tipo }}</td>
+                <td>{{ entity.organizacionAlias.nombre }}</td>
+                <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %} / {% if entity.fechaTermino %}{{ entity.fechaTermino|date('d-m-Y') }}{% endif %}</td>
+                <td>
+                    {% if entity.estado == 'estado.pendiente' %}Pendiente de envío
+                    {% elseif entity.estado == 'estado.enviada' %}Enviada para aprobación
+                    {% elseif entity.estado == 'estado.aprobada' %}Aprobada
+                    {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                    {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
+                    {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
+                    {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y oganización
+                    {% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
+                    {% elseif entity.estado == 'estado.terminada' %}Finalizada
+                    {% elseif entity.estado == 'estado.informe' %}Informe entregado
+                    {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado
+                    {% endif %} 
+                </td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('practicas_alumno_show', { 'id': entity.id }) }}">Ver</a>
+                    </li>
+                    {% if idAlumno and entity.alumno.id == idAlumno and (entity.estado == 'estado.pendiente' or entity.estado == 'estado.rechazada') %}
+                    <li>
+                        <a href="{{ path('practicas_alumno_wizard', { 'idPracticante': entity.id }) }}">Editar</a>
+                    </li>
+                    {% endif %}
+                    {% if isSupervisor %}
+                    <li>
+                        <a href="{{ path('practicas_alumno_evaluar_supervisor', { 'id': entity.id }) }}">Evaluar</a>
+                    </li>             
+                    {% endif %}
+                    {% if entity.estado == 'estado.informe' %}
+                    <li>
+                        <a href="{{ path('practicas_alumno_evaluar_profesor', { 'id': entity.id }) }}">Evaluar</a>
+                    </li>             
+                    {% endif %}
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=6>
+                    <div class="text-center">No se encontraron planes de prácticas</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% if siguiente or anterior %}
+<div class="pager">
+    <ul>
+        {%if anterior %}
+        <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
+        {% endif%}
+        
+        {%if siguiente %}
+        <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
+        {% endif%}
+    </ul>
+</div>
+{% endif %}
+        
+    {% endblock %}

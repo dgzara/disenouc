@@ -1,0 +1,167 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Detalle de práctica{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+<div id="form_ordenar" class="well clearfix no-margin">
+    {% if isCoordinacion or app.user.id == entity.creador.id %}
+        <div class="btn-group">
+        <a href="{{ path('practicas_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
+        <span class="glyphicon glyphicon-edit"></span> Modificar
+    </a>
+                </div>
+<div class="btn-group">
+    <a href="#form_delete"  class="pull-left btn btn-primary submitform">
+        <span class="glyphicon glyphicon-remove"></span> Eliminar
+    </a>
+    </div>
+    {% endif %}
+    {% if isCoordinacion %}
+        <div class="btn-group">
+    <a href="{{ path('practicas_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-primary onmodal">
+        <span class="glyphicon glyphicon-adjust"></span> Cambiar estado
+    </a>
+            </div>
+    {% endif %}
+</div>
+<div id="estado">
+    <h4>Estado de la práctica</h4>
+    <table class="table table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Estado</th>
+                <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de aprobación
+                    {% elseif entity.estado == 'estado.aprobada' %}Aprobada
+                    {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                    {% elseif entity.estado == 'estado.publicada' %}Publicada
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<h4>Información general</h4>
+<table class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <th>Tipo</th>
+            <td>{{ entity.tipo }}</td>
+        </tr>            
+        <tr>
+            <th>Jornadas</th>
+            <td>{{ entity.jornadas }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de inicio</th>
+            <td>{{ entity.fechaInicio|date('d-m-Y') }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de término</th>
+            <td>{{ entity.fechaTermino|date('d-m-Y') }}</td>
+        </tr>
+        <tr>
+            <th>Manejo software</th>
+            <td>{{ entity.manejoSoftware }}</td>
+        </tr>
+        <tr>
+            <th>Interés</th>
+            <td>{{ entity.interes }}</td>
+        </tr>
+        <tr>
+            <th>Cupos</th>
+            <td>{{ entity.cupos }}</td>
+        </tr>
+        <tr>
+            <th>¿Entrevista / presentación de portafolio?</th>
+            <td>{{ entity.entrevista }}</td>
+        </tr>
+        <tr>
+            <th>Remuneracion</th>
+            <td>{{ entity.remuneraciones }}</td>
+        </tr>
+        <tr>
+            <th>Beneficios</th>
+            <td>{{ entity.beneficios }}</td>
+        </tr>
+        <tr>
+            <th>Descripción</th>
+            <td>{{ entity.descripcion }}</td>
+        </tr>
+    </tbody>
+</table>
+<h4>Información de la empresa/organización</h4>
+<table class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <th>Nombre</th>
+            <td>{{ entity.organizacionAlias.nombre }}</td>
+        </tr>
+        <tr>
+            <th>Rubro</th>
+            <td>{{ entity.organizacionAlias.organizacion.rubro }}</td>
+        </tr>
+        <tr>
+            <th>Descripción</th>
+            <td>{{ entity.organizacionAlias.organizacion.descripcion }}</td>
+        </tr>
+        <tr>
+            <th>País</th>
+            <td>{{ entity.organizacionAlias.organizacion.pais }}</td>
+        </tr>
+        <tr>
+            <th>Web</th>
+            <td>{{ entity.organizacionAlias.organizacion.web }}</td>
+        </tr>
+        <tr>
+            <th>Número de personas que trabajan en la organización</th>
+            <td>{{ entity.organizacionAlias.organizacion.personasTotal }}</td>
+        </tr>
+        <tr>
+            <th>Antiguedad</th>
+            <td>{{ entity.organizacionAlias.organizacion.antiguedad }}</td>
+        </tr>
+    </tbody>
+</table>
+<h4>Información de contacto</h4>
+<table class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <th>Nombre</th>
+            <td>{{ entity.contacto.nombreCompleto }}</td>
+        </tr>
+        <tr>
+            <th>Dirección</th>
+            <td>{{ entity.contacto.direccionCalle }}</td>
+        </tr>
+        <tr>
+            <th>Teléfono</th>
+            <td>{{ entity.contacto.numeroTelefono }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ entity.contacto.email }}</td>
+        </tr>
+    </tbody>
+</table>
+
+        
+        
+    
+<form class="hide" id="form_delete" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post">
+    <input type="hidden" name="_method" value="DELETE" />
+    {{ form_widget(delete_form) }}
+    <button id="_submit" type="submit">Eliminar</button>
+</form>
+    
+{% endblock %}

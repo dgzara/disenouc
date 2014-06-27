@@ -1,0 +1,15 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Modificar Persona{% endblock %}
+{% block body %}
+    <form id="form_edit" class="form-horizontal form-modal" action="{{ path('persona_update',{'tipo':tipo,'idPersona':persona.id}) }}" method="post" {{ form_enctype(form) }}>
+        <input type="hidden" value="PUT" name ="_method"/>
+        {{ form_widget(form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a href="#form_edit" class="btn btn-primary submitform">Guardar</a>
+
+{% endblock %}

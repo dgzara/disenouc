@@ -1,0 +1,22 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Nuevo criterio de evaluación{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    
+
+    <form class="well form-horizontal" action="{{ path('practicas_evaluacion_criterios_create') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+        <p>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+        </p>
+    </form>
+
+{% endblock %}

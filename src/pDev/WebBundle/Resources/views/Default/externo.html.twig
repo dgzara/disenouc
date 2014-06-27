@@ -1,0 +1,32 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+                <li><a href="{{ path('default_inicio') }}">Inicio</a></li>
+{%endblock%}
+
+
+
+{%block header%}Bienvenido{%endblock%}
+{%block lead%}Sistema de información y gestión académica{%endblock%}
+
+{%block navleft%}
+            
+{%endblock%}
+
+{%block content %}
+
+
+    <!-- <p><a href="{#{ path('registro') }#}" class="btn btn-primary">Solicitar ingreso</a></p> //-->
+    <div class="alert alert-block">
+        <h4 class="alert-heading">{{ titulo }}</h4>
+        <p>{{ mensaje }}</p>
+      </div>
+
+
+
+    
+
+
+{%endblock%}

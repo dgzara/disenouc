@@ -1,0 +1,31 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}Prácticas{%endblock%}
+{%block lead%}Periodo académico {%endblock%}
+
+{%block content %}
+    <h1>ProfesorEvaluador</h1>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('practicas_profesor') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

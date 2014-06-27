@@ -1,0 +1,16 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Modificar estado{% endblock %}
+{% block body %}
+
+    <form id="form_estado" class="form-horizontal form-modal" action="{{ path('practicas_alumno_estado',{'id':entity.id}) }}" method="post" {{ form_enctype(edit_form) }}>
+        {{ form_row(edit_form.estado) }}
+        {{ form_rest(edit_form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a href="#form_estado" class="btn btn-primary submitform">Guardar</a>
+
+{% endblock %}

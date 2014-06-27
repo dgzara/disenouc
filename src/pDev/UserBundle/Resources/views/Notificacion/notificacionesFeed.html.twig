@@ -1,0 +1,38 @@
+{% for notificacion in notificaciones %}
+    
+            
+    <tr>
+        <td>
+            <div style="float:left;">
+            {% if notificacion.llave == "broadcast.notice" %}
+                <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-bullhorn" style="float:left;"></span>
+
+            {% elseif notificacion.llave == "user.notice" %}    
+                <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-bell" style="float:left;"></span>       
+
+            {% elseif notificacion.llave == "user.information" %}    
+                <span class="glyphicon glyphicon-margin-right glyphicon-margin-left glyphicon-info-sign" style="float:left;"></span>    
+
+            {% endif %}      
+            </div>
+
+            
+            <div style="float:right;margin-right: 10px">
+                {{ notificacion.created|date('g:i A d-m-Y') }}
+            </div>
+            <div style="margin-left:27px;width:590px">
+                {{ notificacion.mensaje }}
+            </div>    
+        </td>
+    </tr>
+{% endfor %}
+    {% if pagina > 0%}
+<tr>
+            <td style="text-align:center"><a href="{{ path('notificaciones_feed', { 'pagina': pagina }) }}" class="loadmore">Ver anteriores</a></td>
+        </tr>
+        {% endif%}
+        
+        
+        
+        
+        

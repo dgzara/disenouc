@@ -1,0 +1,151 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                
+{%endblock%}
+
+
+{%block header%}
+{% if entity.tipo == 'TYPE_ALUMNO' %}
+Alumno
+{% elseif entity.tipo == 'TYPE_ACADEMICO' %}
+Profesor
+{% elseif entity.tipo == 'TYPE_FUNCIONARIO' %}
+Funcionario
+{% elseif entity.tipo == 'TYPE_PRACTICAS_CONTACTO' %}
+Contacto organización
+{% elseif entity.tipo == 'TYPE_PRACTICAS_SUPERVISOR' %}
+Supervisor organización
+{% endif %}
+{%endblock%}
+{%block lead%}{{ entity.nombreCompleto }}{%endblock%}
+
+{% block content %}
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Rut</th>
+                <td>{{ entity.rut }}</td>
+            </tr> 
+            {% if entity.tipo == 'TYPE_ALUMNO' %}
+            <tr>
+                <th>Número de alumno</th>
+                <td>{{ entity.numeroAlumno }}</td>
+            </tr> 
+            {% elseif entity.tipo == 'TYPE_CONTACTO' %}
+            <tr>
+                <th>Área / departamento</th>
+                <td>{{ entity.area }}</td>
+            </tr> 
+            {% elseif entity.tipo == 'TYPE_SUPERVISOR' %}
+            <tr>
+                <th>Cargo</th>
+                <td>{{ entity.cargo }}</td>
+            </tr> 
+            {% endif %}
+            <tr>
+                <th>Correo electrónico</th>
+                <td>{{ entity.email }}{% if entity.emailSecundario%}, {{entity.emailSecundario}}{%endif%}</td>
+            </tr>
+            <tr>
+                <th>Teléfono</th>
+                <td>{{ entity.numeroTelefono }}</td>
+            </tr>
+            <tr>
+                <th>Dirección</th>
+                <td>{{ entity.direccionCalle }}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+<h4>
+{% if entity.tipo == 'TYPE_ALUMNO' %}
+Planes de práctica
+{% elseif entity.tipo == 'TYPE_ACADEMICO' %}
+Planes de práctica donde es evaluador
+{% elseif entity.tipo == 'TYPE_PRACTICAS_CONTACTO' %}
+Planes de práctica con organizaciones donde es contacto
+{% elseif entity.tipo == 'TYPE_PRACTICAS_SUPERVISOR' %}
+Planes de práctica donde es supervisor evaluador
+{% endif %}
+</h4>
+
+<table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Alumno</th>
+                <th>Tipo de práctica</th>
+                <th>Organización</th>
+                <th>Inicio / Término</th>                
+                <th>···</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for practicante in practicantes %}
+            <tr>
+                <td>{{ practicante.alumno.nombreCompleto }}</td>
+                <td>{{ practicante.tipo }}</td>
+                <td>{{ practicante.organizacionAlias.nombre }}</td>
+                <td>{% if practicante.fechaInicio %}{{ practicante.fechaInicio|date('d-m-Y') }}{% endif %} / {% if practicante.fechaTermino %}{{ practicante.fechaTermino|date('d-m-Y') }}{% endif %}</td>
+                
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('practicas_alumno_show', { 'id': practicante.id }) }}">Ver</a>
+                    </li>                                        
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron planes de prácticas</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% if organizaciones %}
+<h4>Organizaciones asociadas</h4>
+<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombres</th>
+                
+                
+                <th>Rubro</th>                
+                <th>Dirección web</th>    
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for organizacion in organizaciones %}
+            <tr>
+                <td>{% for alias in organizacion.aliases %}{{ alias.nombre }}<br/>{% endfor %}</td>
+                
+                
+                <td>{{ organizacion.rubro }}</td>
+                <td>{{ organizacion.web }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('practicas_organizacion_show', { 'id': organizacion.id }) }}">Ver</a>
+                    </li>
+                    
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron organizaciones</div>                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        {% endif %}
+{% endblock %}

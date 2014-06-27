@@ -1,0 +1,102 @@
+{% extends 'form_div_layout.html.twig' %}
+
+
+{% block form_widget_compound %}
+{% spaceless %}
+        {% if form.parent is empty %}
+            {{ form_errors(form) }}
+        {% endif %}
+        {{ block('form_rows') }}
+        {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock form_widget_compound %}
+
+{% block form_widget_simple %}
+{% spaceless %}
+    {% set type = type|default('text') %}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{% endspaceless %}
+{% endblock form_widget_simple %}
+
+{% block form_row %}
+{% spaceless %}
+    <div class="control-group">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        <div class="controls">
+        {{ form_widget(form) }}
+        </div>
+    </div>
+{% endspaceless %}
+{% endblock form_row %}
+
+{% block form_label %}
+{% spaceless %}
+    {% if label is not sameas(false) %}
+        {% if not compound %}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {% endif %}
+        {% if required %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {% endif %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label')|trim}) %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}
+        {%if label_attr['data-help'] is defined %}
+            
+                <abbr class="tooltip-append" title="{{label_attr['data-help']}}"><i class="icon-question-sign"></i></abbr>
+            
+        {% endif %}
+        </label>
+    {% endif %}
+{% endspaceless %}
+{% endblock form_label %}
+
+{% block datetime_widget %}
+{% spaceless %}
+    {% if widget == 'single_text' %}
+        {{ block('form_widget_simple') }}
+    {% else %}
+        <div {# block('widget_container_attributes') #}>
+            <div class="date input-append">
+            {{ form_errors(form.date) }}
+            {{ form_widget(form.date, {'attr': {'autocomplete':'off','data-format': 'dd-MM-yyyy'}}) }}
+            <span class="add-on">
+              <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+              </i>
+            </span>
+            </div>
+            <div class="time input-append">
+            {{ form_errors(form.time) }}
+            {{ form_widget(form.time, {'attr': {'autocomplete':'off','data-format': 'hh:mm:ss'}}) }}
+            <span class="add-on">
+              <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+              </i>
+            </span>
+            </div>
+        </div>
+    {% endif %}
+{% endspaceless %}
+{% endblock datetime_widget %}
+
+{% block date_widget %}
+{% spaceless %}
+    {% if widget == 'single_text' %}
+        <div>
+            <div class="date input-append">
+            {{ form_errors(form) }}
+            {{ form_widget(form, {'attr': {'autocomplete':'off','data-format': 'dd-MM-yyyy'}}) }}
+            <span class="add-on">
+              <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+              </i>
+            </span>
+            </div>
+            
+        </div>
+    {% else %}
+        
+    {% endif %}
+{% endspaceless %}
+{% endblock date_widget %}

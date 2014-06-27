@@ -1,0 +1,20 @@
+{% extends 'pDevWebBundle::base.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><a href="{{ path('sync') }}">Sincronizar</a></li>
+{%endblock%}
+
+{% block javascript %}
+{% endblock %}
+
+{%block header%}{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+{% endblock %}
+
+{% block javascriptload %}
+{%endblock%}

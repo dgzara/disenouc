@@ -1,0 +1,14 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Nueva Persona{% endblock %}
+{% block body %}
+    <form id="form_persona" class="form-horizontal form-modal" action="{{ path('persona_create',{'tipo':tipo}) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+{% block footer %}
+<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+<a href="#form_persona" class="btn btn-primary submitform">Guardar</a>
+
+{% endblock %}

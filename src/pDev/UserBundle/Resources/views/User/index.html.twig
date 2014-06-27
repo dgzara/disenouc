@@ -1,0 +1,66 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+                <li><span class="divider">/</span> <a href="{{ path('user') }}">Usuarios</a></li>
+{%endblock%}
+
+{% block javascript %}
+{% endblock %}
+
+{%block header%}Usuarios{%endblock%}
+{%block lead%}{{total}} usuarios en el sistema{%endblock%}
+
+{%block content %}
+<div id="form_ordenar" class="well clearfix" style="margin:0">
+        
+        <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('user_buscar') }}" method="post" {{ form_enctype(search_form) }}>
+              {{ form_widget(search_form.querystring) }}
+              {{ form_rest(search_form) }}
+              <button type="submit" id="_submit" class="hide"></button>
+              <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
+        </form>   
+        {% set orderBy = app.request.get('orderBy') %}
+        {% set order = app.request.get('order') %}
+        {% set defaultorder = 'asc' %}
+    </div>
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Último acceso</th>
+            <th>Permisos</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td>{{ entity.nombreCompleto }} ({{ entity.username }})</td>
+            <td>{{ entity.email }}</td>
+            <td>{% if entity.lastLogin %}{{ entity.lastLogin|date('Y-m-d H:i:s') }}{% else %}Nunca{% endif %}</td>
+            <td><a href="{{ path('user_permisos', { 'username': entity.username }) }}" class="onmodal">Modificar permisos</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if siguiente or anterior %}
+<div class="pager">
+    <ul>
+        {%if anterior %}
+        <li><a href="{{ path('user_page',{'page':anterior}) }}">← Anterior</a></li>
+        {% endif%}
+        
+        {%if siguiente %}
+        <li><a href="{{ path('user_page',{'page':siguiente}) }}">Siguiente →</a></li>
+        {% endif%}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascriptload %}
+{%endblock%}

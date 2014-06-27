@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="p_dev_user.permission.manager">pDev\UserBundle\DependencyInjection\PermissionManager</parameter>
+        <parameter key="p_dev_user.context.helper">pDev\UserBundle\DependencyInjection\ContextHelper</parameter>
+        <parameter key="p_dev_user.notification.manager">pDev\UserBundle\DependencyInjection\NotificationManager</parameter>
+        <parameter key="p_dev_user.logger.manager">pDev\UserBundle\DependencyInjection\LoggerManager</parameter>
+        <parameter key="p_dev_user.search.helper">pDev\UserBundle\DependencyInjection\SearchHelper</parameter>
+    </parameters>
+
+    <services>
+        
+        
+        <service id="permission.manager" class="%p_dev_user.permission.manager%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="service_container"/>
+        </service>
+        
+        <service id="context.helper" class="%p_dev_user.context.helper%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="service_container"/>
+        </service>
+        
+        <service id="notification.manager" class="%p_dev_user.notification.manager%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="service_container"/>
+        </service>
+        
+        <service id="logger.manager" class="%p_dev_user.logger.manager%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="service_container"/>
+        </service>
+        
+        <service id="search.helper" class="%p_dev_user.search.helper%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="service_container"/>
+        </service>
+        
+        <service id="pdev.user_provider.username" class="pDev\UserBundle\Security\UserProvider" public="false">
+            <argument type="service" id="fos_user.user_manager" />
+        </service>
+    </services>
+    
+    <!--
+    <parameters>
+        <parameter key="p_dev_user.example.class">pDev\UserBundle\Example</parameter>
+    </parameters>
+
+    <services>
+        <service id="p_dev_user.example" class="%p_dev_user.example.class%">
+            <argument type="service" id="service_id" />
+            <argument>plain_value</argument>
+            <argument>%parameter_name%</argument>
+        </service>
+        <service id="permission.manager" class="%p_dev_user.example.class%">
+            <argument type="service" id="service_id" />
+            <argument>plain_value</argument>
+            <argument>%parameter_name%</argument>
+        </service>
+    </services>
+    
+    permission.manager:
+        class: Comunica\UserBundle\DependencyInjection\PermissionManager
+        tags:
+            - { name: permission.manager }
+        arguments:
+            em: "@doctrine.orm.entity_manager"
+            container: "@service_container"
+            
+    -->
+</container>

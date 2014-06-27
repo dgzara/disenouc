@@ -1,0 +1,57 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_SUPER_USER:  ROLE_USER
+        ROLE_ADMIN:       ROLE_SUPER_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+        pdev_userbundle:
+            id: pdev.user_provider.username
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_provider: form.csrf_provider
+                use_referer: true
+                always_use_default_target_path: true
+                default_target_path: /inicio
+            #trusted_sso:
+            #    manager: admin_sso
+            #    login_action: false
+            #    logout_action: false
+            #    login_path: /inicio/
+            #    check_path: /login_cas
+            #    provider: pdev_userbundle
+            #    create_users: true
+            #    created_users_roles: [ROLE_USER]
+            #    always_use_default_target_path: true
+            #    default_target_path: /inicio/
+            #    failure_path: /login_failure
+
+            #logout:       true
+            logout:     
+                path: /logout
+                #invalidate_session: false
+
+            anonymous:    true
+            
+
+    access_control:
+        - { path: ^/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login_cas$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/registro, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/img/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/*, role: ROLE_USER }

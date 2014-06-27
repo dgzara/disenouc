@@ -1,0 +1,53 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{parent()}}
+                <li class="active"><span class="divider">/</span><a href="{{ path('practicas_supervisor') }}">Supervisores</a></li>
+{%endblock%}
+
+
+{%block header%}Supervisores{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Rut</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.nombres }} {{ entity.apellidoPaterno }} {{ entity.apellidoMaterno }}</td>
+                <td>{{ entity.rut }}</td>
+                <td>{{ entity.email }}</td>                
+                <td>{{ entity.cargo }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('persona_show', { 'id': entity.id }) }}">Ver</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('persona_edit', { 'idPersona': entity.id }) }}" class="onmodal">Editar</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No se encontraron supervisores</div>                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+       
+    {% endblock %}

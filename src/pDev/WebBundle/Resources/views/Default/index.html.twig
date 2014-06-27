@@ -1,0 +1,19 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block navleft%}
+{%endblock%}
+
+{%block header%}Bienvenido{%endblock%}
+{%block lead%}Por favor seleccione un acceso para continuar{%endblock%}
+
+{%block content %}
+
+<div class="" style="margin:auto;width: 300px">
+    
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('default_inicio') }}">Usuario UC</a></h3>
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('fos_user_security_login') }}">Usuario externo</a></h3>
+    
+</div>
+{%endblock%}

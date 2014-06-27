@@ -1,0 +1,62 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+
+
+{%block breadcrumb%}
+{{parent()}}
+
+            <li><span class="divider">/</span><a href="{{ path('configuracion') }}">Ajustes</a></li>    
+{%endblock%}
+
+{% block javascript %}
+{% endblock %}
+
+{%block header%}Ajustes{%endblock%}
+{%block lead%}{%endblock%}
+
+{%block content %}
+
+{% for categoria in categorias %}
+{% if categorias|length > 1%}
+<h3>{{categoria.nombre}}</h3>
+{% endif%}
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Valor</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in categoria.configuraciones %}
+        <tr>
+            <td>{{ entity.nombre }}</td>
+            <td>{{ entity.descripcion }}</td>
+            <td>
+                {% if entity.valorTipo == 'password' %}
+                    ****
+                {% elseif entity.valorTipo == 'datetime' %}
+                    {{ entity.valor|date('d-m-Y H:i:s') }}
+                {% else %}
+                    {{ entity.valorPlano }}
+                {% endif %}</td>
+            <td>
+                <a href="{{ path('configuracion_edit', { 'id': entity.id }) }}" class="onmodal">Modificar</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}
+
+{% block javascriptload %}
+{%endblock%}

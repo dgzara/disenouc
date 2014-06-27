@@ -1,0 +1,41 @@
+p_dev_practicas:
+    resource: "@pDevPracticasBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+cas_login:
+    pattern: /login_cas
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+#fos_user_profile:
+#    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+#    prefix: /perfil
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /registro
+
+#fos_user_resetting:
+#    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+#    prefix: /resetting
+
+#fos_user_change_password:
+#    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+#    prefix: /perfil
+
+p_dev_user:
+    resource: "@pDevUserBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+p_dev_web:
+    resource: "@pDevWebBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+p_dev_parser:
+    resource: "@pDevParserBundle/Controller/"
+    type:     annotation
+    prefix:   /
