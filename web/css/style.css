@@ -1,0 +1,116 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+background-color:rgb(250,250,250);
+padding-top:50px;
+margin-bottom: 100px;
+}
+#footer {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 100px;
+background-color: rgb(240,240,240);
+border-top:1px solid rgb(230,230,230);
+padding-top:1em;
+}
+
+
+.dno{
+background:transparent url('../images/diseno-uc.png') 0 0 no-repeat;
+background-size:190px 50px;
+font-size:3em;
+text-indent: -9999em;
+min-width:250px;
+}
+
+
+body > .container {
+  padding: 10px 20px;
+}
+
+
+.navbar-brand{letter-spacing: 0.1em;}
+
+.panel{
+box-shadow: 0 0 6px rgba(155,155,155, 0.25);
+}
+
+.jumbotron{padding:30px; border-bottom:1px solid rgb(230,230,230); text-align: center;}
+
+.jumbotron h1{font-size:2.5em; font-weight: 100;}
+
+
+.central{
+text-align: center;
+padding-bottom:20px;
+}
+
+.jumbotronside{
+padding:0;
+overflow:hidden;
+height:170px;
+border-bottom:1px solid rgb(230,230,230);
+vertical-align: baseline;
+}
+
+.jumbotronside img{
+width:100%;
+height:auto;
+}
+
+div[class*='col-'] figure img{width:100%; height:auto;}
+
+div[class*='col-'] ul{
+margin:0;
+padding:0;
+list-style-position: inside;
+}
+
+.modal-dialog  {width:30%;}
+
+.modal-footer{text-align: center;}
+
+.modal-body h5 {text-align: center;}
+
+.table-responsive{
+margin:1em 0 2em -0.5em;
+border-top:1px solid rgb(230,230,230);
+border-bottom:1px solid rgb(230,230,230);
+}
+
+.alert{
+margin:1em 0;
+}
+
+.col-sm-8 .alert{
+margin-left:-1em;
+}
+
+.btn-xs{min-width:80px;}
+
+@media screen and (max-width:768px){
+
+div[class*='col-'] figure img{display:none;}
+
+.modal-dialog  {width:75%; margin:10% auto;}
+
+.table-responsive{
+margin:1em 0em;
+}
+
+.jumbotronside{
+padding:0;
+overflow:hidden;
+height:130px;
+border-bottom:1px solid rgb(230,230,230);
+vertical-align: baseline;
+}
+
+.col-sm-8 .alert{
+margin-left:0;
+}
+
+}
