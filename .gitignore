@@ -1,3 +1,10 @@
+##generic files to ignore
+*~
+*.DS_Store
+*.swp
+*.out
+*.orig
+
 # Cache and logs
 /app/cache/*
 /app/logs/*

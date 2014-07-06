@@ -42,11 +42,11 @@ class RegistrationController extends BaseController
 
         $user = $userManager->createUser();
         $user->setEnabled(true);
-        $user->setUsername('newuser');
 
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, new UserEvent($user, $request));
 
         $form = $formFactory->createForm();
+        $form->remove('username');
         $form->setData($user);
 
         if ('POST' === $request->getMethod()) {

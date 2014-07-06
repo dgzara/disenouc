@@ -227,13 +227,14 @@ function p_loadingModal(mensaje)
         $('#ModalLoadingDiv .modal-body h5').html(mensaje);
     else
     {
-        var content = "<div id=\"ModalLoadingDiv\">";
+        var content = "<div id=\"ModalLoadingDiv\" class=\"modal-dialog\">";
+        content += "<div class=\"modal-content\">";
         content += "<div class=\"modal-header\">";
         content += "</div>";
         content += "<div  id=\"ModalLoadingBody\" class=\"modal-body\" style=\"height:"+height+"px;text-align:center;\">";
         content += "<h5 style=\"position: relative;top: 100px;\">"+mensaje+"</h5>";
         content += "</div>";
-        content += "<div class=\"modal-footer\"></div></div>";
+        content += "<div class=\"modal-footer\"></div></div></div>";
         
         
         p_modal.Obj.append(content);
@@ -298,7 +299,7 @@ function p_alertOnModal(msj,title)
     if(title === undefined)
         title = "Información";    
 
-    var content = "<div id=\"ModalAlertDiv\"><div class=\"modal-header\">";
+    var content = "<div id=\"ModalAlertDiv\" class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\">";
     content += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>";
     content += "<h3 id=\"myModalLabel\">"+title+"</h3>";
     content += "</div>";
@@ -307,7 +308,7 @@ function p_alertOnModal(msj,title)
     content += "</div>";
     content += "<div class=\"modal-footer\">";
     content += "<button id=\"buttonaceptar\" class=\"btn btn-primary\" data-dismiss=\"modal\" aria-hidden=\"true\">Aceptar</button>";
-    content += "</div></div>";
+    content += "</div></div></div>";
     
     p_modal.Obj.empty();
     p_modal.Obj.append(content);
@@ -328,7 +329,7 @@ function p_confirmOnModal(msj,siFunc,noFunc,title)
     if(title === undefined)
         title = "Confirmación";   
 
-    var content = "<div id=\"ModalConfirmDiv\"><div class=\"modal-header\">";
+    var content = "<div id=\"ModalConfirmDiv\" class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\">";
     content += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>";
     content += "<h3 id=\"myModalLabel\">"+title+"</h3>";
     content += "</div>";
@@ -338,7 +339,7 @@ function p_confirmOnModal(msj,siFunc,noFunc,title)
     content += "<div class=\"modal-footer\">";
     content += "<button id=\"buttoncancelar\" class=\"btn\" data-dismiss=\"modal\" aria-hidden=\"true\">Cancelar</button>";
     content += "<button id=\"buttonaceptar\" class=\"btn btn-primary\">Aceptar</button>";
-    content += "</div></div>";
+    content += "</div></div></div>";
     
     p_modal.Obj.empty();
     p_modal.Obj.append(content);

@@ -1,12 +1,6 @@
 {% extends 'pDevWebBundle::layout.html.twig' %}
 {% trans_default_domain "FOSUserBundle" %}
 
-
-{%block breadcrumb%}
-{{parent()}}
-                <li class="active"><span class="divider">/</span><a href="{{ path('fos_user_security_login') }}">Ingresar</a></li>
-{%endblock%}
-                
 {%block navleft%}
 {%endblock%}
 

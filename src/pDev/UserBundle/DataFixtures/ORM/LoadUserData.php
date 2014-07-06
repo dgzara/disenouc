@@ -15,25 +15,29 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $userpersona = $manager->getRepository('pDevUserBundle:Funcionario')->findOneByRut("166583225");
+        $userpersona = $manager->getRepository('pDevUserBundle:Funcionario')->findOneByRut("166284740");
         if(!$userpersona)
             $userPersona = new Funcionario();
-        $userPersona->setNombres("Pedro Alberto");
-        $userPersona->setApellidoPaterno("Reyes");
-        $userPersona->setApellidoMaterno("Espinoza");
-        $userPersona->setEmail("plreyes@uc.cl");
-        $userPersona->setRut("166583225");
+        $userPersona->setNombres("Diego Alonso");
+        $userPersona->setApellidoPaterno("Gómez");
+        $userPersona->setApellidoMaterno("Zará");
+        $userPersona->setEmail("dlgomez@uc.cl");
+        $userPersona->setRut("166284740");
         
         $manager->persist($userPersona);
         
-        $userAdmin = $manager->getRepository('pDevUserBundle:User')->findOneByUsername("plreyes");
+        $userAdmin = $manager->getRepository('pDevUserBundle:User')->findOneByUsername("dlgomez@uc.cl");
         if(!$userAdmin)
             $userAdmin = new User();
-        $userAdmin->setUsername('plreyes');
-        $userAdmin->setPlainPassword('Wj47pwUC');
-        $userAdmin->setEmail('plreyes@uc.cl');
+        $userAdmin->setUsername('dlgomez@uc.cl');
+        $userAdmin->setPlainPassword('holaFaco');
+        $userAdmin->setEmail('dlgomez@uc.cl');
         $userAdmin->setEnabled(true);
         $userAdmin->addPersona($userPersona);
+        $userAdmin->setNombres("Diego Alonso");
+        $userAdmin->setApellidoPaterno("Gómez");
+        $userAdmin->setApellidoMaterno("Zará");
+        $userAdmin->setRut("166284740");
         $userPersona->setUsuario($userAdmin);
         $userAdmin->addRole('ROLE_SUPER_ADMIN');
         

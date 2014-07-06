@@ -937,7 +937,7 @@ class ImportaController extends Controller
             $alumno_periodo = $year.'-'.$semestre;
         }
         
-        // creamos profesor
+        // creamos el alumno
         $alumno = $em->getRepository('pDevUserBundle:Alumno')->findOneByNumeroAlumno($alumno_numero);
         if(!$alumno)
         {

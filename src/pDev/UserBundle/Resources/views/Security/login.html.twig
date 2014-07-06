@@ -1,30 +1,38 @@
-<form class="form-horizontal form-small form-well" action="{{ path("fos_user_security_check") }}" method="post">
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-    <div class="modal-body">
-        {% if error %}
-            <div class="alert alert-error">
-                <a class="close">&times;</a>
-                <h4 class="alert-heading">Error</h4>
-                {{ error|trans({}, 'FOSUserBundle') }}
-            </div>
-        {% endif %}
-        <p>
-            <div class="input-group">
-                <span class="input-group-addon">Usuario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" required="required" placeholder="usuario@correo.cl"/>
-            </div>
-        </p>
-        <p>
-            <div class="input-group">
-              <span class="input-group-addon">Contraseña</span>
-              <input type="password" class="form-control" id="password" name="_password" required="required" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"/>
-            </div>
-        </p>
-        <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
+<div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal form-small form-well" action="{{ path("fos_user_security_check") }}" method="post">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">BIENVENIDO</h4>
+        </div>
+        <div class="modal-body">
+            {% if error %}
+                <div class="alert alert-error">
+                    <a class="close">&times;</a>
+                    <h4 class="alert-heading">Error</h4>
+                    {{ error|trans({}, 'FOSUserBundle') }}
+                </div>
+            {% endif %}
+            <p>
+                <div class="input-group">
+                    <span class="input-group-addon">Usuario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" required="required" placeholder="usuario@correo.cl"/>
+                </div>
+            </p>
+            <p>
+                <div class="input-group">
+                  <span class="input-group-addon">Contraseña</span>
+                  <input type="password" class="form-control" id="password" name="_password" required="required" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"/>
+                </div>
+            </p>
+            <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
+            <button type="submit" class="btn btn-primary">Ingresar &rarr;</button>
+        </div>
+    </form>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
-        <button type="button" class="btn btn-primary" onclick="location.href='dashboard-estudiante.php'">Ingresar &rarr;</button>
-    </div>
-</form>
+</div>

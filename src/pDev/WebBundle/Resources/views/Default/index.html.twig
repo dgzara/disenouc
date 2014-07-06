@@ -16,41 +16,7 @@
         </div>
         <div class="panel-body">
             <p>Actualiza tus datos de contacto y define un perfil de practicante, con el ingreso de tus ámbitos de interés.</p>
-            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ModalEstudiante">Acceder &rarr;</button>
-
-            <!--modal-->
-            <div class="modal fade" id="ModalEstudiante" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">BIENVENIDO ESTUDIANTE</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Usuario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                    <input type="text" class="form-control" placeholder="usuario@correo.cl">
-                                </div>
-                            </p>
-                            <p>
-                                <div class="input-group">
-                                  <span class="input-group-addon">Contraseña</span>
-                                  <input type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;">
-                                </div>
-                            </p>
-                            <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
-                            <button type="button" class="btn btn-primary" onclick="location.href='dashboard-estudiante.php'">Ingresar &rarr;</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/modal-->
-
+            <a class="btn btn-sm btn-primary onmodal" href="{{ path('default_inicio') }}">Acceder &rarr;</a>
         </div><!--/panel-->
     </div><!--/panel-body-->			
     <figure><img src="images/usuario-empresa.jpg"></figure>			
@@ -63,40 +29,7 @@
         </div>
         <div class="panel-body">
             <p>Define un perfil de evaluador, actualizando tus ámbitos de experiencia profesional y docente.</p>
-            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ModalAcademico">Acceder &rarr;</button>
-            
-            <!--modal-->
-            <div class="modal fade" id="ModalAcademico" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">BIENVENIDO ACADÉMICO</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Usuario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                    <input type="text" class="form-control" placeholder="usuario@correo.cl">
-                                </div>
-                            </p>
-                            <p>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Contraseña</span>
-                                    <input type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;">
-                                </div>
-                            </p>
-                            <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
-                            <button type="button" class="btn btn-primary" onclick="location.href='dashboard-academico.php'">Ingresar &rarr;</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/modal-->
+            <a class="btn btn-sm btn-primary onmodal" href="{{ path('default_inicio') }}">Acceder &rarr;</a>
         </div><!--/panel-->
     </div><!--/panel-body-->
     <figure><img src="images/usuario-empresa.jpg"></figure>						
@@ -109,40 +42,7 @@
         </div>
         <div class="panel-body">
             <p>Ingrese ofertas de prácticas. Evalúe a sus practicantes y ofrezca nuevas plazas de trabajo.</p>
-            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ModalEmpresario">Acceder &rarr;</button>
-            
-            <!--modal-->
-            <div class="modal fade" id="ModalEmpresario" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">BIENVENIDO EMPRESARIO</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Usuario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                    <input type="text" class="form-control" placeholder="usuario@correo.cl">
-                                </div>
-                            </p>
-                            <p>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Contraseña</span>
-                                    <input type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;">
-                                </div>
-                            </p>
-                            <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
-                            <button type="button" class="btn btn-primary" onclick="location.href='dashboard-empresa.php'">Ingresar &rarr;</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/modal-->
+            <a class="btn btn-sm btn-primary onmodal" href="{{ path('fos_user_security_login') }}">Acceder &rarr;</a>
         </div><!--/panel-body-->
     </div><!--/panel-->
     <figure><img src="images/usuario-empresa.jpg"></figure>			
