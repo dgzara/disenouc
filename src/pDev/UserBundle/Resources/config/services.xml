@@ -13,7 +13,11 @@
     </parameters>
 
     <services>
-        
+
+        <service id="pdev.security.authentication_handler" class="pDev\UserBundle\DependencyInjection\AuthenticationHandler" public="false">
+            <argument type="service" id="router"/>
+            <argument type="service" id="session"/>
+        </service>
         
         <service id="permission.manager" class="%p_dev_user.permission.manager%">
             <argument type="service" id="doctrine.orm.entity_manager"/>

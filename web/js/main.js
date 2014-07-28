@@ -406,6 +406,7 @@ function p_getOnModal(url, msj)
            p_modal.Obj.append(data);
            p_modal.Try('show');
            p_initialize('#'+p_modal.Obj.attr("id"));
+           p_formModal('#'+p_modal.Obj.attr("id"));           
         },
         error: function( jqXHR, textStatus,  errorThrown ){
             if(errorThrown==='Forbidden')
@@ -414,7 +415,6 @@ function p_getOnModal(url, msj)
                 p_alertOnModal("Ha ocurrido un error: "+errorThrown,'Error')
         }
     });
-
 }
 
 
@@ -425,6 +425,38 @@ function p_getOnBackground(url)
     });
 
 }
+
+function p_formModal(parenttag)
+{
+    var $form = $(parenttag).find("form");
+    $form.submit(function( event ) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            success: function(data, textStatus, xhr) {
+                if (data.redirect) {
+                    // data.redirect contains the string URL to redirect to
+                    window.location.href = data.redirect;
+                }
+                else {
+                    // data.form contains the HTML for the replacement form
+                    $(parenttag).html(data);
+                    p_formModal(parenttag);
+                }
+            },
+            error: function( jqXHR, textStatus,  errorThrown ){
+                if(errorThrown==='Forbidden')
+                    p_alertOnModal("Usted no tiene permisos suficientes.",'Acceso restringido')
+                else
+                    p_alertOnModal("Ha ocurrido un error: "+errorThrown,'Error')
+            }
+        });
+    });
+}
+
+
 var p_test=1;
 function p_getMore(url,obj)
 {
