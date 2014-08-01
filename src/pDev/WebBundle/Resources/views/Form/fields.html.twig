@@ -3,11 +3,11 @@
 
 {% block form_widget_compound %}
 {% spaceless %}
-        {% if form.parent is empty %}
-            {{ form_errors(form) }}
-        {% endif %}
-        {{ block('form_rows') }}
-        {{ form_rest(form) }}
+    {% if form.parent is empty %}
+        {{ form_errors(form) }}
+    {% endif %}
+    {{ block('form_rows') }}
+    {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock form_widget_compound %}
 
@@ -62,7 +62,7 @@
         <div {# block('widget_container_attributes') #}>
             <div class="date input-append">
             {{ form_errors(form.date) }}
-            {{ form_widget(form.date, {'attr': {'autocomplete':'off','data-format': 'dd-MM-yyyy'}}) }}
+            {{ form_widget(form.date, {'attr': {'autocomplete':'off','data-date-format': 'DD/MM/YYYY'}}) }}
             <span class="add-on">
               <i data-time-icon="icon-time" data-date-icon="icon-calendar">
               </i>
@@ -84,17 +84,16 @@
 {% block date_widget %}
 {% spaceless %}
     {% if widget == 'single_text' %}
-        <div>
-            <div class="date input-append">
-            {{ form_errors(form) }}
-            {{ form_widget(form, {'attr': {'autocomplete':'off','data-format': 'dd-MM-yyyy'}}) }}
-            <span class="add-on">
-              <i data-time-icon="icon-time" data-date-icon="icon-calendar">
-              </i>
-            </span>
-            </div>
-            
+    <div>
+        <div class="date input-append" data-date-format="DD-MM-YYYY">
+        {{ form_errors(form) }}
+        {{ form_widget(form, {'attr': {'autocomplete':'off'}}) }}
+        <span class="add-on">
+          <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+          </i>
+        </span>
         </div>
+    </div>
     {% else %}
         
     {% endif %}

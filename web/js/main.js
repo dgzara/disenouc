@@ -87,7 +87,6 @@ function p_initialize(parentag)
         $(this).datetimepicker({
           pickTime: false
         });
-        
     });
     
     $( parentag+".time" ).each(function( index ) {

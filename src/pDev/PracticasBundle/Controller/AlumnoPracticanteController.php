@@ -684,9 +684,9 @@ class AlumnoPracticanteController extends Controller
                 foreach($proyecto->getTareas() as $tarea)
                 {
                     $start_date = $tarea->getFechaInicio()?$tarea->getFechaInicio():new \DateTime();                    
-                    $start = date_format($start_date,'Y,m-1,d');
+                    $start = date_format($start_date,'Y,m,d');
                     $end_date = $tarea->getFechaTermino()?$tarea->getFechaTermino():new \DateTime();                    
-                    $end = date_format($end_date,'Y,m-1,d');
+                    $end = date_format($end_date,'Y,m,d');
 
                     $series[] = array(  'name'  =>  $tarea->getNombre(),
                                         'start' =>  'new Date('.$start.')',

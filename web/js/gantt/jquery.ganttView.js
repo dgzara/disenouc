@@ -143,7 +143,7 @@ behavior: {
             var headerDiv = jQuery("<div>", { "class": "ganttview-vtheader" });
             for (var i = 0; i < data.length; i++) {
                 var itemDiv = jQuery("<div>", { "class": "ganttview-vtheader-item" });
-                var taskAdd = opts.editable?' <a onclick="p_gantt_task_add('+data[i].idProyecto+')"><i class="icon-plus"></i></a>':'';
+                var taskAdd = opts.editable?' <a onclick="p_gantt_task_add('+data[i].idProyecto+')">+</a>':'';
                 itemDiv.append(jQuery("<div>", {
                     "class": "ganttview-vtheader-item-name",
                     "css": { "height": (data[i].series.length * cellHeight) + "px" }
@@ -275,11 +275,11 @@ behavior: {
         	}
         	
             if (opts.behavior.resizable) { 
-            	//bindBlockResize(div, opts.cellWidth, opts.start, opts.behavior.onResize); 
+            	bindBlockResize(div, opts.cellWidth, opts.start, opts.behavior.onResize); 
         	}
             
             if (opts.behavior.draggable) { 
-            	//bindBlockDrag(div, opts.cellWidth, opts.start, opts.behavior.onDrag); 
+            	bindBlockDrag(div, opts.cellWidth, opts.start, opts.behavior.onDrag); 
         	}
 		}
 
@@ -289,7 +289,7 @@ behavior: {
             });
         }
         
-        /*function bindBlockResize(div, cellWidth, startDate, callback) {
+        function bindBlockResize(div, cellWidth, startDate, callback) {
         	jQuery("div.ganttview-block", div).resizable({
         		grid: cellWidth, 
         		handles: "e,w",
@@ -311,7 +311,7 @@ behavior: {
         			if (callback) { callback(block.data("block-data")); }
         		}
         	});
-        }*/
+        }
         
         function updateDataAndPosition(div, block, cellWidth, startDate) {
         	var container = jQuery("div.ganttview-slide-container", div);
