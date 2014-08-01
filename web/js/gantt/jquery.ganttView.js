@@ -143,14 +143,14 @@ behavior: {
             var headerDiv = jQuery("<div>", { "class": "ganttview-vtheader" });
             for (var i = 0; i < data.length; i++) {
                 var itemDiv = jQuery("<div>", { "class": "ganttview-vtheader-item" });
-                var taskAdd = opts.editable?' <a onclick="p_gantt_task_add('+data[i].idProyecto+')">+</a>':'';
+                var taskAdd = opts.editable?' <a onclick="p_gantt_task_add('+data[i].idProyecto+')" title="Agregar tarea"><span class="glyphicon glyphicon-plus"></span></a>':'';
                 itemDiv.append(jQuery("<div>", {
                     "class": "ganttview-vtheader-item-name",
                     "css": { "height": (data[i].series.length * cellHeight) + "px" }
                 }).append(data[i].name + taskAdd));
                 var seriesDiv = jQuery("<div>", { "class": "ganttview-vtheader-series" });
                 for (var j = 0; j < data[i].series.length; j++) {
-                    var taskEdit = opts.editable?' <a onclick="p_gantt_task_edit('+data[i].idProyecto+','+data[i].series[j].idTarea+')"><i class="icon-edit"></i></a><a onclick="p_gantt_task_remove('+data[i].idProyecto+','+data[i].series[j].idTarea+')"><i class="icon-remove"></i></a>':'';
+                    var taskEdit = opts.editable?' <a onclick="p_gantt_task_edit('+data[i].idProyecto+','+data[i].series[j].idTarea+')" title="Modificar tarea"><span class="glyphicon glyphicon-edit"></span></a><a onclick="p_gantt_task_remove('+data[i].idProyecto+','+data[i].series[j].idTarea+')" title="Remover tarea"><span class="glyphicon glyphicon-remove"></span></a>':'';
                     seriesDiv.append(jQuery("<div>", { "class": "ganttview-vtheader-series-name" })
 						.append(data[i].series[j].name + taskEdit ));
                 }

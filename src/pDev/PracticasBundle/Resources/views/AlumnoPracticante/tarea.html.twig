@@ -1,6 +1,6 @@
 {% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
 
-{% block title %}Modificar tarea{% endblock %}
+{% block title %}{% if idTarea == 'new' %}Nueva{% else %}Modificar{% endif %} tarea{% endblock %}
 {% block body %}
 
     <form id="form_tarea" class="form-horizontal form-modal" action="{{ path('practicas_alumno_tarea',{'idProyecto':idProyecto,'idTarea':idTarea}) }}" method="post" {{ form_enctype(edit_form) }}>

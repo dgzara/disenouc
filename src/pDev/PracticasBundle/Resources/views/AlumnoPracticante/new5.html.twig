@@ -77,7 +77,7 @@
     function p_gantt_task_edit(proyecto,task)
     {
         //alert('editar: '+proyecto+','+task);
-        var edit_url = '{{path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
+        var edit_url = '{{ path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
         edit_url = edit_url.replace('__proyecto__',proyecto);
         edit_url = edit_url.replace('__tarea__',task);
         p_getOnModal(edit_url);
@@ -86,17 +86,17 @@
 
     function p_gantt_task_add(proyecto)
     {
-        var edit_url = '{{path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'new'})}}';
-        edit_url = edit_url.replace('__proyecto__',proyecto);
-        p_getOnModal(edit_url);
+        var add_url = '{{ path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'new'})}}';
+        add_url = add_url.replace('__proyecto__',proyecto);
+        p_getOnModal(add_url);
     }
 
     function p_gantt_task_remove(proyecto,task)
     {
-        var edit_url = '{{path('practicas_alumno_tarea_remove',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
-        edit_url = edit_url.replace('__proyecto__',proyecto);
-        edit_url = edit_url.replace('__tarea__',task);
-        p_getOnModal(edit_url);
+        var remove_url = '{{ path('practicas_alumno_tarea_remove',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
+        remove_url = remove_url.replace('__proyecto__',proyecto);
+        remove_url = remove_url.replace('__tarea__',task);
+        p_getOnModal(remove_url);
     }
             
     </script>
