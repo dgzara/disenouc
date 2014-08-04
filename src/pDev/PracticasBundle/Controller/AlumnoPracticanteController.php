@@ -40,7 +40,6 @@ use pDev\PracticasBundle\Form\AlumnoPracticanteEstadoType;
  */
 class AlumnoPracticanteController extends Controller
 {
-
     /**
      * Lists all AlumnoPracticante entities.
      *
@@ -795,6 +794,8 @@ class AlumnoPracticanteController extends Controller
                 }
                 elseif($estado === AlumnoPracticante::ESTADO_ACEPTADA_ALUMNO or $estado === AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR)
                     $estado = AlumnoPracticante::ESTADO_ACEPTADA;
+                elseif($isCoordinacion and $estado = AlumnoPracticante::ESTADO_ACEPTADA)
+                    $estado = AlumnoPracticante::ESTADO_INICIADA;
                 
                 $entity->setEstado($estado);
                 $em->persist($entity);

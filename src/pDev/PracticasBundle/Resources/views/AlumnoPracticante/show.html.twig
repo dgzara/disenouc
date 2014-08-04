@@ -71,6 +71,14 @@
                         </a>
                     </td>
                 </tr> 
+                {% elseif isCoordinacion and entity.estado == 'estado.aceptada' %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
+                            <span class="glyphicon glyphicon-ok"></span> Autorizar práctica
+                        </a>
+                    </td>
+                </tr>    
                 {% endif %}
             </tbody>
         </table>
