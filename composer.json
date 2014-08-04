@@ -27,7 +27,8 @@
         "fabpot/goutte": "v1.0.2",
         "liuggio/ExcelBundle": "v1.0.4",
         "besimple/sso-auth-bundle": "1.0.*@dev",
-        "knplabs/knp-snappy-bundle": "dev-master"
+        "knplabs/knp-snappy-bundle": "dev-master",
+        "friendsofsymfony/jsrouting-bundle": "@stable"
     },
     "scripts": {
         "post-install-cmd": [

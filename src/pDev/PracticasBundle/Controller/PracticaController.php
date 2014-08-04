@@ -24,14 +24,13 @@ use pDev\PracticasBundle\Form\PracticaEstadoType;
  */
 class PracticaController extends Controller
 {
-
     /**
      * Lists all Practica entities.
      *
      * @Route("/todas/{periodo}/{page}/{orderBy}/{order}", name="practicas")
      * @Template()
      */
-    public function indexAction($periodo = null,$page = null,$orderBy = null,$order = null)
+    public function indexAction($periodo = null, $page = null, $orderBy = null, $order = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
@@ -109,7 +108,6 @@ class PracticaController extends Controller
         $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");
         $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
-        
         $em = $this->getDoctrine()->getManager();
         
         $qb = $em->getRepository('pDevPracticasBundle:Practica')->createQueryBuilder('p');
@@ -121,8 +119,7 @@ class PracticaController extends Controller
         if(!$isCoordinacion)
         {
             $where = 'cr.id = :idUser';
-            $entities = $entities->setParameter('idUser',$user->getId());
-
+            $entities = $entities->setParameter('idUser', $user->getId());
 
             if(!$isExterno)
             {
@@ -137,17 +134,15 @@ class PracticaController extends Controller
                 if($contacto)
                 {
                     $where .= ' or co.id = :coid';
-                    $entities = $entities->setParameter('coid',$contacto->getId());
+                    $entities = $entities->setParameter('coid', $contacto->getId());
                 }                
             }
             
             $entities = $entities->andWhere($where);   
         }
         
-        $entities = $entities->setParameter('fecha1', $fecha1)
-            ->setParameter('fecha2', $fecha2);
-        $entities2 = $entities->getQuery()
-            ->getResult();
+        $entities = $entities->setParameter('fecha1', $fecha1)->setParameter('fecha2', $fecha2);
+        $entities2 = $entities->getQuery()->getResult();
         $count = count($entities2);
         $anterior = $offset>0?$page-1:false;
         $siguiente = $page*$limit<$count?$page + 1:false;
@@ -185,34 +180,34 @@ class PracticaController extends Controller
             $ec = 0;
             $ef = 1;
 
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ID');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ID');
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'TIPO');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'TIPO');
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ORGANIZACION');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ORGANIZACION');
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'FECHA INICIO');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA INICIO');
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'FECHA TERMINO');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA TERMINO');
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ESTADO');
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ESTADO');
             $ec++;
 
             $ef++;
             $ec = 0;    
             foreach($entities as $entity)
             {
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getId());
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getId());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getTipo());
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getTipo());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getOrganizacionAlias()->getNombre());
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacionAlias()->getNombre());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,date_format($entity->getFechaInicio(),'d-m-Y'));
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaInicio(),'d-m-Y'));
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,date_format($entity->getFechaTermino(),'d-m-Y'));
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaTermino(),'d-m-Y'));
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getEstado());
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getEstado());
                 $ec++;
 
                 $ef++;
@@ -231,7 +226,6 @@ class PracticaController extends Controller
             return $response; 
         
         }
-        
         
         return array(
             'entities' => $entities,
@@ -257,8 +251,11 @@ class PracticaController extends Controller
         $form = $this->createForm(new PracticaType(), $entity);
         $form->submit($request);
 
-        if ($form->isValid()) {
+        if ($form->isValid()) 
+        {   
             $em = $this->getDoctrine()->getManager();
+            $entity->setCreador($this->getUser());
+            
             $em->persist($entity);
             $em->flush();
 
@@ -274,157 +271,19 @@ class PracticaController extends Controller
     /**
      * Displays a form to create a new Practica entity.
      *
-     * @Route("/new/{step}/{idOrganizacion}/{idExterno}", name="practicas_new")
+     * @Route("/new", name="practicas_new")
+     * @Method("GET")
+     * @Template()
      */
-    public function newAction($step = 1,$idOrganizacion = null,$idExterno = null)
+    public function newAction()
     {
-        $pm = $this->get('permission.manager');
-        $user = $pm->getUser();
+        $entity = new Practica();
+        $form   = $this->createForm(new PracticaType(), $entity);
         
-        $request = $this->getRequest();
-        $em = $this->getDoctrine()->getManager();
-        
-        if($step == 1)
-        {
-            $organizacion = new Organizacion();
-            $organizacion_form   = $this->createForm(new OrganizacionType(), $organizacion);
-            
-            $organizacionAlias = new OrganizacionAlias();
-            $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-            
-            return $this->render(
-                'pDevPracticasBundle:Practica:new1.html.twig',
-                array('organizacion_form' => $organizacion_form->createView(),
-                    'organizacionAlias_form' => $organizacionAlias_form->createView())
-            );
-        }
-        elseif($request->isMethod('POST') and $step == 2)
-        {
-            $organizacion = new Organizacion();
-            $organizacion_form   = $this->createForm(new OrganizacionType(), $organizacion);
-            
-            $organizacionAlias = new OrganizacionAlias();
-            $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-            
-            $organizacion_form->submit($request);
-            $organizacionAlias_form->submit($request);
-
-            if ($organizacion_form->isValid() and $organizacionAlias_form->isValid())
-            {
-                $organizacion_tmp = $em->getRepository('pDevPracticasBundle:Organizacion')->findOneByRut($organizacion->getRut());
-                
-                if($organizacion_tmp)
-                {
-                    $organizacion = $organizacion_tmp;
-                    $organizacion_form   = $this->createForm(new OrganizacionType(), $organizacion_tmp);
-                    $organizacion_form->submit($request);
-                }
-                else
-                    $em->persist($organizacion);
-                
-                
-                $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
-                if($organizacionAlias_tmp)
-                {
-                    $organizacionAlias_tmp->setOrganizacion ($organizacion);  
-                    $organizacionAlias = $organizacionAlias_tmp;
-                }
-                else
-                {
-                    $organizacionAlias->setOrganizacion($organizacion);
-                    $em->persist($organizacionAlias);
-                }
-                
-                $em->flush();
-            
-            
-                $externo = new Contacto();
-                $externo_form   = $this->createForm(new ContactoType(), $externo);
-
-                return $this->render(
-                    'pDevPracticasBundle:Practica:new2.html.twig',
-                    array('externo_form' => $externo_form->createView(),
-                        'idOrganizacion'  => $organizacionAlias->getId())
-                );
-            }
-            
-            return $this->render(
-                'pDevPracticasBundle:Practica:new1.html.twig',
-                array('organizacion_form' => $organizacion_form->createView())
-            );            
-            
-        }
-        elseif($request->isMethod('POST') and $step == 3 and $idOrganizacion)
-        {
-            $organizacionAlias = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->find($idOrganizacion);
-            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($organizacionAlias->getOrganizacion()->getId());
-            
-            $externo = new Contacto();
-            $externo_form   = $this->createForm(new ContactoType(), $externo);
-            $externo_form->submit($request);
-
-            if ($externo_form->isValid())
-            {
-                $externo_tmp = $em->getRepository('pDevPracticasBundle:Contacto')->findOneByRut($externo->getRut());
-                if($externo_tmp)
-                {
-                    $externo_form   = $this->createForm(new ContactoType(), $externo_tmp);
-                    $externo_form->submit($request);
-                    $externo = $externo_tmp;
-                }
-                else
-                    $em->persist($externo);
-                $em->flush();
-                            
-                $practica = new Practica();
-                $practica_form   = $this->createForm(new PracticaType(), $practica);
-
-                return $this->render(
-                    'pDevPracticasBundle:Practica:new3.html.twig',
-                    array('practica_form' => $practica_form->createView(),
-                        'idOrganizacion'  => $organizacionAlias->getId(),
-                        'idExterno' => $externo->getId())
-                );
-            
-            }
-            
-            return $this->render(
-                    'pDevPracticasBundle:Practica:new2.html.twig',
-                    array('externo_form' => $externo_form->createView(),
-                        'idOrganizacion'  => $organizacionAlias->getId())
-                );
-        }
-        
-        elseif($request->isMethod('POST') and $step == 4 and $idOrganizacion and $idExterno)
-        {
-            $organizacionAlias = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->find($idOrganizacion);
-            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($organizacionAlias->getOrganizacion()->getId());
-            $contacto = $em->getRepository('pDevPracticasBundle:Contacto')->find($idExterno);
-            
-            $practica = new Practica();
-            $practica_form   = $this->createForm(new PracticaType(), $practica);
-            $practica_form->submit($request);
-
-            if ($practica_form->isValid())
-            {
-                $practica->setOrganizacionAlias($organizacionAlias);
-                $practica->setContacto($contacto);
-                $practica->setCreador($user);
-                $em->persist($practica);
-                $em->flush();
-                            
-                return $this->redirect($this->generateUrl('practicas_show', array('id' => $practica->getId())));            
-            }
-            
-            return $this->render(
-                    'pDevPracticasBundle:Practica:new3.html.twig',
-                    array('practica_form' => $practica_form->createView(),
-                        'idOrganizacion'  => $organizacionAlias->getId(),
-                        'idExterno' => $externo->getId())
-                );
-        }
-
-        
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+        );
     }
 
     /**
@@ -459,8 +318,7 @@ class PracticaController extends Controller
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'isCoordinacion'=>$isCoordinacion,
-            
-            );
+        );
     }
 
     /**
@@ -515,7 +373,7 @@ class PracticaController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('practicas_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
         return array(
@@ -563,6 +421,40 @@ class PracticaController extends Controller
     }
     
     /**
+     * Displays a modal to delete an existing Practica entity.
+     *
+     * @Route("/{id}/delete/modal", name="practicas_delete_modal")
+     * @Method("GET")
+     * @Template()
+     */
+    public function deleteModalAction($id)
+    {
+        $pm = $this->get('permission.manager');
+        $user = $pm->getUser();
+        
+        $isExterno = $user->getExternal();
+        $isAlumno = $pm->checkType("TYPE_ALUMNO");
+        $isSupervisor = $pm->checkType("TYPE_PRACTICAS_SUPERVISOR");
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Practica entity.');
+        }
+
+        $deleteForm = $this->createDeleteForm($id);
+
+        return array(
+            'entity'      => $entity,
+            'delete_form' => $deleteForm->createView(),
+        );
+    }
+    
+    /**
      * Deletes a Practica entity.
      *
      * @Route("/{id}/remove", name="practicas_delete")
@@ -603,7 +495,7 @@ class PracticaController extends Controller
         ;
     }
     
-    private function createPeriodForm($data = null,$tooltip='Periodo académico')
+    private function createPeriodForm($data = null, $tooltip='Periodo académico')
     {
         $attr = array();
         //$attr = array('placeholder'=>$placeholder);

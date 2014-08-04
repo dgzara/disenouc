@@ -1,114 +1,73 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
 {%block breadcrumb%}
-{{parent()}}
+    {{parent()}}
     <li class="active"><a href="{{ path('practicas') }}">Prácticas</a></li>
-              
 {%endblock%}
 
 
 {%block header%}Solicitudes de práctica{%endblock%}
 {%block lead%}{%endblock%}
 
-{%block content %}
-<div id="div_periodo" class="hide" style="margin:0">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Seleccionar periodo</h3>
-    </div>
-    <div class="modal-body">
-        <form id="form_periodo" class="form-horizontal" action="{{ path('practicas') }}" method="post" {{ form_enctype(period_form) }}>
-            <div class="control-group" style="margin:0">
-                {{ form_label(period_form.periodo) }}
-                <div class="controls">
-                    {{ form_widget(period_form.periodo) }}
-                    <button type="submit" id="_submit" class="hide"></button>
-            
-                </div></div>
-            {{ form_rest(period_form) }}          
-        </form>
-    </div>
-    <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-    <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
-    </div>
-</div>
-
-{% set orderBy = app.request.get('orderBy') %}
-        {% set order = app.request.get('order') %}
-        {% set defaultorder = 'asc' %}
+{% block content %}
+    {% set orderBy = app.request.get('orderBy') %}
+    {% set order = app.request.get('order') %}
+    {% set defaultorder = 'asc' %}
 
     <div id="form_ordenar" class="well no-margin">
         <div class="btn-group">
-        <a href="{{ path('practicas_organizacion_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-certificate"></span> Registrar organización</a>        
-        </div>
-        {% if isAlumno %}
-        <div class="btn-group">
-        <a href="{{ path('practicas_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Solicitar practicante</a>        
-        </div>
+        {% if isContacto %}
+            <a href="{{ path('practicas_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Solicitar practicante</a>        
         {% endif %}
-        <div class="btn-group">
-            <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
-        </div>
-        <div class="btn-group">
-            <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
     </div>
 
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Código</th>
                 <th>
                     {% if orderBy == 'tipo' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        Tipo
-                        <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'tipo'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    Tipo
+                    <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'tipo'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
                 </th>
                 <th>Organización
-                    
                     {% if orderBy == 'organizacionAlias' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        
-                        <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'organizacionAlias'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'organizacionAlias'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
                 </th>
                 <th>Fecha inicio / término
                     {% if orderBy == 'fechaInicio' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        
-                        <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'fechaInicio'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'fechaInicio'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
                 </th>
                 <th>Estado
                     {% if orderBy == 'estado' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        
-                        <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'estado'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'estado'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
                 </th>
-                <th>···</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -125,16 +84,19 @@
                     {% endif %}
                 </td>
                 <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('practicas_show', { 'id': entity.id }) }}">Ver detalles</a>
-                    </li>
-                    {% if isCoordinacion or app.user.id == entity.creador.id %}
-                    <li>
-                        <a href="{{ path('practicas_edit', { 'id': entity.id }) }}">Modificar</a>
-                    </li>
-                    {% endif %}
-                </ul>
+                    <ul>
+                        <li>
+                            <a href="{{ path('practicas_show', { 'id': entity.id }) }}">Ver detalles</a>
+                        </li>
+                        {% if isCoordinacion or app.user.id == entity.creador.id %}
+                        <li>
+                            <a href="{{ path('practicas_edit', { 'id': entity.id }) }}">Modificar</a>
+                        </li>
+                        <li>
+                            <a class="onmodal" href="{{ path('practicas_delete_modal', { 'id': entity.id }) }}">Borrar</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </td>
             </tr>
         {% else %}

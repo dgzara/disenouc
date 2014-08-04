@@ -1,7 +1,9 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
 {%block breadcrumb%}
-{{parent()}}
+    {{ parent() }}
+    <li><a href="{{ path('practicas') }}">Prácticas</a></li>
+    <li><a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="active">{{ entity }}</a></li>
 {%endblock%}
 
 {% block notificacion %} 
@@ -11,18 +13,35 @@
     </div>
 {% endblock %}
 
-{%block header%}{{ entity.organizacionAlias.nombre }}{%endblock%}
-{%block lead%}{{ entity.tipo }}{%endblock%}
+{% block header %}{{ entity.organizacionAlias.nombre }}{%endblock%}
+{% block lead %}{{ entity.tipo }}{%endblock%}
 
 {% block sidebar %}
-
+    
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
     <div class="alert alert-info">
         <a href="">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
     </div>
-    
-    <div class="alert alert-info">
-        <a href="">Recomienda esta práctica <span class="glyphicon glyphicon glyphicon-envelope pull-right"></span></a>
+    {% else %}
+    <h3>Estado de la práctica</h3>
+    <div id="estado" class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td width="35%">Estado</td>
+                    <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de aprobación
+                        {% elseif entity.estado == 'estado.aprobada' %}Aprobada
+                        {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                        {% elseif entity.estado == 'estado.publicada' %}Publicada
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Observaciones</td>
+                    <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     {% endif %}
     
@@ -62,7 +81,7 @@
         <table class="table table-striped">
             <tbody>
                 <tr>
-                    <td>Dirección</td>
+                    <td width="35%">Dirección</td>
                     <td>{{ entity.contacto.direccionCalle }} ·  <a target="_blank" href="https://www.google.cl/maps/place/Antonio+Bellet+224/@-33.42764,-70.617502,17.08z/data=!4m7!1m4!3m3!1s0x9662cf63bd1147f9:0x75439dce5e789b17!2sAntonio+Bellet+224!3b1!3m1!1s0x9662cf63bd1147f9:0x75439dce5e789b17">Ver mapa <span class="glyphicon glyphicon-map-marker"></span></a></td>
                 </tr>
                 <tr>
@@ -101,10 +120,6 @@
                     <td>Beneficios</td>
                     <td>{{ entity.beneficios }}</td>
                 </tr>
-                <tr>
-                    <td>Evaluación</td>
-                    <td><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star-empty"></span><span class="glyphicon glyphicon-star-empty"></span></td>
-                </tr>
             </tbody>
         </table>
     </div><!--/table-responsive-->
@@ -114,7 +129,7 @@
         <table class="table table-striped">
             <tbody>
                 <tr>
-                    <td>Nombre</td>
+                    <td width="35%">Nombre</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -150,7 +165,7 @@
         <table class="table table-striped">
             <tbody>
                 <tr>
-                    <td>Nombre</td>
+                    <td width="35%">Nombre</td>
                     <td>{{ entity.contacto.nombreCompleto }}</td>
                 </tr>
                 <tr>
@@ -169,27 +184,6 @@
         </table>
     </div>
     
-    <h4>Estado de la práctica</h4>
-    <div id="estado" class="table-responsive">
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <td>Estado</td>
-                    <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de aprobación
-                        {% elseif entity.estado == 'estado.aprobada' %}Aprobada
-                        {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                        {% elseif entity.estado == 'estado.publicada' %}Publicada
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Observaciones</td>
-                    <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
     <form class="hide" id="form_delete" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post">
         <input type="hidden" name="_method" value="DELETE" />
         {{ form_widget(delete_form) }}

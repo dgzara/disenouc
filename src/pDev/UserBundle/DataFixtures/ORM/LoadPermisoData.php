@@ -15,7 +15,7 @@ class LoadPermisoData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $sitios = array();
-	$sitios[] = array('SITE_PRACTICAS','Prácticas');        
+	    $sitios[] = array('SITE_PRACTICAS','Prácticas');        
         $sitios[] = array('SITE_ALUMNOS','Alumnos');
         $sitios[] = array('SITE_PERSONAS','Personas');        
         $sitios[] = array('SITE_AJUSTES','Ajustes');

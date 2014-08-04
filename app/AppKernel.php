@@ -18,13 +18,12 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new Liuggio\ExcelBundle\LiuggioExcelBundle(),
             new BeSimple\SsoAuthBundle\BeSimpleSsoAuthBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
-            
             new pDev\UserBundle\pDevUserBundle(),
             new pDev\ParserBundle\pDevParserBundle(),
-            //new pDev\AlumnosBundle\pDevAlumnosBundle(),            
             new pDev\PracticasBundle\pDevPracticasBundle(),
             new pDev\WebBundle\pDevWebBundle(),            
         );

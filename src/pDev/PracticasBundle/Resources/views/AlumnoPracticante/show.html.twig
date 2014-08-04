@@ -1,87 +1,88 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
-{% block javascript%}
-        <link rel="stylesheet" type="text/css" href="{{ asset('/css/gantt/jquery.ganttView.css') }}" />
-        <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>        
-        <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>        
-        <script type="text/javascript" src="{{ asset('/js/pdev.submit.js') }}"></script>      
+{% block styles %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/jquery-ui.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/gantt/jquery.ganttView.css') }}" />
+{% endblock %}        
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>   
+    <script type="text/javascript" src="{{ asset('/js/vendor/jquery-ui-1.11.0.min.js') }}"></script>     
+    <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>        
+    <script type="text/javascript" src="{{ asset('/js/pdev.submit.js') }}"></script>      
 {% endblock %}
         
 {%block breadcrumb%}
-{{parent()}}
-                
+    {{ parent() }}
 {%endblock%}
 
+{% block header%}Plan de práctica{%endblock%}
+{% block lead%}{%endblock%}
 
-{%block header%}Plan de práctica{%endblock%}
-{%block lead%}{%endblock%}
-
-{%block content %}
-<div class="well clearfix" style="margin:0">
-
-    {% if isCoordinacion %}
+{% block sidebar %}
     <div class="btn-group">
+        {% if isCoordinacion %}
         <a href="{{ path('practicas_alumno_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-primary onmodal">
-                <span class="glyphicon glyphicon-adjust"></span> Cambiar estado
+            <span class="glyphicon glyphicon-adjust"></span> Cambiar estado
         </a>
-    </div>
-    {% endif %}
-    
-    <div class="btn-group">
+        {% endif %}
+        {% if isAcademico and entity.estado == 'estado.informe' %}
         <a href="{{ path('practicas_evaluacion_show_profesor', { 'idPracticante': entity.id }) }}"  class="pull-left btn btn-primary">
-                <span class="glyphicon glyphicon-check"></span> Evaluación profesor
-            </a>
-    </div>
-    
-    <div class="btn-group">
-    <a href="{{ path('practicas_evaluacion_show_supervisor', { 'idPracticante': entity.id }) }}"  class="pull-left btn btn-primary">
+            <span class="glyphicon glyphicon-check"></span> Evaluación profesor
+        </a>
+        {% endif %}
+        {% if isSupervisor and entity.estado == 'estado.informe' %}
+        <a href="{{ path('practicas_evaluacion_show_supervisor', { 'idPracticante': entity.id }) }}"  class="pull-left btn btn-primary">
             <span class="glyphicon glyphicon-check"></span> Evaluación supervisor
         </a>
+        {% endif %}
     </div>
-</div>
-<div id="estado">
-    <h4>Estado del plan de práctica</h4>
-    <table class="table table-bordered">
-        <tbody>
-            <tr>
-                <th>Estado</th>
-                <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de envío
-                    {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
-                    {% elseif entity.estado == 'estado.aprobada' %}Aprobada
-                    {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                    {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
-                    {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
-                    {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y oganización
-                    {% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
-                    {% elseif entity.estado == 'estado.terminada' %}Finalizada
-                    {% elseif entity.estado == 'estado.informe' %}Informe entregado
-                    {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado
-                    {% endif %}    
-                </td>
-            </tr>
-            <tr>
-                <th>Observaciones</th>
-                <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
-            </tr> 
-            {% if (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) 
-                    or (isSupervisor and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
-            <tr>
-                <td colspan=2>
-                    <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}"  class="pull-right btn btn-primary onmodal">
+    <div id="estado">
+        <h4>Estado del plan de práctica</h4>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Estado</th>
+                    <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de envío
+                        {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
+                        {% elseif entity.estado == 'estado.aprobada' %}Aprobada
+                        {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                        {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
+                        {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
+                        {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
+                        {% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
+                        {% elseif entity.estado == 'estado.terminada' %}Finalizada
+                        {% elseif entity.estado == 'estado.informe' %}Informe entregado
+                        {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado
+                        {% endif %}    
+                    </td>
+                </tr>
+                <tr>
+                    <th>Observaciones</th>
+                    <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
+                </tr> 
+                {% if (isCoordinacion and entity.estado == 'estado.enviada') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
                             <span class="glyphicon glyphicon-ok"></span> Aceptar práctica
-                    </a>                    
-                </td>
-            </tr> 
-            {% endif %}
-        </tbody>
-    </table>
-    
-</div>
+                        </a>
+                    </td>
+                </tr> 
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block content %}
     <h4>Información del alumno</h4>
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
             <tr>
-                <th>Nombre</th>
+                <th width="35%">Nombre</th>
                 <td>{{ entity.alumno.nombreCompleto }}</td>
             </tr>
             <tr>
@@ -99,10 +100,10 @@
         </tbody>
     </table>
     <h4>Información de la organización</h4>
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
             <tr>
-                <th>Nombre</th>
+                <th width="35%">Nombre</th>
                 <td>{{ entity.organizacionAlias.nombre }}</td>
             </tr>
             <tr>
@@ -136,10 +137,10 @@
         </tbody>
     </table>
     <h4>Información del supervisor</h4>
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
             <tr>
-                <th>Rut</th>
+                <th width="35%">Rut</th>
                 <td>{{ entity.supervisor.rut }}</td>
             </tr>
             <tr>
@@ -158,10 +159,10 @@
         </tbody>
     </table>
     <h4>Información de la práctica</h4>
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
             <tr>
-                <th>Tipo de práctica</th>
+                <th width="35%">Tipo de práctica</th>
                 <td>{{ entity.tipo }}</td>
             </tr>
             <tr>
@@ -211,28 +212,28 @@
     </table>
     
     <h4>Proyectos y responsabilidades</h4>
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
-    {% for proyecto in entity.proyectos %}
-    <tr>
+        {% for proyecto in entity.proyectos %}
+            <tr>
                 <td><strong>{{ loop.index }}. {{ proyecto.nombre }}</strong><p> {{ proyecto.descripcion}}</td>
             </tr>
-    {% else %}
+        {% else %}
             <tr>
                 <td class="text-center">Sin información</td>
             </tr>
-    {% endfor%}
+        {% endfor%}
         </tbody>
     </table>
+    
     <h4>Carta gantt</h4>
-     
     <div id="ganttChart" style="background-color: white;margin:auto;"></div>
-        <br/><br/>
+    <br/><br/>
     <div id="eventMessage"></div>
     
     <h4>Objectivos específicos (desafíos personales que desea lograr el alumno)</h4>
     
-    <table class="table table-bordered table-hover">
+    <table class="table">
         <tbody>
         {% for desafio in entity.desafios%}
             <tr>
@@ -245,71 +246,38 @@
         {% endfor%}
     </tbody>
     </table>
-        <form id="form_delete" class="hide" action="{{ path('practicas_alumno_delete', { 'id': entity.id }) }}" method="post">
-            <input type="hidden" name="_method" value="DELETE" />
-            {{ form_widget(delete_form) }}
-            <button id="_submit" type="submit">Delete</button>
-        </form>
+    
 {% endblock %}
-
     
-{% block javascriptload%}
-<script type="text/javascript">
-    var ganttData = jQuery.parseJSON('{{ganttdata|raw}}');
-    
-    function p_gantt_redraw()
-    {
-        var dinwidth = $('#container').innerWidth() - 510;
-        $("#ganttChart").empty();
-        $("#ganttChart").ganttView({
-                    data: ganttData,
-                    slideWidth: dinwidth,
-                    editable: false,
-                    behavior: {
-                            onClick: function (data) {
-                                    var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                                    //$("#eventMessage").text(msg);
-                            },
-                            onResize: function (data) {
-                                    var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                                    //$("#eventMessage").text(msg);
-                            },
-                            onDrag: function (data) {
-                                    var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                                    //$("#eventMessage").text(msg);
-                            }
+{% block javascriptload %}
+    {{ parent() }}
+    <script type="text/javascript">
+        function p_gantt_redraw()
+        {
+            var dinwidth = $('.container').innerWidth() - 510;
+            $("#ganttChart").empty();
+            $("#ganttChart").ganttView({
+                dataUrl: Routing.generate('practicas_alumno_gantt_json', { id: {{ entity.id }} }),
+                slideWidth: dinwidth,
+                behavior: {
+                    onClick: function (data) {
+                            var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
+                    },
+                    onResize: function (data) {
+                            var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
+                    },
+                    onDrag: function (data) {
+                            var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
                     }
+                }
             });
 
-        //$("#ganttChart").ganttView("setSlideWidth", 510);
-    }
+            //$("#ganttChart").ganttView("setSlideWidth", 510);
+        }
 
-    p_gantt_redraw();
-
-    function p_gantt_task_edit(proyecto,task)
-    {
-        //alert('editar: '+proyecto+','+task);
-        var edit_url = '{{path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
-        edit_url = edit_url.replace('__proyecto__',proyecto);
-        edit_url = edit_url.replace('__tarea__',task);
-        p_getOnModal(edit_url);
-
-    }
-
-    function p_gantt_task_add(proyecto)
-    {
-        var edit_url = '{{path('practicas_alumno_tarea',{'idProyecto':'__proyecto__','idTarea':'new'})}}';
-        edit_url = edit_url.replace('__proyecto__',proyecto);
-        p_getOnModal(edit_url);
-    }
-
-    function p_gantt_task_remove(proyecto,task)
-    {
-        var edit_url = '{{path('practicas_alumno_tarea_remove',{'idProyecto':'__proyecto__','idTarea':'__tarea__'})}}';
-        edit_url = edit_url.replace('__proyecto__',proyecto);
-        edit_url = edit_url.replace('__tarea__',task);
-        p_getOnModal(edit_url);
-    }
-            
+        p_gantt_redraw();
     </script>
 {% endblock %}

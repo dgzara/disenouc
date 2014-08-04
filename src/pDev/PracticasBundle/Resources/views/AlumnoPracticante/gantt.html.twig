@@ -1,0 +1,101 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{% block styles %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/jquery-ui.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/gantt/jquery.ganttView.css') }}" />
+{% endblock %}        
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>   
+    <script type="text/javascript" src="{{ asset('/js/vendor/jquery-ui-1.11.0.min.js') }}"></script>     
+    <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>        
+    <script type="text/javascript" src="{{ asset('/js/pdev.submit.js') }}"></script>      
+{% endblock %}
+        
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block header%}Plan de práctica{%endblock%}
+{% block lead%}2 de 3: Carta gantt{%endblock%}
+
+{% block content %}
+    
+    <div class="alert alert-default">
+        <a class="close">×</a>
+        <h4 class="alert-heading"><span style="color: #0F6DAF">Información</span></h4>
+        <p>Las modificaciones que realice en esta carta gantt, quedan inmediatamente guardadas. Una vez que finalice lo envía para aprobación.</p>
+    </div>
+
+    <div id="ganttChart" style="background-color: white;margin:auto;"></div>
+    <div id="eventMessage" class="text-center" style="height: 50px;vertical-align: middle"></div>
+    
+    <div class="well">
+        <p>
+            <a href="{{ path('practicas_alumno_edit', {'id': entity.id})}}" class="btn btn-primary">Anterior: Detalles de la práctica</a>        
+            <a href="{{ path('practicas_alumno_gantt_create', {'id': entity.id}) }}" class="btn btn-primary pull-right">Enviar para aprobación</a>        
+        </p>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}
+
+{% block javascriptload %}
+    {{ parent() }}
+    <script type="text/javascript">
+        
+        function p_gantt_redraw()
+        {
+            var dinwidth = $('.container').innerWidth() - 510;
+            $("#ganttChart").empty();
+            $("#ganttChart").ganttView({
+                dataUrl: Routing.generate('practicas_alumno_gantt_json', { id: {{ entity.id }} }),
+                slideWidth: dinwidth,
+                behavior: {
+                    onClick: function (data) {
+                            var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
+                    },
+                    onResize: function (data) {
+                            var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
+                    },
+                    onDrag: function (data) {
+                            var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
+                            //$("#eventMessage").text(msg);
+                    },
+                    editable: true,
+                    clickable: true,
+	                draggable: true,
+	                resizable: true,
+                }
+            });
+
+            //$("#ganttChart").ganttView("setSlideWidth", 510);
+        }
+
+        p_gantt_redraw();
+
+        function p_gantt_task_edit(proyecto, task)
+        {
+            //alert('editar: '+proyecto+','+task);
+            var edit_url = Routing.generate('practicas_alumno_tarea', { idProyecto: proyecto , idTarea: task});
+            p_getOnModal(edit_url);
+        }
+
+        function p_gantt_task_add(proyecto)
+        {
+            var add_url = Routing.generate('practicas_alumno_tarea', { idProyecto: proyecto , idTarea: 'new'});
+            p_getOnModal(add_url);
+        }
+
+        function p_gantt_task_remove(proyecto, task)
+        {
+            var remove_url = Routing.generate('practicas_alumno_tarea', { idProyecto: proyecto , idTarea: task});
+            p_getOnModal(remove_url);
+        }
+            
+    </script>
+{% endblock %}

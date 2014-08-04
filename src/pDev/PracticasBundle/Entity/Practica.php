@@ -141,8 +141,6 @@ class Practica
      */
     private $descripcion;
 
-
-   
     /**
      * Constructor
      */
@@ -150,6 +148,16 @@ class Practica
     {
         $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->estado = Practica::ESTADO_PENDIENTE;
+    }
+    
+    /**
+     * Get tipo
+     *
+     * @return string 
+     */
+    public function __toString()
+    {
+        return "".$this->organizacionAlias." - ".$this->tipo;
     }
     
     /**

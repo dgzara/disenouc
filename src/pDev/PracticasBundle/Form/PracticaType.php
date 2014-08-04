@@ -15,6 +15,8 @@ class PracticaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('organizacionAlias')
+            ->add('contacto')
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
@@ -23,18 +25,22 @@ class PracticaType extends AbstractType
 - Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
                                         ))           
             ->add('jornadas', 'choice', array(
-                'choices'   => array('Part-time' => 'Part-time', 'Full-time' => 'Full-time'),
+                'choices'   => array(
+                    'Part-time' => 'Part-time', 
+                    'Full-time' => 'Full-time'),
                 'required'  => false,
                 'label_attr' => array('data-help' => '240 horas')
             ))
-            ->add('fechaInicio', 'date',array('widget' => 'single_text',                                            
+            ->add('fechaInicio', 'date', array('widget' => 'single_text',                                            
                 'invalid_message'=>'Valor no válido',
                 'label' => 'Fecha de inicio',
+                'format' => 'dd-MM-yyyy',
                 'attr' => array('placeholder' => 'dd-mm-aaaa')
             ))
-            ->add('fechaTermino', 'date',array('widget' => 'single_text',                                            
+            ->add('fechaTermino', 'date', array('widget' => 'single_text',                                            
                 'invalid_message'=>'Valor no válido',
                 'label' => 'Fecha de término',
+                'format' => 'dd-MM-yyyy',
                 'attr' => array('placeholder' => 'dd-mm-aaaa')
             ))
             ->add('manejoSoftware',null,array('label' => 'Manejo de software','label_attr' => array('data-help' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))

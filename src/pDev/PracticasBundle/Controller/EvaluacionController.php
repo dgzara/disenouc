@@ -29,7 +29,7 @@ class EvaluacionController extends Controller
      * @Route("/todas/{periodo}/{page}/{orderBy}/{order}", name="practicas_evaluacion")
      * @Template()
      */
-    public function indexAction($periodo = null,$page = null,$orderBy = null,$order = null)
+    public function indexAction($periodo = null, $page = null, $orderBy = null, $order = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();        
@@ -105,12 +105,11 @@ class EvaluacionController extends Controller
                     //->andWhere('p.estado = :estado1 or p.estado = :estado2');
         $practicantes = array();
         
-        
         if($isCoordinacion)
         {
             // con informe entregado o evaluados
-            $consulta = $consulta->setParameter('semestre',$semestre);
-            $consulta = $consulta->setParameter('year',$year);
+            $consulta = $consulta->setParameter('semestre', $semestre);
+            $consulta = $consulta->setParameter('year', $year);
             //$consulta = $consulta->setParameter('estado1',AlumnoPracticante::ESTADO_INFORME);
             //$consulta = $consulta->setParameter('estado2',AlumnoPracticante::ESTADO_EVALUADA);
             
@@ -145,8 +144,6 @@ class EvaluacionController extends Controller
                 $orderBy = 'evaluacion.notaFinal';            
             }
 
-
-
             if(!$excel)
             {
                 $entities = $consulta->orderBy($orderBy, $order)
@@ -170,44 +167,44 @@ class EvaluacionController extends Controller
                 $ec = 0;
                 $ef = 1;
 
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ALUMNO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ALUMNO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO ALUMNO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'NUMERO ALUMNO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'TIPO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'TIPO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ORGANIZACION');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ORGANIZACION');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'FECHA INICIO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA INICIO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'FECHA TERMINO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA TERMINO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ESTADO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ESTADO');
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NOTA');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'NOTA');
                 $ec++;
 
                 $ef++;
                 $ec = 0;    
                 foreach($entities as $entity)
                 {
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAlumno()->getNombreCompleto());
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNombreCompleto());
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAlumno()->getNumeroAlumno());
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNumeroAlumno());
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getTipo());
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getTipo());
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getOrganizacionAlias()->getNombre());
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacionAlias()->getNombre());
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,date_format($entity->getFechaInicio(),'d-m-Y'));
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaInicio(),'d-m-Y'));
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,date_format($entity->getFechaTermino(),'d-m-Y'));
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaTermino(),'d-m-Y'));
                     $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getEstado());
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getEstado());
                     $ec++;
                     $nota = $entity->getProfesorEvaluacion()?$entity->getProfesorEvaluacion()->getNotaFinal():0.0;
                     
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nota);
+                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $nota);
                     $ec++;
 
                     $ef++;
@@ -224,9 +221,7 @@ class EvaluacionController extends Controller
                 $response->headers->set('Pragma', 'public');
                 $response->headers->set('Cache-Control', 'maxage=1');
                 return $response; 
-
             }
-        
         }
                 
         return array(
@@ -274,7 +269,6 @@ class EvaluacionController extends Controller
                 if($alumno)
                 {
                     $planpractica = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->findOneBy(array('alumno'=>$alumno->getId(),'estado'=>  AlumnoPracticante::ESTADO_INFORME));
-                    
                     if($planpractica)
                     {
                         $planpractica->setProfesor($profesorEvaluador);
@@ -471,8 +465,6 @@ class EvaluacionController extends Controller
         $evaluacionProfesor = $practicante->getProfesorEvaluacion();
         $evaluacionSupervisor = $practicante->getSupervisorEvaluacion();
 
-        
-
         return array(
             'evaluacion_profesor'      => $evaluacionProfesor,
             'evaluacion_supervisor'      => $evaluacionSupervisor,            
@@ -498,8 +490,6 @@ class EvaluacionController extends Controller
         
         $evaluacionProfesor = $practicante->getProfesorEvaluacion();
         $evaluacionSupervisor = $practicante->getSupervisorEvaluacion();
-
-        
 
         return array(
             'evaluacion_profesor'      => $evaluacionProfesor,
@@ -610,7 +600,7 @@ class EvaluacionController extends Controller
         ;
     }
     
-    private function createPeriodForm($data = null,$tooltip='Periodo académico')
+    private function createPeriodForm($data = null, $tooltip='Periodo académico')
     {
         $attr = array();
         //$attr = array('placeholder'=>$placeholder);

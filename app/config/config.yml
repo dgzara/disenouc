@@ -71,7 +71,10 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: pDev\UserBundle\Entity\User
-
+    registration:
+        form:
+            type: pdev_user_registration
+            
 be_simple_sso_auth:
         admin_sso:
             protocol:

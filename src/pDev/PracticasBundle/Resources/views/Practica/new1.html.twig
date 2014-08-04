@@ -1,21 +1,19 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
-{%block breadcrumb%}
-{{parent()}}
-                <li><a href="{{ path('practicas_new') }}">Solicitar practicante</a></li>
-{%endblock%}
+{% block breadcrumb %}
+    {{parent()}}
+    <li><a href="{{ path('practicas_new') }}">Solicitar practicante</a></li>
+{% endblock %}
 
 {% block javascript %}
-        <script src="{{ asset('/js/pdev.submit.js') }}"></script>
+    <script src="{{ asset('/js/pdev.submit.js') }}"></script>
 {% endblock %}
         
-{%block header%}Solicitar practicante{%endblock%}
-{%block lead%}1 de 3: Información de la organización{%endblock%}
+{% block header %}Solicitar practicante{% endblock %}
+{% block lead %}1 de 3: Información de la organización{% endblock %}
 
-{%block content %}
-
+{% block content %}
     <form id="form_organizacion" class="form-well form-horizontal" action="{{ path('practicas_new',{'step':2}) }}" method="post" {{ form_enctype(organizacion_form) }}>
-        
         {{ form_rest(organizacionAlias_form) }}
         {{ form_rest(organizacion_form) }}
         <p class="pull-right">            
@@ -25,19 +23,14 @@
         </p>
         <div class="clearfix"></div>
     </form>
-       
 {% endblock %}
 
 {% block javascriptload%}
-<script type="text/javascript">
-    
-    var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
-    var source_url = '{{path('practicas_organizacion_find')}}';
-    var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
-    
-    p_setTypeahead(input_alias,source_url,fillable_base);
-    
-    
-    
+    <script type="text/javascript">
+        var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
+        var source_url = '{{path('practicas_organizacion_find')}}';
+        var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
+        
+        p_setTypeahead(input_alias,source_url,fillable_base);
     </script>
 {% endblock %}

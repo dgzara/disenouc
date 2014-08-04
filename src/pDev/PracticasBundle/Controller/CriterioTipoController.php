@@ -35,6 +35,7 @@ class CriterioTipoController extends Controller
             'entities' => $entities,
         );
     }
+    
     /**
      * Creates a new CriterioTipo entity.
      *

@@ -57,7 +57,17 @@ class OrganizacionAlias
         $this->tipo = "TYPE_PRACTICAS_CONTACTO";
         $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
+    
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function __toString()
+    {
+        return "".$this->nombre;
+    }
+    
     /**
      * Set nombre
      *

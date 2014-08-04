@@ -14,11 +14,9 @@
 {% set order = app.request.get('order') %}
 {% set defaultorder = 'asc' %}
 
-<div id="form_ordenar" class="well no-margin">
+    <div id="form_ordenar" class="well no-margin">
         <div class="btn-group">
-        <a href="{{ path('practicas_organizacion_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-certificate"></span> Registrar organización</a>        
-        </div>
-        <div class="btn-group">
+            <a href="{{ path('practicas_organizacion_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-certificate"></span> Registrar organización</a>        
             <a href="{{ path('practicas_organizacion',{'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
     </div>

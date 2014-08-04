@@ -11,12 +11,12 @@ class UserBasicType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-                ->add('rut',null,array('required'=>true))
-                ->add('nombres')                
-                ->add('apellidoPaterno')                
-                ->add('apellidoMaterno')
-                ->add('numeroTelefono',null,array('label'=>'Número de teléfono'))
-                ->add('direccionCalle',null,array('label'=>'Dirección'))                
+            ->add('rut',null,array('required'=>true))
+            ->add('nombres')                
+            ->add('apellidoPaterno')                
+            ->add('apellidoMaterno')
+            ->add('numeroTelefono',null,array('label'=>'Número de teléfono'))
+            ->add('direccionCalle',null,array('label'=>'Dirección'))                
         ;
     }
 

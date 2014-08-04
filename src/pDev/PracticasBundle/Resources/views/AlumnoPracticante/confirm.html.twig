@@ -1,0 +1,93 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+        
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}Plan de práctica{% endblock %}
+{% block lead %}3 de 3: Confirmar datos{% endblock %}
+
+{% block content %}
+    <h4>Información de la práctica</h4>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th width="30%">Tipo de práctica</th>
+                <td>{{ entity.tipo }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Organización</th>
+                <td>{{ entity.organizacionAlias }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Supervisor</th>
+                <td>{{ entity.supervisor }}</td>
+            </tr>
+            <tr>
+                <th>¿Cómo contactó a la organización?</th>
+                <td>{{ entity.comoContacto }}</td>
+            </tr>
+            <tr>
+                <th>Último taller</th>
+                <td>{{ entity.ultimoTaller }}</td>
+            </tr>
+            <tr>
+                <th>Profesor</th>
+                <td>{{ entity.ultimoTallerProfesor }}</td>
+            </tr>
+            <tr>
+                <th>Fecha inicio</th>
+                <td>{{ entity.fechaInicio|date('d-m-y') }}</td>
+            </tr>
+            <tr>
+                <th>Fecha término</th>
+                <td>{{ entity.fechaTermino|date('d-m-Y') }}</td>
+            </tr>
+            <tr>
+                <th>Horas estimadas</th>
+                <td>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Lun</td>
+                            <td>Mar</td>
+                            <td>Mié</td>
+                            <td>Jue</td>
+                            <td>Vie</td>
+                            <td>Sáb</td>
+                        </tr>
+                        <tr>
+                            <td>{{ entity.horasLunes }}</td>
+                            <td>{{ entity.horasMartes }}</td>
+                            <td>{{ entity.horasMiercoles }}</td>
+                            <td>{{ entity.horasJueves }}</td>
+                            <td>{{ entity.horasViernes }}</td>
+                            <td>{{ entity.horasSabado }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h4>Proyectos y responsabilidades</h4>
+    <table class="table table-bordered table-hover">
+        <tbody>
+        {% for proyecto in entity.proyectos %}
+            <tr>
+                <td><strong>{{ loop.index }}. {{ proyecto.nombre }}</strong><p> {{ proyecto.descripcion}}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td class="text-center">Sin información</td>
+            </tr>
+        {% endfor%}
+        </tbody>
+    </table>
+    
+    <h4>¿Seguro que desea enviar este plan de práctica para su aprobación?</h4>
+    <form action="{{ path('practicas_alumno_confirm', {'id': entity.id}) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_rest(form) }}
+        <a href="{{ path('practicas_alumno_gantt', {'id': entity.id})}}" class="btn btn-primary">Anterior: Carta Gantt</a>        
+        <button class="btn btn-primary pull-right" type="submit">Enviar a aprobación</button>
+    </form>
+{% endblock %}

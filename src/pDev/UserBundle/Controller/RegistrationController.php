@@ -23,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
+use pDev\PracticasBundle\Entity\Contacto;
 
 /**
  * Controller managing the registration
@@ -39,7 +40,9 @@ class RegistrationController extends BaseController
         $userManager = $this->container->get('fos_user.user_manager');
         /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
-
+        /** @var $doctrine */
+        $em = $this->container->get('doctrine')->getManager();
+        
         $user = $userManager->createUser();
         $user->setEnabled(true);
 
@@ -49,7 +52,8 @@ class RegistrationController extends BaseController
         $form->remove('username');
         $form->setData($user);
 
-        if ('POST' === $request->getMethod()) {
+        if ('POST' === $request->getMethod()) 
+        {
             $form->bind($request);
 
             if ($form->isValid()) {
@@ -60,7 +64,22 @@ class RegistrationController extends BaseController
                 $user->setExternal(true);
                 
                 $userManager->updateUser($user);
-
+                
+                // Lo designamos como externo
+                $userPersona = new Contacto();
+                $userPersona->setNombres($user->getNombres());
+                $userPersona->setApellidoPaterno($user->getApellidoPaterno());
+                $userPersona->setApellidoMaterno($user->getApellidoMaterno());
+                $userPersona->setEmail($user->getEmail());
+                $userPersona->setRut($user->getRut());
+                $userPersona->setDireccionCalle($user->getDireccionCalle());
+                $userPersona->setNumeroTelefono($user->getNumeroTelefono());
+                $userPersona->setUsuario($user);
+                $em->persist($userPersona);
+                
+                // Guardamos
+                $em->flush();
+                
                 if (null === $response = $event->getResponse()) {
                     $url = $this->container->get('router')->generate('default_inicio');
                     $response = new RedirectResponse($url);
@@ -76,5 +95,4 @@ class RegistrationController extends BaseController
             'form' => $form->createView(),
         ));
     }
-    
 }

@@ -47,6 +47,12 @@
         <service id="pdev.user_provider.username" class="pDev\UserBundle\Security\UserProvider" public="false">
             <argument type="service" id="fos_user.user_manager" />
         </service>
+        
+        <service id="pdev_user.registration.form.type" class="pDev\UserBundle\Form\Type\RegistrationFormType">
+            <tag name="form.type" alias="pdev_user_registration" />
+            <argument>%fos_user.model.user.class%</argument>
+        </service>
+        
     </services>
     
     <!--

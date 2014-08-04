@@ -65,6 +65,7 @@ class DefaultController extends Controller
                 
                 $user->addPersona($persona);
                 $persona->setUsuario($user);
+                $em->persist($persona);
             }
         }
                 

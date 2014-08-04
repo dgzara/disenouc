@@ -36,6 +36,7 @@ class SupervisorController extends Controller
             'entities' => $entities,
         );
     }
+    
     /**
      * Creates a new Supervisor entity.
      *
@@ -167,6 +168,7 @@ class SupervisorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+    
     /**
      * Deletes a Supervisor entity.
      *

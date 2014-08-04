@@ -181,12 +181,12 @@ class AlumnoPracticante
     private $horasSabado;
     
     /**
-     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Proyecto", mappedBy="practicante")
+     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Proyecto", mappedBy="practicante", cascade={"persist"})
      */
     private $proyectos;
     
     /**
-     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Desafio", mappedBy="practicante")
+     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Desafio", mappedBy="practicante", cascade={"persist"})
      */
     private $desafios;
     
@@ -591,6 +591,17 @@ class AlumnoPracticante
     {
         return $this->supervisor;
     }
+    
+    /**
+     * Has supervisor
+     *
+     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisor
+     * @return boolean
+     */
+    public function hasSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisor)
+    {
+        return $this->supervisor === $supervisor;
+    }
 
     /**
      * Set profesorEvaluacion
@@ -662,6 +673,17 @@ class AlumnoPracticante
     }
     
     /**
+     * Has alumno
+     *
+     * @param \pDev\UserBundle\Entity\Alumno $alumno
+     * @return boolean
+     */
+    public function hasAlumno(\pDev\UserBundle\Entity\Alumno $alumno)
+    {
+        return $this->alumno === $alumno;
+    }
+    
+    /**
      * Set organizacionAlias
      *
      * @param \pDev\PracticasBundle\Entity\OrganizacionAlias $organizacion
@@ -725,7 +747,8 @@ class AlumnoPracticante
     public function addProyecto(\pDev\PracticasBundle\Entity\Proyecto $proyectos)
     {
         $this->proyectos[] = $proyectos;
-    
+        $proyectos->setPracticante($this);
+        
         return $this;
     }
 
@@ -758,7 +781,8 @@ class AlumnoPracticante
     public function addDesafio(\pDev\PracticasBundle\Entity\Desafio $desafios)
     {
         $this->desafios[] = $desafios;
-    
+        $desafios->setPracticante($this);
+        
         return $this;
     }
 
@@ -780,5 +804,16 @@ class AlumnoPracticante
     public function getDesafios()
     {
         return $this->desafios;
+    }
+    
+    /**
+     * Has contacto
+     *
+     * @param \pDev\PracticasBundle\Entity\Contacto $contactoBuscado
+     * @return boolean 
+     */
+    public function hasContacto(\pDev\PracticasBundle\Entity\Contacto $contactoBuscado)
+    {
+        return $this->organizacionAlias->getOrganizacion()->hasContacto($contactoBuscado);
     }
 }

@@ -1,8 +1,9 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
 {%block breadcrumb%}
-{{parent()}}
-                <li> <a href="{{ path('practicas_edit', { 'id': entity.id }) }}">Editar</a></li>
+    {{ parent() }}
+    <li><a href="{{ path('practicas') }}">Prácticas</a></li>
+    <li><a href="{{ path('practicas_edit', { 'id': entity.id }) }}" class="active">Editar</a></li>
 {%endblock%}
 
 

@@ -4,6 +4,7 @@ namespace pDev\PracticasBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use pDev\UserBundle\Entity\Persona;
+
 /**
  * Supervisor
  *
@@ -28,8 +29,11 @@ class Supervisor extends Persona
      * @ORM\Column(name="cargo", type="string", length=255)
      */
     private $cargo;
-
     
+    public function __toString()
+    {
+        return "".$this->getNombres()." ".$this->getApellidoPaterno();
+    }
     
     /**
      * Set cargo
@@ -53,8 +57,6 @@ class Supervisor extends Persona
     {
         return $this->cargo;
     }
-
-    
 
     /**
      * Get practicas
@@ -138,7 +140,6 @@ class Supervisor extends Persona
         return $this->practicantes;
     }
     
-
     /**
      * Constructor
      */
@@ -149,8 +150,4 @@ class Supervisor extends Persona
         $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tipo = "TYPE_PRACTICAS_SUPERVISOR";
     }
-    
-    
-
-
 }

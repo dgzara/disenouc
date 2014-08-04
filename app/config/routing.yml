@@ -25,6 +25,9 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /perfil
 
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+    
 p_dev_user:
     resource: "@pDevUserBundle/Controller/"
     type:     annotation

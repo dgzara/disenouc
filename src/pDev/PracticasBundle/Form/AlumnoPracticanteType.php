@@ -16,47 +16,59 @@ class AlumnoPracticanteType extends AbstractType
     {
         $width = '40px';
         $builder
+            ->add('organizacionAlias')
+            ->add('supervisor')
             ->add('tipo', 'choice', array(
-                                        'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
-                                        'required'  => false,
-                                        'label_attr' => array('data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
+                'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
+                'required'  => false,
+                'label_attr' => array(
+                    'data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
 
 - Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
                                         ))
-            ->add('comoContacto','choice',array('label'=>'¿Cómo se contactó a la organización?',
-                                                'choices'   => array('Ofertas publicadas en este sitio' => 'Ofertas publicadas en este sitio',
-                                                                     'Contacto practicante anterior' => 'Contacto practicante anterior',
-                                                                     'Contacto propio' => 'Contacto propio',
-                                                                     'Contactado por empresa' => 'Contactado por empresa',
-                                                                     'Contactado por profesor' => 'Contactado por profesor',
-                                                                     'Otro' => 'Otro',
-                                                                     
-                                                                    ),
-                
-                
-                                                ))
-            ->add('codigoPractica',null,array('label'=>'Código practica','label_attr' => array('data-help' => 'Sólo si se contactó a través de una publicación de este sistema.')))
-            ->add('ultimoTallerProfesor',null,array('label'=>'Profesor'))
+            ->add('comoContacto','choice',array(
+                'label'=>'¿Cómo se contactó a la organización?',
+                'choices' => array(
+                    'Ofertas publicadas en este sitio' => 'Ofertas publicadas en este sitio',
+                     'Contacto practicante anterior' => 'Contacto practicante anterior',
+                     'Contacto propio' => 'Contacto propio',
+                     'Contactado por empresa' => 'Contactado por empresa',
+                     'Contactado por profesor' => 'Contactado por profesor',
+                     'Otro' => 'Otro',
+                ),
+            ))
+            ->add('codigoPractica',null,array(
+                'label'=>'Código practica',
+                'label_attr' => array(
+                    'data-help' => 'Sólo si se contactó a través de una publicación de este sistema.'
+                )
+            ))
+            ->add('ultimoTallerProfesor', null, array('label'=>'Profesor'))
             ->add('ultimoTaller', 'choice', array(
-                                        'label'=>'Último taller',
-                                        'choices'   => array('5. Calidad I' => '5. Calidad I',
-                                                            '6. Calidad II' => '6. Calidad II',
-                                                            '7. Mercado I' => '7. Mercado I',
-                                                            '8. Mercado II' => '8. Mercado II',
-                                                            '9. Seminario' => '9. Seminario',
-                                                            '10. Título' => '10. Título')))
-            ->add('fechaInicio', 'date',array('widget' => 'single_text',                                            
-                                            'format' => 'dd-MM-yyyy',                                            
-                                            'invalid_message'=>'Valor no válido',
-                                            'label' => 'Fecha de inicio',
-                                            'attr' => array('placeholder' => 'dd-mm-aaaa')
-                                            ))
-            ->add('fechaTermino', 'date',array('widget' => 'single_text',                                            
-                                            'format' => 'dd-MM-yyyy',                                            
-                                            'invalid_message'=>'Valor no válido',
-                                            'label' => 'Fecha de término',
-                                            'attr' => array('placeholder' => 'dd-mm-aaaa')
-                                            ))
+                'label'=>'Último taller',
+                'choices'   => array(
+                    '5. Calidad I' => '5. Calidad I',
+                    '6. Calidad II' => '6. Calidad II',
+                    '7. Mercado I' => '7. Mercado I',
+                    '8. Mercado II' => '8. Mercado II',
+                    '9. Seminario' => '9. Seminario',
+                    '10. Título' => '10. Título'
+                )
+            ))
+            ->add('fechaInicio', 'date', array(
+                'widget' => 'single_text',                                            
+                'format' => 'dd-MM-yyyy',                                            
+                'invalid_message'=>'Valor no válido',
+                'label' => 'Fecha de inicio',
+                'attr' => array('placeholder' => 'dd-mm-aaaa')
+            ))
+            ->add('fechaTermino', 'date',array(
+                'widget' => 'single_text',                                            
+                'format' => 'dd-MM-yyyy',                                            
+                'invalid_message'=>'Valor no válido',
+                'label' => 'Fecha de término',
+                'attr' => array('placeholder' => 'dd-mm-aaaa')
+            ))
             ->add('horasLunes',null,array('attr'=>array('placeholder'=>'Lunes','style'=>'width:'.$width)))
             ->add('horasMartes',null,array('attr'=>array('placeholder'=>'Martes','style'=>'width:'.$width)))
             ->add('horasMiercoles',null,array('attr'=>array('placeholder'=>'Miércoles','style'=>'width:'.$width)))
@@ -65,7 +77,7 @@ class AlumnoPracticanteType extends AbstractType
             ->add('horasSabado',null,array('attr'=>array('placeholder'=>'Sábado','style'=>'width:'.$width)))
             ->add('proyectos', 'collection', array('label'=>' ','type' => new ProyectoType(),'allow_add'=> true,'allow_delete' => true))
             ->add('desafios', 'collection', array('label'=>' ','type' => new DesafioType(),'allow_add'=> true,'allow_delete' => true))
-            ;
+        ;
     }
 
     /**

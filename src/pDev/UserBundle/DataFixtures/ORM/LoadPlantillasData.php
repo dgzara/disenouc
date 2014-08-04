@@ -15,8 +15,6 @@ class LoadPlantillasData extends AbstractFixture implements OrderedFixtureInterf
     {
         $owner = $this->getReference('user_default');
         
-        
-        
         $plantilla2 = new Archivo();
         $plantilla2->setMimetype('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $plantilla2->setPath('plantilla_personas.xlsx');

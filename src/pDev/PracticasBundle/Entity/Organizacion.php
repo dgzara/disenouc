@@ -75,6 +75,10 @@ class Organizacion
      */
     private $antiguedad;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Contacto", mappedBy="organizaciones")
+     */
+    private $contactos;
     
     /**
      * Get id
@@ -305,7 +309,54 @@ class Organizacion
         return $this->aliases;
     }
 
+    /**
+     * Add contactos
+     *
+     * @param \pDev\PracticasBundle\Entity\Contacto $contactos
+     * @return Organizacion
+     */
+    public function addContacto(\pDev\PracticasBundle\Entity\Contacto $contactos)
+    {
+        $this->contactos[] = $contactos;
     
+        return $this;
+    }
+
+    /**
+     * Remove contactos
+     *
+     * @param \pDev\PracticasBundle\Entity\Contacto $contactos
+     */
+    public function removeContacto(\pDev\PracticasBundle\Entity\Contacto $contactos)
+    {
+        $this->contactos->removeElement($contactos);
+    }
+
+    /**
+     * Get contactos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContactos()
+    {
+        return $this->contactos;
+    }
+    
+    /**
+     * Has contacto
+     *
+     * @param \pDev\PracticasBundle\Entity\Contacto $contactoBuscado
+     * @return boolean 
+     */
+    public function hasContacto(\pDev\PracticasBundle\Entity\Contacto $contactoBuscado)
+    {
+        foreach($this->contactos as $contacto)
+        {
+            if($contacto === $contactoBuscado)
+                return true;
+        }
+        return false;
+    }
     
     /**
      * Constructor
@@ -313,14 +364,11 @@ class Organizacion
     public function __construct()
     {
         $this->aliases = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->contactos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    
-    public function __toString() {
+    public function __toString() 
+    {
         return count($this->aliases)>0?$this->aliases[0]->getNombre():'sin nombre';
     }
-
-
-    
-    
 }

@@ -77,86 +77,84 @@ class OrganizacionController extends Controller
                     ->leftJoin('p.aliases','alias');
         
         if(!$excel)
+        {
+            $results = $results->orderBy($orderBy, $order)
+                ->setFirstResult( $offset )
+                ->setMaxResults( $limit )
+                ->getQuery()
+                ->getResult();
+        }
+        else
+        {
+            $entities = $results->orderBy($orderBy, $order)                    
+                ->getQuery()
+                ->getResult();
+            $excelService = $this->get('xls.service_xls2007');
+
+            $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
+                                ->setTitle('Practicas')
+                                ->setSubject('');
+
+            $excelService->excelObj->setActiveSheetIndex(0);
+            $ec = 0;
+            $ef = 1;
+
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NOMBRES');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUT');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUBRO');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'PAIS');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'WEB');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ANTIGUEDAD');
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO PERSONAS');
+            $ec++;
+            
+            $ef++;
+            $ec = 0;    
+            foreach($entities as $entity)
             {
-                $results = $results->orderBy($orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-            }
-            else
-            {
-                $entities = $results->orderBy($orderBy, $order)                    
-                    ->getQuery()
-                    ->getResult();
-                $excelService = $this->get('xls.service_xls2007');
-
-                $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
-                                    ->setTitle('Practicas')
-                                    ->setSubject('');
-
-                $excelService->excelObj->setActiveSheetIndex(0);
-                $ec = 0;
-                $ef = 1;
-
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NOMBRES');
+                $nombres = '';
+                foreach($entity->getAliases() as $alias)
+                {
+                    $nombres .= $alias->getNombre().', ';
+                }
+                
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nombres);
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUT');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRut());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUBRO');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRubro());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'PAIS');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPais());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'WEB');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getWeb());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ANTIGUEDAD');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAntiguedad());
                 $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO PERSONAS');
+                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPersonasTotal());
                 $ec++;
                 
+
                 $ef++;
-                $ec = 0;    
-                foreach($entities as $entity)
-                {
-                    $nombres = '';
-                    foreach($entity->getAliases() as $alias)
-                    {
-                        $nombres .= $alias->getNombre().', ';
-                    }
-                    
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nombres);
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRut());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRubro());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPais());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getWeb());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAntiguedad());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPersonasTotal());
-                    $ec++;
-                    
-
-                    $ef++;
-                    $ec = 0;
-                }
-
-                $nombrearchivo = 'exportar';
-
-                $response = $excelService->getResponse();
-                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-                $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
-
-                // If you are using a https connection, you have to set those two headers for compatibility with IE <9
-                $response->headers->set('Pragma', 'public');
-                $response->headers->set('Cache-Control', 'maxage=1');
-                return $response; 
-
+                $ec = 0;
             }
 
+            $nombrearchivo = 'exportar';
+
+            $response = $excelService->getResponse();
+            $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+            $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
+
+            // If you are using a https connection, you have to set those two headers for compatibility with IE <9
+            $response->headers->set('Pragma', 'public');
+            $response->headers->set('Cache-Control', 'maxage=1');
+            return $response; 
+        }
         
         return array(
             'entities' => $results,
@@ -268,8 +266,6 @@ class OrganizacionController extends Controller
                 ->setParameter('id',$entity->getId())
                 ->getQuery()
                 ->getResult();
-
-        
 
         $deleteForm = $this->createDeleteForm($id);
 
@@ -405,7 +401,6 @@ class OrganizacionController extends Controller
                 'antiguedad'=>$entity->getOrganizacion()->getAntiguedad(),
                 );
         }
-        
                  
         $response = new Response(json_encode($return));
         $response->headers->set('Content-Type', 'application/json');

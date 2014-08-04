@@ -30,9 +30,15 @@ class Contacto extends Persona
     /**
      * @var string
      *
-     * @ORM\Column(name="area", type="string", length=255)
+     * @ORM\Column(name="area", type="string", length=255, nullable=true)
      */
     private $area;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Organizacion", inversedBy="contactos")
+     * @ORM\JoinTable(name="nb_persona_contactos_organizaciones")
+     */
+    private $organizaciones;
     
     /**
      * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Practica", mappedBy="contacto")     
@@ -45,7 +51,13 @@ class Contacto extends Persona
     public function __construct()
     {
         $this->tipo = "TYPE_PRACTICAS_CONTACTO";
+        $this->organizaciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    public function __toString()
+    {
+        return "".$this->getNombres()." ".$this->getApellidoPaterno();
     }
     
     /**
@@ -148,5 +160,38 @@ class Contacto extends Persona
     public function getPracticas()
     {
         return $this->practicas;
+    }
+    
+    /**
+     * Add organizacion
+     *
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
+     * @return Supervisor
+     */
+    public function addOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
+    {
+        $this->organizaciones[] = $organizacion;
+    
+        return $this;
+    }
+
+    /**
+     * Remove organizaciones
+     *
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
+     */
+    public function removeOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
+    {
+        $this->organizaciones->removeElement($organizacion);
+    }
+
+    /**
+     * Get organizaciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getOrganizaciones()
+    {
+        return $this->organizaciones;
     }
 }

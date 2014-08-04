@@ -41,18 +41,16 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $userPersona->setUsuario($userAdmin);
         $userAdmin->addRole('ROLE_SUPER_ADMIN');
         
-        $this->createPermisos($userAdmin,$manager);
+        $this->createPermisos($userAdmin, $manager);
         
         $manager->persist($userAdmin);
         
         $this->addReference('user_default', $userAdmin);
         
         $manager->flush();
-        
-        
     }
     
-    private function createPermisos($user = null,$em)
+    private function createPermisos($user = null, $em)
     {
         if(!$user)
             $user = $this->getUser();
