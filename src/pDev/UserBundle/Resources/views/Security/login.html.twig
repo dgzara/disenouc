@@ -30,7 +30,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-warning" onclick="location.href='web-page-{{ path("fos_user_registration_register") }}'">Registrarse</button>
+            <a class="btn btn-warning" href="{{ path('fos_user_registration_register') }}">Registrarse</a>
             <button type="submit" class="btn btn-primary">Ingresar &rarr;</button>
         </div>
     </form>

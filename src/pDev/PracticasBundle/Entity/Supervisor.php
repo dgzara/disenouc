@@ -19,9 +19,20 @@ class Supervisor extends Persona
     private $evaluaciones;
 
     /**
+     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Practica", mappedBy="supervisor")     
+     */
+    private $practicas;
+    
+    /**
      * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\AlumnoPracticante", mappedBy="supervisor")     
      */
     private $practicantes;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Organizacion", inversedBy="supervisores")
+     * @ORM\JoinTable(name="nb_persona_supervisores_organizaciones")
+     */
+    private $organizaciones;
     
     /**
      * @var string
@@ -29,6 +40,18 @@ class Supervisor extends Persona
      * @ORM\Column(name="cargo", type="string", length=255)
      */
     private $cargo;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->evaluaciones = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->organizaciones = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tipo = "TYPE_PRACTICAS_SUPERVISOR";
+    }
     
     public function __toString()
     {
@@ -56,22 +79,6 @@ class Supervisor extends Persona
     public function getCargo()
     {
         return $this->cargo;
-    }
-
-    /**
-     * Get practicas
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPracticas()
-    {
-        $practicas = array();
-        
-        foreach($this->practicantes as $practicante)
-            $practicas = array_merge($practicas,$practicante->getPractica());
-        
-        return $practicas;
-        
     }
 
     /**
@@ -106,7 +113,40 @@ class Supervisor extends Persona
     {
         return $this->evaluaciones;
     }
+    
+    /**
+     * Add practica
+     *
+     * @param \pDev\PracticasBundle\Entity\Practica $practica
+     * @return Supervisor
+     */
+    public function addPractica(\pDev\PracticasBundle\Entity\Practica $practica)
+    {
+        $this->practicas[] = $practica;
+    
+        return $this;
+    }
 
+    /**
+     * Remove practica
+     *
+     * @param \pDev\PracticasBundle\Entity\Practica $practica
+     */
+    public function removePractica(\pDev\PracticasBundle\Entity\Practica $practica)
+    {
+        $this->practicas->removeElement($practica);
+    }
+
+    /**
+     * Get practicas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPracticas()
+    {
+        return $this->practicas;
+    }
+    
     /**
      * Add practicantes
      *
@@ -141,13 +181,35 @@ class Supervisor extends Persona
     }
     
     /**
-     * Constructor
+     * Add organizacion
+     *
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
+     * @return Supervisor
      */
-    public function __construct()
+    public function addOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
     {
-        $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->evaluaciones = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->tipo = "TYPE_PRACTICAS_SUPERVISOR";
+        $this->organizaciones[] = $organizacion;
+    
+        return $this;
+    }
+
+    /**
+     * Remove organizaciones
+     *
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
+     */
+    public function removeOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
+    {
+        $this->organizaciones->removeElement($organizacion);
+    }
+
+    /**
+     * Get organizaciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getOrganizaciones()
+    {
+        return $this->organizaciones;
     }
 }

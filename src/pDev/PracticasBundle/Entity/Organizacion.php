@@ -81,6 +81,11 @@ class Organizacion
     private $contactos;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Supervisor", mappedBy="organizaciones")
+     */
+    private $supervisores;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -343,6 +348,39 @@ class Organizacion
     }
     
     /**
+     * Add supervisores
+     *
+     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisores
+     * @return Organizacion
+     */
+    public function addSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisores)
+    {
+        $this->supervisores[] = $supervisores;
+    
+        return $this;
+    }
+
+    /**
+     * Remove supervisores
+     *
+     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisores
+     */
+    public function removeSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisores)
+    {
+        $this->supervisores->removeElement($supervisores);
+    }
+
+    /**
+     * Get supervisores
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSupervisores()
+    {
+        return $this->supervisores;
+    }
+    
+    /**
      * Has contacto
      *
      * @param \pDev\PracticasBundle\Entity\Contacto $contactoBuscado
@@ -359,12 +397,29 @@ class Organizacion
     }
     
     /**
+     * Has supervisor
+     *
+     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisorBuscado
+     * @return boolean 
+     */
+    public function hasSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisorBuscado)
+    {
+        foreach($this->supervisores as $supervisor)
+        {
+            if($supervisor === $supervisorBuscado)
+                return true;
+        }
+        return false;
+    }
+    
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->aliases = new \Doctrine\Common\Collections\ArrayCollection();
         $this->contactos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->supervisores = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function __toString() 

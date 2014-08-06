@@ -15,8 +15,11 @@ class PracticaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('organizacionAlias')
+            ->add('organizacionAlias', null, array(
+                'label' => 'Organización'
+            ))
             ->add('contacto')
+            ->add('supervisor')
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
@@ -31,13 +34,15 @@ class PracticaType extends AbstractType
                 'required'  => false,
                 'label_attr' => array('data-help' => '240 horas')
             ))
-            ->add('fechaInicio', 'date', array('widget' => 'single_text',                                            
+            ->add('fechaInicio', 'date', array(
+                'widget' => 'single_text',                                            
                 'invalid_message'=>'Valor no válido',
                 'label' => 'Fecha de inicio',
                 'format' => 'dd-MM-yyyy',
                 'attr' => array('placeholder' => 'dd-mm-aaaa')
             ))
-            ->add('fechaTermino', 'date', array('widget' => 'single_text',                                            
+            ->add('fechaTermino', 'date', array(
+                'widget' => 'single_text',                                            
                 'invalid_message'=>'Valor no válido',
                 'label' => 'Fecha de término',
                 'format' => 'dd-MM-yyyy',

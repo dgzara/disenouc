@@ -323,10 +323,11 @@ class AlumnoPracticanteController extends Controller
      * Creates a new AlumnoPracticante entity.
      *
      * @Route("/create", name="practicas_alumno_create")
+     * @Route("/create/{id}", name="practicas_alumno_create_source")
      * @Method("POST")
      * @Template("pDevPracticasBundle:AlumnoPracticante:new.html.twig")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $id = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
@@ -347,10 +348,40 @@ class AlumnoPracticanteController extends Controller
         $entity->addProyecto(new Proyecto());
         $entity->addProyecto(new Proyecto());  
         
+        // Si hay una practica asociada, la adjuntamos
+        if($id)
+        {
+            $em = $this->getDoctrine()->getManager();
+            $practica = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
+
+            if (!$practica) {
+                throw $this->createNotFoundException('Unable to find Practica entity.');
+            }
+            
+            $entity->setPractica($practica);
+            $entity->setOrganizacionAlias($practica->getOrganizacionAlias());
+            $entity->setSupervisor($practica->getSupervisor());
+            $entity->setComoContacto("Ofertas publicadas en este sitio");
+            $entity->setFechaInicio($practica->getFechaInicio());
+            $entity->setFechaTermino($practica->getFechaTermino());
+        }
+        
         $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+
+        // Si esta asociada a una practica, borramos los campos de organizacion y contacto        
+        if($id){
+            $form->remove('organizacionAlias');
+            $form->remove('contacto');
+            $form->remove('supervisor');
+            $form->remove('comoContacto');
+            $form->remove('fechaInicio');
+            $form->remove('fechaTermino');
+        }
+        
         $form->submit($request);
 
-        if ($form->isValid()) {
+        if ($form->isValid()) 
+        {
             $em = $this->getDoctrine()->getManager();
             
             // Generamos las fechas
@@ -386,9 +417,10 @@ class AlumnoPracticanteController extends Controller
      * Displays a form to create a new AlumnoPracticante entity.
      *
      * @Route("/new", name="practicas_alumno_new")
+     * @Route("/new/{id}", name="practicas_alumno_new_source")
      * @Template()
      */
-    public function newAction(Request $request)
+    public function newAction($id = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
@@ -409,8 +441,36 @@ class AlumnoPracticanteController extends Controller
         $entity->addProyecto(new Proyecto());
         $entity->addProyecto(new Proyecto());  
         
-        $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+        // Si hay una practica asociada, la adjuntamos
+        if($id)
+        {
+            $em = $this->getDoctrine()->getManager();
+            $practica = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
+
+            if (!$practica) {
+                throw $this->createNotFoundException('Unable to find Practica entity.');
+            }
             
+            $entity->setPractica($practica);
+            $entity->setOrganizacionAlias($practica->getOrganizacionAlias());
+            $entity->setSupervisor($practica->getSupervisor());
+            $entity->setComoContacto("Ofertas publicadas en este sitio");
+            $entity->setFechaInicio($practica->getFechaInicio());
+            $entity->setFechaTermino($practica->getFechaTermino());
+        }
+        
+        $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+        
+        // Si esta asociada a una practica, borramos los campos de organizacion y contacto
+        if($id){
+            $form->remove('organizacionAlias');
+            $form->remove('contacto');
+            $form->remove('supervisor');
+            $form->remove('comoContacto');
+            $form->remove('fechaInicio');
+            $form->remove('fechaTermino');
+        }
+          
         return array(
             'entity' => $entity,
             'form' => $form->createView(),

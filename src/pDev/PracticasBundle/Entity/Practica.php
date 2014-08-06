@@ -47,13 +47,19 @@ class Practica
     private $contacto;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Supervisor", inversedBy="practicas")
+     * @ORM\JoinColumn(name="supervisor_id", referencedColumnName="id", nullable=true)
+     */
+    private $supervisor;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="pDev\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="creador_id", referencedColumnName="id", nullable=false)
      */
     private $creador;
 
     /**
-     * @ORM\OneToMany(targetEntity="AlumnoPracticante",mappedBy="practica")
+     * @ORM\OneToMany(targetEntity="AlumnoPracticante", mappedBy="practica")
      */
     private $practicantes;
 
@@ -498,7 +504,7 @@ class Practica
      * @param \pDev\PracticasBundle\Entity\Contacto $contacto
      * @return Practica
      */
-    public function setContacto(\pDev\PracticasBundle\Entity\contacto $contacto)
+    public function setContacto(\pDev\PracticasBundle\Entity\Contacto $contacto)
     {
         $this->contacto = $contacto;
     
@@ -513,6 +519,29 @@ class Practica
     public function getContacto()
     {
         return $this->contacto;
+    }
+    
+    /**
+     * Set supervisor
+     *
+     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisor
+     * @return Practica
+     */
+    public function setSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisor)
+    {
+        $this->supervisor = $supervisor;
+    
+        return $this;
+    }
+
+    /**
+     * Get supervisor
+     *
+     * @return \pDev\PracticasBundle\Entity\Supervisor
+     */
+    public function getSupervisor()
+    {
+        return $this->supervisor;
     }
     
     /**

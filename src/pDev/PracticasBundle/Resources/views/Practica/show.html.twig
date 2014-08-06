@@ -20,7 +20,7 @@
     
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
     <div class="alert alert-info">
-        <a href="">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
+        <a href="{{ path('practicas_alumno_new_source', {'id': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
     </div>
     {% else %}
     <h3>Estado de la práctica</h3>
@@ -29,11 +29,11 @@
             <tbody>
                 <tr>
                     <td width="35%">Estado</td>
-                    <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de aprobación
-                        {% elseif entity.estado == 'estado.aprobada' %}Aprobada
-                        {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                        {% elseif entity.estado == 'estado.publicada' %}Publicada
-                        {% endif %}
+                    <td>{% if entity.estado == 'estado.pendiente' %}<span class="label label-default">Pendiente de aprobación
+                        {% elseif entity.estado == 'estado.aprobada' %}<span class="label label-success">Aprobada
+                        {% elseif entity.estado == 'estado.rechazada' %}<span class="label label-danger">Rechazada
+                        {% elseif entity.estado == 'estado.publicada' %}<span class="label label-primary">Publicada
+                        {% endif %}</span>
                     </td>
                 </tr>
                 <tr>
@@ -44,13 +44,6 @@
         </table>
     </div>
     {% endif %}
-    
-    <h3>Empresas relacionadas</h3>
-    <ul>
-        <li><a href="perfil-empresa-pa-estudiante.php">Nombre de la Empresa</a></li>
-        <li><a href="perfil-empresa-pa-estudiante.php">Nombre de la Empresa</a></li>
-        <li><a href="perfil-empresa-pa-estudiante.php">Nombre de la Empresa</a></li>
-    </ul>
     
     {% if isCoordinacion %}
     <div id="form_ordenar" class="well clearfix no-margin">

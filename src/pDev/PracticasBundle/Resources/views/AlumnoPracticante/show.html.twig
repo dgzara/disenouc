@@ -145,6 +145,7 @@
         </tbody>
     </table>
     <h4>Información del supervisor</h4>
+    {% if entity.supervisor %}
     <table class="table">
         <tbody>
             <tr>
@@ -166,6 +167,10 @@
             
         </tbody>
     </table>
+    {% else %}
+    <div class="alert alert-warning" role="alert">No hay supervisor asignado</div>
+    {% endif %}
+    
     <h4>Información de la práctica</h4>
     <table class="table">
         <tbody>

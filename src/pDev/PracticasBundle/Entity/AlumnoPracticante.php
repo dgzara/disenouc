@@ -143,42 +143,42 @@ class AlumnoPracticante
      *
      * @ORM\Column(name="horasLunes", type="integer")
      */
-    private $horasLunes;
+    private $horasLunes = 0;
     
     /**
      * @var integer
      *
      * @ORM\Column(name="horasMartes", type="integer")
      */
-    private $horasMartes;
+    private $horasMartes = 0;
     
     /**
      * @var integer
      *
      * @ORM\Column(name="horasMiercoles", type="integer")
      */
-    private $horasMiercoles;
+    private $horasMiercoles = 0;
     
     /**
      * @var integer
      *
      * @ORM\Column(name="horasJueves", type="integer")
      */
-    private $horasJueves;
+    private $horasJueves = 0;
     
     /**
      * @var integer
      *
      * @ORM\Column(name="horasViernes", type="integer")
      */
-    private $horasViernes;
+    private $horasViernes = 0;
     
     /**
      * @var integer
      *
      * @ORM\Column(name="horasSabado", type="integer")
      */
-    private $horasSabado;
+    private $horasSabado = 0;
     
     /**
      * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Proyecto", mappedBy="practicante", cascade={"persist"})

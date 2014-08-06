@@ -8,16 +8,26 @@
 {%block lead%}1 de 3: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
+    <form class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_source', {'id': entity.practica.id}) }}{% else %}{{ path('practicas_alumno_create') }}{% endif %}" method="post" {{ form_enctype(form) }}>
+        {% if entity.practica %}    
+           <div class="alert alert-info" role="alert">
+            Postulando a <strong>{{ entity.practica.organizacionAlias }}</strong><br>
+            Fecha de inicio: {{ entity.practica.fechaInicio|date('d-m-Y') }}<br>
+            Fecha de término: {{ entity.practica.fechaTermino|date('d-m-Y') }}<br>
+           </div>
+        {% else %}
         {{ form_row(form.organizacionAlias) }}
         {{ form_row(form.supervisor) }}
-        {{ form_row(form.tipo) }}
         {{ form_row(form.comoContacto) }}
+        {{ form_row(form.fechaInicio) }}
+        {{ form_row(form.fechaTermino) }}
+        {% endif %}
+        
+        {{ form_row(form.tipo) }}
         {{ form_row(form.codigoPractica) }}
         {{ form_row(form.ultimoTaller) }}
         {{ form_row(form.ultimoTallerProfesor) }}
-        {{ form_row(form.fechaInicio) }}
-        {{ form_row(form.fechaTermino) }}
+        
         <div class="control-group">
             <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="margin-top:23px;">
                 Horas (240 horas)
@@ -101,11 +111,12 @@
         horas[6] = $('#pdev_practicasbundle_alumnopracticantetype_horasSabado');
         fields.push(horas[6]);
         
+        {% if entity.practica == null %}
         var fechaIn = $('input#pdev_practicasbundle_alumnopracticantetype_fechaInicio');
         fields.push(fechaIn);
         var fechaTe = $('input#pdev_practicasbundle_alumnopracticantetype_fechaTermino');    
         fields.push(fechaTe);
-        
+        {% endif %}
         
         var $collectionHolder;
 
@@ -165,8 +176,8 @@
                 // add a new tag form (see next code block)
                 if($collectionHolder.find(':input').length<9)
                     addForm($collectionHolder, $newLinkLi);
-                
             });
+            
             $collectionHolder.find('div.proyecto').each(function() {
                 //addTagFormDeleteLink($(this));
             });
@@ -177,14 +188,11 @@
 
                 // add a new tag form (see next code block)
                 addForm($collectionHolder2, $newLinkLi2);
-                
             });
             
             $collectionHolder2.find('div.desafio').each(function() {
                 //addTagFormDeleteLink($(this));
             });
-            
-            
             
             $.each(fields,function() {
                 $(this).change(function() {
@@ -195,8 +203,6 @@
             
             calculateTotal();
             
-                
-                    
             $( ".date" ).each(function( index ) {
                 $(this).datetimepicker({
                   pickTime: false
@@ -209,7 +215,11 @@
         
         function calculateTotal()
         {
+            {% if entity.practica %}
+            var darr = daysBetween(parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}"),parseDate("{{ entity.practica.fechaTermino|date('d-m-Y') }}"));
+            {% else %}
             var darr = daysBetween(parseDate(fechaIn.val()),parseDate(fechaTe.val()));
+            {% endif %}
             
             var total = 0;
             for(var i=1;i<7;i++)
