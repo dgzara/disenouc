@@ -47,14 +47,9 @@ class MenuController extends Controller
             if($isCoordinacion)
                 $practicas_items[] = $this->createItem('Evaluaciones',$this->generateUrl('practicas_evaluacion'));
             
-            
-            
             $items = array_merge($items,$practicas_items);     
             
-            
-            
             //solo si soy super user o admin
-            
             // personas
             
             $admin_items = array();
@@ -68,10 +63,9 @@ class MenuController extends Controller
             if($pm->isGranted("ROLE_SUPER_USER","SITE_PERSONAS"))
             {
                 //$admin_items[] = $this->createItem('Todas',$this->generateUrl('persona'));
-                            
+                $admin_items[] = $this->createItem('Contactos',$this->generateUrl('persona_contactos'));
                 $admin_items[] = $this->createItem('Académicos',$this->generateUrl('persona_profesores'));
                 $admin_items[] = $this->createItem('Funcionarios',$this->generateUrl('persona_funcionarios'));
-                
             }
             
             if($pm->isGranted("ROLE_SUPER_USER","SITE_ALUMNOS"))

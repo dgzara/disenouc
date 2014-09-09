@@ -246,10 +246,25 @@ class PracticaController extends Controller
      * @Template("pDevPracticasBundle:Practica:new.html.twig")
      */
     public function createAction(Request $request)
-    {
+    {   
+        $pm = $this->get('permission.manager');
+        $user = $pm->getUser();
         $entity  = new Practica();
+        
+        // Si es un contacto, lo agrega dentro del formulario
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");  
+        if($isContacto){
+            $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
+            $entity->setContacto($contacto);
+        }
+        
         $form = $this->createForm(new PracticaType(), $entity);
-        $form->submit($request);
+        
+        if($isContacto){
+            $form->remove('contacto');
+        }
+        
+        $form->handleRequest($request);
 
         if ($form->isValid()) 
         {   
@@ -277,8 +292,23 @@ class PracticaController extends Controller
      */
     public function newAction()
     {
+        $pm = $this->get('permission.manager');
+        $user = $pm->getUser();
+        
         $entity = new Practica();
+        
+        // Si es un contacto, lo agrega altiro
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");  
+        if($isContacto){
+            $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
+            $entity->setContacto($contacto);
+        }
+        
         $form   = $this->createForm(new PracticaType(), $entity);
+        
+        if($isContacto){
+            $form->remove('contacto');
+        }
         
         return array(
             'entity' => $entity,

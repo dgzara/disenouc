@@ -311,6 +311,7 @@ class AlumnoPracticanteController extends Controller
             'entities' => $entities,
             'isExterno'=> $isExterno,
             'idAlumno'  => $isAlumno?$alumno->getId():false,
+            'isAlumno' => $isAlumno,
             'isSupervisor'=> $isSupervisor,            
             'period_form'=>$periodo_form->createView(),
             'anterior'=>$anterior,

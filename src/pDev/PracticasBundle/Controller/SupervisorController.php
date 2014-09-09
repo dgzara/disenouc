@@ -50,8 +50,21 @@ class SupervisorController extends Controller
         $form = $this->createForm(new SupervisorType(), $entity);
         $form->submit($request);
 
-        if ($form->isValid()) {
+        if ($form->isValid()) 
+        {
             $em = $this->getDoctrine()->getManager();
+            
+            // Revisamos si hay un usuario con los mismos datos
+            $usuario = $em->getRepository('pDevUserBundle:User')->findOneByEmail($entity->getEmail());
+            
+            // Probamos con el rut
+            if(!$usuario)
+                $usuario = $em->getRepository('pDevUserBundle:User')->findOneByRut($entity->getRut()); 
+            
+            // Si lo encuentra, lo añade
+            if($usuario)
+                $entity->setUsuario($usuario);
+                
             $em->persist($entity);
             $em->flush();
 
@@ -193,6 +206,56 @@ class SupervisorController extends Controller
         }
 
         return $this->redirect($this->generateUrl('practicas_supervisor'));
+    }
+    
+    /**
+     * Lists all Alumnos entities.
+     *
+     * @Route("/supervisor/buscar", name="persona_supervisores_buscar")
+     * @Method("POST")
+     * @Template("pDevPracticaBundle:Supervisor:index.html.twig")
+     */
+    public function supervisoresBuscarAction()
+    {
+        $pm = $this->get("permission.manager");
+        $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_SUPERVISOR");
+                
+        $sh = $this->get("search.helper");
+        $searchform = $this->createSearchPersonasForm('Buscar supervisores', 'números de alumno');
+        $request = $this->getRequest();
+        
+        if ($request->isMethod('POST'))
+        {
+            $searchform->bind($request);
+            
+            if ($searchform->isValid())
+            {
+                $query = ((string)$searchform['querystring']->getData());                        
+                $entitystring = 'pDevPracticaBundle:Supervisor';            
+
+                // preparamos la consulta
+                $em = $this->getDoctrine()->getManager();
+                $qb = $em->getRepository($entitystring)->createQueryBuilder('p');
+                $qb = $qb->select('p');
+
+                $totalcount = $sh->getEntitiesCount($entitystring);
+                $fields = $sh->getPersonaFields(array('p.email'));
+                $results = $sh->getResultados($fields,$query,$qb);
+
+                return array(
+                    'supervisores' => $results,
+                    'total' => $totalcount,
+                    'search_form' => $searchform->createView(),
+                    'anterior'=> false,
+                    'siguiente' => false
+                );
+            }
+            
+        }
+        
+        $nm = $this->get("notification.manager");
+        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
+        return $this->redirect($this->generateUrl('practicas_supervisor', array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
     }
     
     /**

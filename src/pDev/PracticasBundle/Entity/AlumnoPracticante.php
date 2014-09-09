@@ -134,9 +134,23 @@ class AlumnoPracticante
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fechaTermino", type="datetime")
+     * @ORM\Column(name="fechaTermino", type="datetime", nullable=true)
      */
     private $fechaTermino;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="duracionCantidad", type="integer")
+     */
+    private $duracionCantidad;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="duracionUnidad", type="string")
+     */
+    private $duracionUnidad;
     
     /**
      * @var integer
@@ -407,7 +421,53 @@ class AlumnoPracticante
     {
         return $this->fechaTermino;
     }
+    
+    /**
+     * Set duracionCantidad
+     *
+     * @param integer $duracionCantidad
+     * @return AlumnoPracticante
+     */
+    public function setDuracionCantidad($duracionCantidad)
+    {
+        $this->duracionCantidad = $duracionCantidad;
+    
+        return $this;
+    }
+    
+    /**
+     * Get duracionCantidad
+     *
+     * @return integer
+     */
+    public function getDuracionCantidad()
+    {
+        return $this->duracionCantidad;
+    }
+    
+    /**
+     * Set duracionUnidad
+     *
+     * @param string $duracionUnidad
+     * @return AlumnoPracticante
+     */
+    public function setDuracionUnidad($duracionUnidad)
+    {
+        $this->duracionUnidad = $duracionUnidad;
+    
+        return $this;
+    }
 
+    /**
+     * Get duracionUnidad
+     *
+     * @return string
+     */
+    public function getDuracionUnidad()
+    {
+        return $this->duracionUnidad;
+    }
+    
     /**
      * Set horasLunes
      *

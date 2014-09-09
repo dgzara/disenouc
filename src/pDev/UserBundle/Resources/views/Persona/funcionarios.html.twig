@@ -16,7 +16,7 @@
 {%block content %}
     <div id="form_ordenar" class="well clearfix" style="margin:0">
         <a href="{{ path('importa_funcionarios_upload') }}" class="btn btn-primary onmodal">Importar</a>
-        <a href="{{ path('persona_new',{'tipo':'funcionarios'}) }}" class="pull-left btn onmodal"><span class="glyphicon glyphicon-plus"></span> Crear nuevo funcionario</a>
+        <a href="{{ path('persona_new',{'tipo':'funcionarios'}) }}" class="btn btn-primary onmodal"><span class="glyphicon glyphicon-plus"></span> Crear funcionario</a>
         <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_funcionarios_buscar') }}" method="post" {{ form_enctype(search_form) }}>
               {{ form_widget(search_form.querystring) }}
               {{ form_rest(search_form) }}

@@ -42,7 +42,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand dno " href="#">DISEÑO | UC</a>
+                    <a class="navbar-brand dno" href="{{ path('default') }}">DISEÑO | UC</a>
                 </div>
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
@@ -50,13 +50,23 @@
                         {% block navleft %}
                             {{ render(controller('pDevUserBundle:Menu:menu')) }}
                         {% endblock %}
-                        <li class="active"><a href="fos_user_profile_show">Bienvenido {{ app.user.nombres }} {{ app.user.apellidoPaterno }} {{ app.user.apellidoMaterno }}</a></li>
-                        <li><a href="{{ path('fos_user_profile_edit') }}">Editar perfil <span class="perfil glyphicon glyphicon-user"></span></a></li>
-                        <li><a href="{{ path('fos_user_security_logout') }}">Cerrar sesión <span class="glyphicon glyphicon-log-out"></span></a></li>
+                        <li class="dropdown" id="preview-menu">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                Bienvenido {{ app.user.nombres }} {{ app.user.apellidoPaterno }} {{ app.user.apellidoMaterno }}
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('fos_user_profile_show') }}"><span class="perfil glyphicon glyphicon-user"></span> Mi perfil</a></li>
+                                <li><a href="{{ path('fos_user_profile_edit') }}"><span class="perfil glyphicon glyphicon-cog"></span> Editar perfil</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{{ path('fos_user_security_logout') }}"><span class="glyphicon glyphicon-log-out"></span> Cerrar sesión</a></li>
+                            </ul>
+                        </li>
                         {% else %}
                         <li class="active"><a href="index.php">Bienvenidos</a></li>
-                        <li><a href="web-page-about.php">Acerca de las prácticas</a></li>
-                        <li><a href="web-page-contactos.php">Contactos</a></li>
+                        <li><a href="{{ path('about') }}">Acerca de las prácticas</a></li>
+                        <li><a href="{{ path('preguntas_frecuentes') }}">Preguntas frecuentes</a></li>
+                        <li><a href="{{ path('contacto') }}">Contacto</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -87,7 +97,7 @@
             {% if block('breadcrumb') is not empty %}
             <div class="row">
                 <ol class="breadcrumb">
-                    <li><a href="{{ path('default_inicio') }}"><span class="glyphicon glyphicon-home"></span> Inicio</a></li>
+                    <li><a href="{{ path('default') }}"><span class="glyphicon glyphicon-home"></span> Inicio</a></li>
                     {% block breadcrumb %}{% endblock %}
                 </ol>
             </div>

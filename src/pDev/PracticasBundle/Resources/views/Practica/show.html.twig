@@ -18,11 +18,7 @@
 
 {% block sidebar %}
     
-    {% if app.user.hasPersona('TYPE_ALUMNO') %}
-    <div class="alert alert-info">
-        <a href="{{ path('practicas_alumno_new_source', {'id': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
-    </div>
-    {% else %}
+    {% if app.user.hasPersona('TYPE_FUNCIONARIO') %}
     <h3>Estado de la práctica</h3>
     <div id="estado" class="table-responsive">
         <table class="table table-striped">
@@ -43,6 +39,12 @@
             </tbody>
         </table>
     </div>
+    {% elseif app.user.hasPersona('TYPE_ALUMNO') %}
+    {% if entity.estado == 'estado.publicada' %}
+    <div class="alert alert-info">
+        <a href="{{ path('practicas_alumno_new_source', {'id': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
+    </div>
+    {% endif %}
     {% endif %}
     
     {% if isCoordinacion %}

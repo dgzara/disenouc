@@ -62,12 +62,14 @@ class AlumnoPracticanteType extends AbstractType
                 'label' => 'Fecha de inicio',
                 'attr' => array('placeholder' => 'dd-mm-aaaa')
             ))
-            ->add('fechaTermino', 'date',array(
-                'widget' => 'single_text',                                            
-                'format' => 'dd-MM-yyyy',                                            
-                'invalid_message'=>'Valor no válido',
-                'label' => 'Fecha de término',
-                'attr' => array('placeholder' => 'dd-mm-aaaa')
+            ->add('duracionCantidad', null, array(
+                'label' => 'Duración',
+            ))
+            ->add('duracionUnidad', 'choice', array(
+                'choices'   => array(
+                    'días' => 'días', 
+                    'semanas' => 'semanas',
+                    'meses' => 'meses'),
             ))
             ->add('horasLunes',null,array('attr'=>array('placeholder'=>'Lunes','style'=>'width:'.$width)))
             ->add('horasMartes',null,array('attr'=>array('placeholder'=>'Martes','style'=>'width:'.$width)))

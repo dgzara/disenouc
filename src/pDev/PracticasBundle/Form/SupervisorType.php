@@ -18,7 +18,8 @@ class SupervisorType extends AbstractType
             ->add('rut',null,array('attr'=>array('autocomplete'=>'off')))
             ->add('nombres')
             ->add('apellidoPaterno')
-            ->add('apellidoMaterno')            
+            ->add('apellidoMaterno')
+            ->add('organizaciones')        
             ->add('email')            
             ->add('cargo');
     }

@@ -1,0 +1,23 @@
+
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+{% block breadcrumb%}
+    {{ parent() }}
+{% endblock%}
+
+{% block header %}Acerca de las prácticas{% endblock %}
+{% block lead %}Informaciones para los estudiantes y empresas{% endblock %}
+
+{% block content %}
+<h2>Reglamento de Prácticas</h2>
+<ul>
+    <li><a href="{{ asset('recursos/perfil.pdf') }}" target="_blank">Perfil de Prácticas</a></li>
+    <li><a href="{{ asset('recursos/pauta_informe.pdf') }}" target="_blank">Pauta de Informe</a></li>
+    <li><a href="{{ asset('recursos/bitacora.pdf') }}" target="_blank">Bitácora</a></li>
+    <li><a href="{{ asset('recursos/carta_estudiante.pdf') }}" target="_blank">Carta de Compromiso estudiante</a></li>
+    <li><a href="{{ asset('recursos/carta_supervisor.pdf') }}" target="_blank">Carta de Compromiso supervisor</a></li>
+    <li><a href="{{ asset('recursos/seguro.pdf') }}" target="_blank">Certificado Seguro Escolar</a></li>
+    <li><a href="{{ asset('recursos/disenouc.zip') }}" target="_blank">Logos Diseño</a></li>
+    <li><a href="{{ asset('recursos/uc.zip') }}" target="_blank">Logos UC</a></li>
+</ul>
+{% endblock %}

@@ -55,4 +55,7 @@ security:
         - { path: ^/img/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/acerca, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/contacto, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/faq, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/*, role: ROLE_USER }

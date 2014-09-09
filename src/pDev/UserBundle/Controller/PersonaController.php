@@ -3,6 +3,7 @@
 namespace pDev\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -11,7 +12,13 @@ use pDev\UserBundle\Entity\User;
 use pDev\UserBundle\Entity\Funcionario;
 use pDev\UserBundle\Entity\Notificacion;
 use pDev\UserBundle\Entity\Profesor;
+use pDev\UserBundle\Entity\Alumno;
+use pDev\PracticasBundle\Entity\Contacto;
 use pDev\UserBundle\Form\PersonaType;
+use pDev\UserBundle\Form\AlumnoType;
+use pDev\UserBundle\Form\ProfesorType;
+use pDev\UserBundle\Form\FuncionarioType;
+use pDev\PracticasBundle\Form\ContactoType;
 use pDev\UserBundle\Form\PersonaEditType;
 use pDev\UserBundle\Form\PersonaEmailType;
 
@@ -509,10 +516,6 @@ class PersonaController extends Controller
             'anterior'=>$anterior,
             'siguiente'=>$siguiente
         );
-        
-        
-        
-        
     }
     
     /**
@@ -638,6 +641,123 @@ class PersonaController extends Controller
     }
     
     /**
+     * Lists all Contactos entities.
+     *
+     * @Route("/contactos/todos", name="persona_contactos")
+     * @Method("GET")
+     
+     */
+    public function contactosAction()
+    {
+        $pm = $this->get("permission.manager");
+        $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_CONTACTOS");
+        
+        return $this->redirect($this->generateUrl('persona_contactos_page',array('periodo'=>'todos','page'=>1,'orderBy'=>'nombres','order'=>'asc')));
+    }
+    
+    /**
+     * Lists all Persona entities.
+     *
+     * @Route("/contactos/buscar", name="persona_contactos_buscar")
+     * @Method("POST")
+     * @Template("pDevUserBundle:Persona:contactos.html.twig")
+     */
+    public function contactosBuscarAction()
+    {
+        $pm = $this->get("permission.manager");
+        $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_PERSONAS");
+        
+        $sh = $this->get("search.helper");
+        $searchform = $this->createSearchPersonasForm('Buscar contactos');
+        $request = $this->getRequest();
+        
+        $searchform->bind($request);
+            
+        if ($searchform->isValid())
+        {
+            $query = ((string)$searchform['querystring']->getData());                        
+            $entitystring = 'pDevPracticasBundle:Contacto';            
+            
+            // preparamos la consulta
+            $em = $this->getDoctrine()->getManager();
+            $qb = $em->getRepository($entitystring)->createQueryBuilder('p');
+            $qb = $qb->select('p');
+            
+            $totalcount = $sh->getEntitiesCount($entitystring);
+            $fields = $sh->getPersonaFields();
+            $results = $sh->getResultados($fields,$query,$qb);
+
+            return array(
+                'funcionarios' => $results,
+                'total' => $totalcount,
+                'search_form'=>$searchform->createView(),
+                'anterior'=>false,
+                'siguiente'=>false
+
+            );
+        }
+        
+        $nm = $this->get("notification.manager");
+        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
+        
+        return $this->redirect($this->generateUrl('persona_contactos_page',array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
+    }
+    
+    /**
+     *  Lists all contactos entities.
+     *
+     * @Route("/contactos/{page}/{orderBy}/{order}", name="persona_contactos_page")
+     * @Method("GET")
+     * @Template("pDevUserBundle:Persona:contactos.html.twig")
+     */
+    public function contactosPageAction($page, $orderBy, $order)
+    {
+        $pm = $this->get("permission.manager");
+        $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_CONTACTOS");
+        
+        $em = $this->getDoctrine()->getManager();
+
+        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
+            throw $this->createNotFoundException();
+        if($order!='asc' and $order!='desc')
+            throw $this->createNotFoundException();
+        
+        $page = intval($page);
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+        
+        $sh = $this->get("search.helper");
+        $searchform = $this->createSearchPersonasForm('Buscar contactos');
+        
+        $qb = $em->getRepository('pDevPracticasBundle:Contacto')->createQueryBuilder('p');
+        $count = $qb->select('COUNT(p)')
+                    ->getQuery()
+                    ->getSingleScalarResult();
+        $anterior = ($page - 1)*$limit>0?$page-1:false;
+        $siguiente = ($page + 1)*$limit<$count?$page + 1:false;
+        
+        if($offset>$count or $page < 1)
+        {
+            throw $this->createNotFoundException();
+        }
+        
+        $results = $qb->select('p')
+                    ->orderBy('p.'.$orderBy, $order)
+                    ->setFirstResult( $offset )
+                    ->setMaxResults( $limit )
+                    ->getQuery()
+                    ->getResult();
+        
+        return array(
+            'contactos' => $results,
+            'total' => $count,
+            'search_form'=>$searchform->createView(),
+            'anterior'=>$anterior,
+            'siguiente'=>$siguiente
+        );
+    }
+    
+    /**
      * Creates a new Persona entity.
      *
      * @Route("/{tipo}/create", name="persona_create")
@@ -653,21 +773,45 @@ class PersonaController extends Controller
         if($tipo=="funcionarios")
         {
             $persona = new Funcionario();
+            $type = new FuncionarioType();
         }
         elseif($tipo=="profesores")
         {
             $persona = new Profesor();
+            $type = new ProfesorType();
+        }
+        elseif($tipo=="alumnos")
+        {
+            $persona = new Alumno();
+            $type = new AlumnoType();
+        }
+        elseif($tipo=="contactos")
+        {
+            $persona = new Contacto();
+            $type = new ContactoType();
         }
         else
             throw $this->createNotFoundException('Unable to find Persona entity.');
-            
-        $form = $this->createForm(new PersonaType(), $persona);
+        
+        $form   = $this->createForm($type, $persona);
         $form->bind($request);
         $nm = $this->get("notification.manager");
 
         if ($form->isValid()) 
         {
             $em = $this->getDoctrine()->getManager();
+            
+            // Revisamos si hay un usuario con los mismos datos
+            $usuario = $em->getRepository('pDevUserBundle:User')->findOneByEmail($persona->getEmail());
+            
+            // Probamos con el rut
+            if(!$usuario)
+                $usuario = $em->getRepository('pDevUserBundle:User')->findOneByRut($persona->getRut()); 
+            
+            // Si lo encuentra, lo añade
+            if($usuario)
+                $persona->setUsuario($usuario);
+            
             $ch = $this->get("context.helper");
             $mailuc = $ch->parseEmail($persona->getEmail(),array('uc.cl','puc.cl'));
             
@@ -719,7 +863,10 @@ class PersonaController extends Controller
                                             );
         }
 
-        return $this->redirect($this->generateUrl('persona_'.$tipo));
+        $array = array('redirect' => $this->generateUrl('persona_'.$tipo)); // data to return via JSON
+        $response = new Response( json_encode( $array ) );
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
     /**
@@ -739,15 +886,27 @@ class PersonaController extends Controller
         if($tipo=="funcionarios")
         {
             $persona = new Funcionario();
+            $type = new FuncionarioType();
         }
         elseif($tipo=="profesores")
         {
             $persona = new Profesor();
+            $type = new ProfesorType();
+        }
+        elseif($tipo=="alumnos")
+        {
+            $persona = new Alumno();
+            $type = new AlumnoType();
+        }
+        elseif($tipo=="contactos")
+        {
+            $persona = new Contacto();
+            $type = new ContactoType();
         }
         else
             throw $this->createNotFoundException('Unable to find Persona entity.');
         
-        $form   = $this->createForm(new PersonaType(), $persona);
+        $form   = $this->createForm($type, $persona);
 
         return array(
             'form'   => $form->createView(),
@@ -1163,11 +1322,11 @@ class PersonaController extends Controller
         }
         elseif($tipo=="contacto")
         {
-            $redirect = "personas_contacto";
+            $redirect = "persona_contactos";
         }
         elseif($tipo=="alumno")
         {
-            $redirect = "personas_alumno";
+            $redirect = "persona_alumno";
         }
 
         return $this->redirect($this->generateUrl($redirect));

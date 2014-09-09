@@ -1,17 +1,21 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
 {%block breadcrumb%}
-{{parent()}}
-                <li class="active"><a href="{{ path('practicas_supervisor') }}">Supervisores</a></li>
+    {{parent()}}
+    <li class="active"><a href="{{ path('practicas_supervisor') }}">Supervisores</a></li>
 {%endblock%}
 
 
 {%block header%}Supervisores{%endblock%}
 {%block lead%}{%endblock%}
 
-{%block content %}
-    
-    <table class="table table-bordered">
+{% block content %}
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        <div class="btn-group">
+            <a href="{{ path('practicas_supervisor_new') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Crear supervisor</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -48,6 +52,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-       
-    {% endblock %}
+{% endblock %}

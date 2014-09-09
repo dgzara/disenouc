@@ -41,17 +41,23 @@ class PracticaType extends AbstractType
                 'format' => 'dd-MM-yyyy',
                 'attr' => array('placeholder' => 'dd-mm-aaaa')
             ))
-            ->add('fechaTermino', 'date', array(
-                'widget' => 'single_text',                                            
-                'invalid_message'=>'Valor no válido',
-                'label' => 'Fecha de término',
-                'format' => 'dd-MM-yyyy',
-                'attr' => array('placeholder' => 'dd-mm-aaaa')
+            ->add('duracionCantidad', null, array(
+                'label' => 'Duración',
+            ))
+            ->add('duracionUnidad', 'choice', array(
+                'choices'   => array(
+                    'Part-time' => 'Part-time', 
+                    'Full-time' => 'Full-time'),
             ))
             ->add('manejoSoftware',null,array('label' => 'Manejo de software','label_attr' => array('data-help' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
             ->add('interes',null,array('label' => 'Interés','label_attr' => array('data-help' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
             ->add('cupos')
-            ->add('entrevista',null,array('label' => '¿Entrevista/ Presentación portafolio?','label_attr' => array('data-help' => 'ej. presentación portafolio en entrevista predefinida por contacto')))
+            ->add('entrevista',null,array(
+                'label' => '¿Requiere entrevista o presentación de un portafolio?',
+                'label_attr' => array(
+                    'data-help' => 'ej. presentación portafolio en entrevista predefinida por contacto'
+                )
+            ))
             ->add('remuneraciones',null,array('label' => 'Remuneración','label_attr' => array('data-help' => 'monto líquido, si es que hay')))
             ->add('beneficios',null,array('label' => 'Beneficios','label_attr' => array('data-help' => 'locomoción,etc')))
             ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'));

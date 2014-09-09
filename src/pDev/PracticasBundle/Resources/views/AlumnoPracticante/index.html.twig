@@ -39,7 +39,7 @@
     
     <div id="form_ordenar" class="well clearfix" style="margin:0">
         <div class="btn-group">
-            {% if not isExterno %}  
+            {% if isAlumno %}  
             <a href="{{ path('practicas_alumno_new') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Crear plan de práctica</a>        
             {% endif %}
             <div class="btn-group">

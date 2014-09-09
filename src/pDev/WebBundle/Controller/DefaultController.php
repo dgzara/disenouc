@@ -22,6 +22,33 @@ class DefaultController extends Controller
     }
     
     /**
+     * @Route("/acerca", name="about")
+     * @Template()
+     */
+    public function aboutAction()
+    {
+        return array();
+    }
+    
+    /**
+     * @Route("/faq", name="preguntas_frecuentes")
+     * @Template()
+     */
+    public function preguntasFrecuentesAction()
+    {
+        return array();
+    }
+    
+    /**
+     * @Route("/contacto", name="contacto")
+     * @Template()
+     */
+    public function contactoAction()
+    {
+        return array();
+    }
+    
+    /**
      * @Route("/inicio/", name="default_inicio")
      * @Template()
      */

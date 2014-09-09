@@ -94,21 +94,35 @@ class Practica
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fechaTermino", type="datetime")
+     * @ORM\Column(name="fechaTermino", type="datetime", nullable=true)
      */
     private $fechaTermino;
-
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="duracionCantidad", type="integer")
+     */
+    private $duracionCantidad;
+    
     /**
      * @var string
      *
-     * @ORM\Column(name="manejoSoftware", type="string", length=255)
+     * @ORM\Column(name="duracionUnidad", type="string")
+     */
+    private $duracionUnidad;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="manejoSoftware", type="string", length=255, nullable=true)
      */
     private $manejoSoftware;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="interes", type="string", length=255)
+     * @ORM\Column(name="interes", type="string", length=255, nullable=true)
      */
     private $interes;
 
@@ -122,7 +136,7 @@ class Practica
     /**
      * @var string
      *
-     * @ORM\Column(name="entrevista", type="string", length=255)
+     * @ORM\Column(name="entrevista", type="boolean", nullable=true)
      */
     private $entrevista;
 
@@ -313,6 +327,52 @@ class Practica
     {
         return $this->fechaTermino;
     }
+    
+    /**
+     * Set duracionCantidad
+     *
+     * @param integer $duracionCantidad
+     * @return Practica
+     */
+    public function setDuracionCantidad($duracionCantidad)
+    {
+        $this->duracionCantidad = $duracionCantidad;
+    
+        return $this;
+    }
+
+    /**
+     * Get duracionCantidad
+     *
+     * @return integer
+     */
+    public function getDuracionCantidad()
+    {
+        return $this->duracionCantidad;
+    }
+    
+    /**
+     * Set duracionUnidad
+     *
+     * @param string $duracionUnidad
+     * @return Practica
+     */
+    public function setDuracionUnidad($duracionUnidad)
+    {
+        $this->duracionUnidad = $duracionUnidad;
+    
+        return $this;
+    }
+
+    /**
+     * Get duracionUnidad
+     *
+     * @return string
+     */
+    public function getDuracionUnidad()
+    {
+        return $this->duracionUnidad;
+    }
 
     /**
      * Set manejoSoftware
@@ -386,7 +446,7 @@ class Practica
     /**
      * Set entrevista
      *
-     * @param string $entrevista
+     * @param boolean $entrevista
      * @return Practica
      */
     public function setEntrevista($entrevista)
@@ -399,7 +459,7 @@ class Practica
     /**
      * Get entrevista
      *
-     * @return string 
+     * @return boolean 
      */
     public function getEntrevista()
     {

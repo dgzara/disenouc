@@ -6,23 +6,21 @@
 {%endblock%}
 
 
-{%block header%}Prácticas{%endblock%}
-{%block lead%}Periodo académico {%endblock%}
+{%block header%}Supervisor{%endblock%}
+{%block lead%}Agregar nuevo supervisor {%endblock%}
 
 {%block content %}
-    <h1>Supervisor creation</h1>
-
     <form action="{{ path('practicas_supervisor_create') }}" method="post" {{ form_enctype(form) }}>
         {{ form_widget(form) }}
         <p>
-            <button type="submit">Create</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
         </p>
     </form>
 
         <ul class="record_actions">
     <li>
         <a href="{{ path('practicas_supervisor') }}">
-            Back to the list
+            Volver
         </a>
     </li>
 </ul>

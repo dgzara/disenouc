@@ -2,51 +2,48 @@
 
 
 
-{%block breadcrumb%}
-{{parent()}}
-                <li> <a href="{{ path('persona_alumnos') }}">Alumnos</a></li>
-{%endblock%}
+{% block breadcrumb%}
+    {{ parent() }}
+    <li> <a href="{{ path('persona_alumnos') }}">Alumnos</a></li>
+{% endblock%}
 
 {% block javascript %}
 {% endblock %}
 
-{%block header%}Alumnos{%endblock%}
-{%block lead%}{{total}} alumnos en el sistema{%endblock%}
+{% block header%}Alumnos{%endblock%}
+{% block lead%}{{total}} alumnos en el sistema{%endblock%}
 
-{%block content %}
+{% block content %}
 {% set orderBy = app.request.get('orderBy') %}
-        {% set order = app.request.get('order') %}
-        {% set defaultorder = 'asc' %}
-<div id="div_periodo" class="hide" style="margin:0">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Seleccionar periodo</h3>
-    </div>
-    <div class="modal-body">
-        <form id="form_periodo" class="form-horizontal" action="{{ path('persona_alumnos_page') }}" method="post" {{ form_enctype(period_form) }}>
-            <div class="control-group" style="margin:0">
-                {{ form_label(period_form.periodo) }}
-                <div class="controls">
-                    {{ form_widget(period_form.periodo) }}
-                    <button type="submit" id="_submit" class="hide"></button>
-            
-                </div></div>
-            {{ form_rest(period_form) }}          
-        </form>
-    </div>
-    <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-    <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
-    </div>
-</div>
-<div id="form_ordenar" class="well clearfix" style="margin:0">
-    <div class="btn-group">
-        <a href="{{ path('importa_alumnos_upload') }}" class="btn btn-primary onmodal">Importar</a>
-    </div>
-        <div class="btn-group">
-            <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
+    {% set order = app.request.get('order') %}
+    {% set defaultorder = 'asc' %}
+    <div id="div_periodo" class="hide" style="margin:0">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Seleccionar periodo</h3>
         </div>
+        <div class="modal-body">
+            <form id="form_periodo" class="form-horizontal" action="{{ path('persona_alumnos_page') }}" method="post" {{ form_enctype(period_form) }}>
+                <div class="control-group" style="margin:0">
+                    {{ form_label(period_form.periodo) }}
+                    <div class="controls">
+                        {{ form_widget(period_form.periodo) }}
+                        <button type="submit" id="_submit" class="hide"></button>
+                
+                    </div></div>
+                {{ form_rest(period_form) }}          
+            </form>
+        </div>
+        <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
+        </div>
+    </div>
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
         <div class="btn-group">
+            <a href="{{ path('persona_new', {'tipo':'alumnos'}) }}" class="btn btn-primary onmodal"><span class="glyphicon glyphicon-plus"></span> Crear alumno</a>
+            <a href="{{ path('importa_alumnos_upload') }}" class="btn btn-primary onmodal">Importar</a>
+            <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
             <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
         <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_alumnos_buscar') }}" method="post" {{ form_enctype(search_form) }}>
@@ -55,67 +52,65 @@
               <button type="submit" id="_submit" class="hide"></button>
               <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
         </form>   
-        
     </div>
-<table class="table table-bordered table-striped table-hover">
+    <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th>
-                        {% if orderBy == 'nombres' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
+                    {% if orderBy == 'nombres' and order == 'asc' %}
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    Nombres 
+                    {% if search_form.querystring.vars.value == '' %}
+                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
+                    {% endif %}
+                </th>
+                <th>
+                    {% if orderBy == 'apellidoPaterno' and order == 'asc' %}
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
 
-                        Nombres 
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'apellidoPaterno' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
+                        Apellido paterno
+                    {% if search_form.querystring.vars.value == '' %}
+                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
+                    {% endif %}
+                </th>
+                <th>
+                    {% if orderBy == 'apellidoMaterno' and order == 'asc' %}
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
 
-                            Apellido paterno
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'apellidoMaterno' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
+                        Apellido materno
+                    {% if search_form.querystring.vars.value == '' %}
+                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
+                    {% endif %}
+                </th>
+                <th>
+                    {% if orderBy == 'email' and order == 'asc' %}
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
 
-                            Apellido materno
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'email' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-
-                            Email UC
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'email'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
+                        Email UC
+                    {% if search_form.querystring.vars.value == '' %}
+                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'email'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
+                    {% endif %}
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -137,20 +132,20 @@
         {% endfor %}
         </tbody>
     </table>
-{% if siguiente or anterior %}
-<div class="pager">
-    <ul>
-        {%if anterior %}
-        <li><a href="{{ path('persona_alumnos_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
-        {% endif%}
-        
-        {%if siguiente %}
-        <li><a href="{{ path('persona_alumnos_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
-        {% endif%}
-    </ul>
-</div>
+    {% if siguiente or anterior %}
+    <div class="pager">
+        <ul>
+            {%if anterior %}
+            <li><a href="{{ path('persona_alumnos_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
+            {% endif%}
+            
+            {%if siguiente %}
+            <li><a href="{{ path('persona_alumnos_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
+            {% endif%}
+        </ul>
+    </div>
 {% endif %}
 {% endblock %}
 
 {% block javascriptload %}
-{%endblock%}
+{% endblock %}

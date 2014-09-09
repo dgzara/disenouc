@@ -1,27 +1,30 @@
 {% extends 'pDevUserBundle::layout.html.twig' %}
 
-{% block breadcrumb %}
+{% block breadcrumb%}
     {{ parent() }}
-{% endblock %}
+    <li> <a href="{{ path('persona_contactos') }}">Contactos</a></li>
+{% endblock%}
 
 {% block javascript %}
 {% endblock %}
 
-{% block header%}Personas{%endblock%}
-{% block lead%}{{total}} personas en el sistema{% endblock %}
+{% block header %}Contactos{% endblock %}
+{% block lead %}{{total}} contactos en el sistema{% endblock %}
 
 {% block content %}
     <div id="form_ordenar" class="well clearfix" style="margin:0">
-      <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_buscar',{'tipo':'todas'}) }}" method="post" {{ form_enctype(search_form) }}>
-            {{ form_widget(search_form.querystring) }}
-            {{ form_rest(search_form) }}
-            <button type="submit" id="_submit" class="hide"></button>
-            <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
-      </form>     
+        <a href="{{ path('persona_new',{'tipo':'contactos'}) }}" class="btn btn-primary onmodal"><span class="glyphicon glyphicon-plus"></span> Crear contacto</a>
+        <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_contactos_buscar') }}" method="post" {{ form_enctype(search_form) }}>
+              {{ form_widget(search_form.querystring) }}
+              {{ form_rest(search_form) }}
+              <button type="submit" id="_submit" class="hide"></button>
+              <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
+        </form>   
         {% set orderBy = app.request.get('orderBy') %}
         {% set order = app.request.get('order') %}
         {% set defaultorder = 'asc' %}
     </div>
+    
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
@@ -31,9 +34,9 @@
                     {% else %}
                         {% set defaultorder = 'asc' %}
                     {% endif %}
-                        Nombres
+                    Nombres
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_page',{'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
+                    <a href="{{ path('persona_contactos_page',{'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                     {% endif %}
@@ -44,10 +47,10 @@
                     {% else %}
                         {% set defaultorder = 'asc' %}
                     {% endif %}
-                    
+
                         Apellido paterno
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_page',{'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
+                    <a href="{{ path('persona_contactos_page',{'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                     {% endif %}
@@ -58,10 +61,9 @@
                     {% else %}
                         {% set defaultorder = 'asc' %}
                     {% endif %}
-                    
                         Apellido materno
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_page',{'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
+                    <a href="{{ path('persona_contactos_page',{'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                     {% endif %}
@@ -72,51 +74,42 @@
                     {% else %}
                         {% set defaultorder = 'asc' %}
                     {% endif %}
-                    
                         Email
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_page',{'page':1,'order':defaultorder,'orderBy':'email'}) }}">
+                    <a href="{{ path('persona_contactos_page',{'page':1,'order':defaultorder,'orderBy':'email'}) }}">
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                     {% endif %}
-                        </th>
-                <th>Tipo</th>
+                </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for entity in contactos %}
             <tr>
-                <td>
-                    {{ entity.nombres }}
-                </td>
+                <td>{{ entity.nombres }}</td>
                 <td>{{ entity.apellidoPaterno }}</td>
                 <td>{{ entity.apellidoMaterno }}</td>
-                <td>{{ entity.email }}</td>
-                <td>
-                    {%- if entity.tipo == "TYPE_FUNCIONARIO" -%}Funcionario
-                    {%- elseif entity.tipo == "TYPE_ACADEMICO" -%}Académico
-                    {%- elseif entity.tipo == "TYPE_ALUMNO" -%}Alumno
-                    {%- endif -%}
-                </td>
+                <td>{% if entity.email %}{{ entity.email }}{% else %}<a href="{{ path('persona_email',{'tipo':'contactos','idPersona':entity.id}) }}" class="onmodal">Asignar email UC</a>{% endif %}</td>
+                <td><a href="{{ path('persona_edit',{'tipo':'contactos','idPersona':entity.id}) }}" class="onmodal">Modificar</a></td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     {% if siguiente or anterior %}
-    <div class="pager">
-        <ul>
-            {%if anterior %}
-            <li><a href="{{ path('persona_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
-            {% endif%}
-            
-            {%if siguiente %}
-            <li><a href="{{ path('persona_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
-            {% endif%}
-        </ul>
-    </div>
-    {% endif %}
-
+<div class="pager">
+    <ul>
+        {%if anterior %}
+        <li><a href="{{ path('persona_contactos_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
+        {% endif%}
+        
+        {%if siguiente %}
+        <li><a href="{{ path('persona_contactos_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
+        {% endif%}
+    </ul>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block javascriptload %}
-{% endblock %}
+{%endblock%}

@@ -16,11 +16,14 @@ class PracticaEstadoType extends AbstractType
     {
         $builder
             ->add('estado', 'choice', array(
-                                        'choices'   => array('estado.pendiente' => 'Pendiente', 'estado.aprobada' => 'Aprobado', 'estado.rechazada' => 'Rechazado', 'estado.publicada' => 'Publicado'),
-                                        'required'  => true,
-                                        ))
-            ->add('estadoObservaciones',null,array('label'=>'Observaciones'))
-             ;
+                'choices' => array(
+                    'estado.pendiente' => 'Pendiente', 
+                    'estado.aprobada' => 'Aprobar', 
+                    'estado.rechazada' => 'Rechazar', 
+                ),
+                'required'  => true,
+            ))
+            ->add('estadoObservaciones',null,array('label'=>'Observaciones'));
     }
 
     /**

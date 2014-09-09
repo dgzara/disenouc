@@ -1,0 +1,28 @@
+{% extends 'pDevWebBundle::layout.html.twig' %}
+
+{% block breadcrumb%}
+    {{ parent() }}
+{% endblock%}
+
+{% block header %}Contacto{% endblock %}
+{% block lead %}Coordinadoras de prácticas{% endblock %}
+
+{% block content %}
+<center>
+<table style="text-align:center">
+    <tr>
+        <td><img src="{{ asset('recursos/camila-rios-220x220.jpg') }}"></td>
+        <td style="width:20px"></td>
+        <td><img src="{{ asset('recursos/domper-220x220.jpg') }}"></td>
+    </tr>
+    <tr>
+        <td><strong>Camila Ríos</strong></td>
+        <td></td>
+        <td><strong>María Rosa Domper</strong></td>
+    </tr>
+    <tr>
+        <td colspan="3">practicasdiseno @uc.cl</td>
+    </tr>
+</table>
+</center>
+{% endblock %}
