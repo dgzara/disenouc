@@ -21,6 +21,7 @@ class AlumnoPracticanteType extends AbstractType
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
+                'label' => 'Tipo de práctica',
                 'label_attr' => array(
                     'data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
 
@@ -36,12 +37,6 @@ class AlumnoPracticanteType extends AbstractType
                      'Contactado por profesor' => 'Contactado por profesor',
                      'Otro' => 'Otro',
                 ),
-            ))
-            ->add('codigoPractica',null,array(
-                'label'=>'Código practica',
-                'label_attr' => array(
-                    'data-help' => 'Sólo si se contactó a través de una publicación de este sistema.'
-                )
             ))
             ->add('ultimoTallerProfesor', null, array('label'=>'Profesor'))
             ->add('ultimoTaller', 'choice', array(

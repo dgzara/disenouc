@@ -19,7 +19,7 @@ class PracticaType extends AbstractType
                 'label' => 'Organización'
             ))
             ->add('contacto')
-            ->add('supervisor')
+            ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
@@ -32,6 +32,7 @@ class PracticaType extends AbstractType
                     'Part-time' => 'Part-time', 
                     'Full-time' => 'Full-time'),
                 'required'  => false,
+                'label'=> 'Tipo de jornada',
                 'label_attr' => array('data-help' => '240 horas')
             ))
             ->add('fechaInicio', 'date', array(
@@ -46,8 +47,9 @@ class PracticaType extends AbstractType
             ))
             ->add('duracionUnidad', 'choice', array(
                 'choices'   => array(
-                    'Part-time' => 'Part-time', 
-                    'Full-time' => 'Full-time'),
+                    'días' => 'días', 
+                    'semanas' => 'semanas',
+                    'meses' => 'meses'),
             ))
             ->add('manejoSoftware',null,array('label' => 'Manejo de software','label_attr' => array('data-help' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
             ->add('interes',null,array('label' => 'Interés','label_attr' => array('data-help' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
@@ -60,7 +62,7 @@ class PracticaType extends AbstractType
             ))
             ->add('remuneraciones',null,array('label' => 'Remuneración','label_attr' => array('data-help' => 'monto líquido, si es que hay')))
             ->add('beneficios',null,array('label' => 'Beneficios','label_attr' => array('data-help' => 'locomoción,etc')))
-            ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'));
+        ;
     }
 
     /**

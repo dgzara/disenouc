@@ -3,6 +3,7 @@
 namespace pDev\PracticasBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -124,7 +125,7 @@ class PracticaController extends Controller
             if(!$isExterno)
             {
                 $where .= ' or p.estado = :estado';
-                $entities = $entities->setParameter('estado',Practica::ESTADO_PUBLICADA);
+                $entities = $entities->setParameter('estado',Practica::ESTADO_APROBADA);
 
             }
 
@@ -308,6 +309,7 @@ class PracticaController extends Controller
         
         if($isContacto){
             $form->remove('contacto');
+            $form->remove('tipo');
         }
         
         return array(
@@ -439,8 +441,12 @@ class PracticaController extends Controller
             if ($editForm->isValid()) {
                 $em->persist($entity);
                 $em->flush();
-
-                return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
+                
+                // Devolvemos la respuesta
+                $array = array('redirect' => $this->generateUrl('practicas_show', array('id' => $id))); // data to return via JSON
+                $response = new Response( json_encode( $array ) );
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
             }
         }
         

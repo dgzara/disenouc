@@ -16,7 +16,6 @@ class Practica
     const ESTADO_PENDIENTE = "estado.pendiente";
     const ESTADO_APROBADA = "estado.aprobada";
     const ESTADO_RECHAZADA = "estado.rechazada";
-    const ESTADO_PUBLICADA = "estado.publicada";
     
     /**
      * @var integer
@@ -131,7 +130,7 @@ class Practica
      *
      * @ORM\Column(name="cupos", type="integer")
      */
-    private $cupos;
+    private $cupos = 1;
 
     /**
      * @var string

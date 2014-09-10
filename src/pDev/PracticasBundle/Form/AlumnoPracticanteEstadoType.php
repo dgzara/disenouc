@@ -16,21 +16,26 @@ class AlumnoPracticanteEstadoType extends AbstractType
     {
         $builder
             ->add('estado', 'choice', array(
-                                        'choices'   => array('estado.pendiente' => 'Pendiente', 
-                                                            'estado.enviada' => 'Enviada', 
-                                                            'estado.aprobada' => 'Aprobada', 
-                                                            'estado.rechazada' => 'Rechazada', 
-                                                            'estado.aceptada.alumno' => 'Aceptada por el alumno', 
-                                                            'estado.aceptada.supervisor' => 'Aceptada por la organización', 
-                                                            'estado.aceptada' => 'Aceptada por el alumno y la organización', 
-                                                            'estado.iniciada' => 'Iniciada', 
-                                                            'estado.terminada' => 'Terminada', 
-                                                            'estado.informe' => 'Informe entregado',
-                                                            'estado.evaluada' => 'Evaluada'),
-                                        'required'  => true,
-                                        ))
-            ->add('estadoObservaciones',null,array('label'=>'Observaciones'))
-             ;
+            'choices'   => array('estado.pendiente' => 'Pendiente', 
+                                'estado.enviada' => 'Enviada', 
+                                'estado.aprobada' => 'Aprobada', 
+                                'estado.rechazada' => 'Rechazada', 
+                                'estado.aceptada.alumno' => 'Aceptada por el alumno', 
+                                'estado.aceptada.supervisor' => 'Aceptada por la organización', 
+                                'estado.aceptada' => 'Aceptada por el alumno y la organización', 
+                                'estado.iniciada' => 'Iniciada', 
+                                'estado.terminada' => 'Terminada', 
+                                'estado.informe' => 'Informe entregado',
+                                'estado.evaluada' => 'Evaluada'),
+            'required'  => true,
+            ))
+            ->add('codigoPractica',null,array(
+                'label'=>'Código practica',
+                'label_attr' => array(
+                    'data-help' => 'Sólo si se contactó a través de una publicación de este sistema.'
+                )
+            ))
+            ->add('estadoObservaciones',null,array('label'=>'Observaciones'));
         
     }
 

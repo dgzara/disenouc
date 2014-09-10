@@ -13,15 +13,15 @@
     {% set orderBy = app.request.get('orderBy') %}
     {% set order = app.request.get('order') %}
     {% set defaultorder = 'asc' %}
-
+    
+    {% if isContacto %}
     <div id="form_ordenar" class="well no-margin">
         <div class="btn-group">
-        {% if isContacto %}
-            <a href="{{ path('practicas_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Solicitar practicante</a>        
-        {% endif %}
+            <a href="{{ path('practicas_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Publicar oferta</a>        
         </div>
     </div>
-
+    {% endif %}
+    
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -47,7 +47,7 @@
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                 </th>
-                <th>Fecha inicio / término
+                <th>Fecha inicio
                     {% if orderBy == 'fechaInicio' and order == 'asc' %}
                         {% set defaultorder = 'desc' %}
                     {% else %}
@@ -57,6 +57,17 @@
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                 </th>
+                <th>Duración
+                    {% if orderBy == 'duracionUnidad' and order == 'asc' %}
+                        {% set defaultorder = 'desc' %}
+                    {% else %}
+                        {% set defaultorder = 'asc' %}
+                    {% endif %}
+                    <a href="{{ path('practicas',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'duracionUnidad'}) }}">
+                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
+                    </a>
+                </th>
+                {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
                 <th>Estado
                     {% if orderBy == 'estado' and order == 'asc' %}
                         {% set defaultorder = 'desc' %}
@@ -67,6 +78,7 @@
                         <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
                     </a>
                 </th>
+                {% endif %}
                 <th></th>
             </tr>
         </thead>
@@ -76,13 +88,16 @@
                 <td>{{ entity.id }}</td>
                 <td>{{ entity.tipo }}</td>
                 <td>{{ entity.organizacionAlias.nombre }}</td>
-                <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %} / {% if entity.fechaTermino %}{{ entity.fechaTermino|date('d-m-Y') }}{% endif %}</td>
-                <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de aprobacion
+                <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
+                <td>{% if entity.duracionCantidad %}{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}{% endif %}</td>
+                {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
+                <td>
+                    {% if entity.estado == 'estado.pendiente' %}Pendiente de aprobacion
                     {% elseif entity.estado == 'estado.aprobada' %}Aprobada
                     {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                    {% elseif entity.estado == 'estado.publicada' %}Publicada
                     {% endif %}
                 </td>
+                {% endif %}
                 <td>
                     <ul>
                         <li>

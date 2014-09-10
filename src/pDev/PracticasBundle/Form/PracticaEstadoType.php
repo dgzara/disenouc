@@ -23,6 +23,13 @@ class PracticaEstadoType extends AbstractType
                 ),
                 'required'  => true,
             ))
+            ->add('tipo', 'choice', array(
+                'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
+                'required'  => false,
+                'label_attr' => array('data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
+
+- Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
+                                        ))
             ->add('estadoObservaciones',null,array('label'=>'Observaciones'));
     }
 
