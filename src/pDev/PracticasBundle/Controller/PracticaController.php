@@ -221,7 +221,8 @@ class PracticaController extends Controller
             $entity->setContacto($contacto);
         }
         
-        $form = $this->createForm(new PracticaType(), $entity);
+        $securityContext = $this->container->get('security.context');
+        $form = $this->createForm(new PracticaType($securityContext), $entity);
         
         if($isContacto){
             $form->remove('contacto');
@@ -267,7 +268,8 @@ class PracticaController extends Controller
             $entity->setContacto($contacto);
         }
         
-        $form   = $this->createForm(new PracticaType(), $entity);
+        $securityContext = $this->container->get('security.context');
+        $form = $this->createForm(new PracticaType($securityContext), $entity);
         
         if($isContacto){
             $form->remove('contacto');
@@ -291,13 +293,6 @@ class PracticaController extends Controller
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
-        
-        $isExterno = $user->getExternal();
-        $isAlumno = $pm->checkType("TYPE_ALUMNO");
-        $isSupervisor = $pm->checkType("TYPE_PRACTICAS_SUPERVISOR");
-        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");
-        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
-        
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
@@ -305,13 +300,28 @@ class PracticaController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Practica entity.');
         }
-
+        
+        $alumnoPractica = false;
+        $isExterno = $user->getExternal();
+        $isAlumno = $pm->checkType("TYPE_ALUMNO");
+        $isSupervisor = $pm->checkType("TYPE_PRACTICAS_SUPERVISOR") and $entity->hasSupervisor($user->getPersona('TYPE_PRACTICAS_SUPERVISOR'));
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO") and $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'));
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Si es alumno, comprobamos si ya postuló
+        if($isAlumno)
+            $alumnoPractica = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->findOneByAlumno($user->getPersona('TYPE_ALUMNO'));
+        
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
-            'isCoordinacion'=>$isCoordinacion,
+            'isAlumno' => $isAlumno,
+            'alumnoPractica' => $alumnoPractica,
+            'isContacto' => $isContacto,
+            'isSupervisor' => $isSupervisor,
+            'isCoordinacion' => $isCoordinacion,
         );
     }
 

@@ -16,6 +16,7 @@ class AlumnoPracticante
     const ESTADO_ENVIADA = "estado.enviada";
     const ESTADO_APROBADA = "estado.aprobada";
     const ESTADO_RECHAZADA = "estado.rechazada";
+    const ESTADO_POSTULADO = "estado.postulado";
     const ESTADO_ACEPTADA_ALUMNO = "estado.aceptada.alumno";
     const ESTADO_ACEPTADA_SUPERVISOR = "estado.aceptada.supervisor";
     const ESTADO_ACEPTADA = "estado.aceptada";
@@ -85,14 +86,14 @@ class AlumnoPracticante
     /**
      * @var string
      *
-     * @ORM\Column(name="codigopractica", type="string",nullable=true)     
+     * @ORM\Column(name="codigopractica", type="string", nullable=true)     
      */
     private $codigoPractica;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="ultimoTaller", type="string")     
+     * @ORM\Column(name="ultimoTaller", type="string", nullable=true)    
      */
     private $ultimoTaller;
     

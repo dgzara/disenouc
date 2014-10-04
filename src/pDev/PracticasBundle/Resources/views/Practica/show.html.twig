@@ -17,11 +17,14 @@
 {% block lead %}{{ entity.tipo }}{%endblock%}
 
 {% block sidebar %}
-    
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
-    {% if entity.estado == 'estado.aprobada' %}
+    {% if alumnoPractica == false and entity.estado == 'estado.aprobada' %}
     <div class="alert alert-info">
         <a href="{{ path('practicas_alumno_new_datos_source', {'id': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
+    </div>
+    {% elseif alumnoPractica %}
+    <div class="alert alert-info">
+        Práctica postulada. <a href="{{ path('practicas_alumno_show', {'id': alumnoPractica.id }) }}">Ver detalles</a>
     </div>
     {% endif %}
     {% else %}
@@ -34,6 +37,7 @@
                     <td>{% if entity.estado == 'estado.pendiente' %}<span class="label label-default">Pendiente de aprobación
                         {% elseif entity.estado == 'estado.aprobada' %}<span class="label label-success">Aprobada
                         {% elseif entity.estado == 'estado.rechazada' %}<span class="label label-danger">Rechazada
+                        {% elseif entity.estado == 'estado.finalizada' %}<span class="label label-default">Finalizada
                         {% endif %}</span>
                     </td>
                 </tr>
@@ -41,28 +45,40 @@
                     <td>Observaciones</td>
                     <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
                 </tr>
+                <tr>
+                    <td>Postulantes</td>
+                    <td>{{ entity.postulantes|length }}</td>
+                </tr>
+                <tr>
+                    <td>Aceptados</td>
+                    <td>{{ entity.aceptados|length }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
     {% endif %}
     
-    {% if isCoordinacion %}
+    {% if (isCoordinacion or isContacto) and entity.estado != 'estado.finalizada' %}
     <div id="form_ordenar" class="well clearfix no-margin">
-        {% if app.user.id == entity.creador.id %}
         <div class="btn-group">
             <a href="{{ path('practicas_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
                 <span class="glyphicon glyphicon-edit"></span> Modificar
             </a>
-            <a href="#form_delete"  class="pull-left btn btn-primary submitform">
+            <a href="#form_delete"  class="pull-left btn btn-danger submitform">
                 <span class="glyphicon glyphicon-remove"></span> Eliminar
             </a>
-        </div>
-        {% endif %}
-        <div class="btn-group">
+        {% if isCoordinacion %}
+            {% if entity.estado == 'estado.pendiente' %}
+            <a href="{{ path('practicas_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-success onmodal">
+                <span class="glyphicon glyphicon-adjust"></span> Responder solicitud
+            </a>
+            {% else %}
             <a href="{{ path('practicas_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-primary onmodal">
                 <span class="glyphicon glyphicon-adjust"></span> Cambiar estado
             </a>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
     {% endif %}
 {% endblock %}
@@ -174,11 +190,13 @@
         </table>
     </div>
     
+    {% if entity.estado != "estado.finalizada" %}
     <form class="hide" id="form_delete" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post">
         <input type="hidden" name="_method" value="DELETE" />
         {{ form_widget(delete_form) }}
         <button id="_submit" type="submit">Eliminar</button>
     </form>
+    {% endif %}
         
 {% endblock %}
 

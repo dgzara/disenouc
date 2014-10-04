@@ -323,6 +323,7 @@ class Organizacion
     public function addContacto(\pDev\PracticasBundle\Entity\Contacto $contactos)
     {
         $this->contactos[] = $contactos;
+        $contactos->addOrganizacion($this);
     
         return $this;
     }
@@ -356,6 +357,7 @@ class Organizacion
     public function addSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisores)
     {
         $this->supervisores[] = $supervisores;
+        $supervisores->addOrganizacion($this);
     
         return $this;
     }

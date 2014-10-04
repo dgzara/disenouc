@@ -16,6 +16,7 @@ class Practica
     const ESTADO_PENDIENTE = "estado.pendiente";
     const ESTADO_APROBADA = "estado.aprobada";
     const ESTADO_RECHAZADA = "estado.rechazada";
+    const ESTADO_FINALIZADA = "estado.finalizada";
     
     /**
      * @var integer
@@ -26,6 +27,13 @@ class Practica
      */
     private $id;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=255)
+     */
+    private $nombre;
+    
     /**
      * @var string
      *
@@ -142,14 +150,14 @@ class Practica
     /**
      * @var string
      *
-     * @ORM\Column(name="remuneraciones", type="string", length=255)
+     * @ORM\Column(name="remuneraciones", type="string", length=255, nullable=true)
      */
     private $remuneraciones;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="beneficios", type="string", length=255)
+     * @ORM\Column(name="beneficios", type="string", length=255, nullable=true)
      */
     private $beneficios;
 
@@ -188,7 +196,30 @@ class Practica
     {
         return $this->id;
     }
+    
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Practica
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    
+        return $this;
+    }
 
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+    
     /**
      * Set tipo
      *
@@ -657,5 +688,40 @@ class Practica
     public function getPracticantes()
     {
         return $this->practicantes;
+    }
+    
+    
+    public function getPostulantes()
+    {
+        return $this->practicantes->filter(
+            function($entry) {
+               return $entry->getEstado() === AlumnoPracticante::ESTADO_POSTULADO;
+            }
+        ); 
+    }
+    
+    public function getAceptados()
+    {
+        return $this->practicantes->filter(
+            function($entry) {
+               return $entry->getEstado() === AlumnoPracticante::ESTADO_ACEPTADA;
+            }
+        );   
+    }
+    
+    public function hasContacto($user)
+    {
+        if($this->contacto === $user)
+            return true;
+        else
+            return false;
+    }
+    
+    public function hasSupervisor($user)
+    {
+        if($this->supervisor === $user)
+            return true;
+        else
+            return false;
     }
 }

@@ -6,7 +6,13 @@
 {%endblock%}
 
 
-{%block header%}Solicitudes de práctica{%endblock%}
+{%block header%}
+    {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
+        Solicitudes de práctica
+    {% else %}
+        Ofertas de práctica
+    {% endif %}
+{%endblock%}
 {%block lead%}{%endblock%}
 
 {% block content %}

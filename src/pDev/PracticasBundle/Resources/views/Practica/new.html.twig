@@ -14,7 +14,14 @@
 
 {% block content %}
     <form id="form_practica" class="form-well form-horizontal" action="{{ path('practicas_create') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_rest(form) }}
+        {{ form_row(form.nombre) }}
+        {{ form_row(form.organizacionAlias) }}
+        {{ form_row(form.descripcion) }}
+        {{ form_row(form.jornadas) }}
+        {{ form_row(form.fechaInicio) }}
+        {{ form_label(form.duracionCantidad) }}<br>
+        {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+        {{ form_rest(form) }}
         <p class="pull-right">            
             <button id="_submit" class="hide" type="submit"></button>         
             <a class="btn" onClick="document.forms.form_practica.reset()">Limpiar</a>

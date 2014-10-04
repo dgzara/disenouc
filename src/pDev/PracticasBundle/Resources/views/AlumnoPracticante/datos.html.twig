@@ -122,8 +122,10 @@
         {% if entity.practica == null %}
         var fechaIn = $('input#pdev_practicasbundle_alumnopracticantetype_fechaInicio');
         fields.push(fechaIn);
-        var fechaTe = $('input#pdev_practicasbundle_alumnopracticantetype_fechaTermino');    
-        fields.push(fechaTe);
+        var duracionCantidad = $('input#pdev_practicasbundle_alumnopracticantetype_duracionCantidad');    
+        fields.push(duracionCantidad);
+        var duracionUnidad = $('#pdev_practicasbundle_alumnopracticantetype_duracionUnidad');    
+        fields.push(duracionUnidad);
         {% endif %}
         
         var $collectionHolder;
@@ -224,9 +226,9 @@
         function calculateTotal()
         {
             {% if entity.practica %}
-            var darr = daysBetween(parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}"),parseDate("{{ entity.practica.fechaTermino|date('d-m-Y') }}"));
+            var darr = daysBetween(parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}"), {{ entity.practica.duracionCantidad }}, {{ entity.practica.duracionUnidad }});
             {% else %}
-            var darr = daysBetween(parseDate(fechaIn.val()),parseDate(fechaTe.val()));
+            var darr = daysBetween(parseDate(fechaIn.val()), duracionCantidad.val(), duracionUnidad.val());
             {% endif %}
             
             var total = 0;
@@ -240,8 +242,17 @@
             return total;
         }
         
-        function daysBetween(startDate, endDate) {
-            var days = [], current = startDate;
+        function daysBetween(startDate, duracionCantidad, duracionUnidad) 
+        {
+            var days = [], current = startDate, endDate = startDate;
+            
+            if(duracionUnidad == "días")
+                endDate = new Date(startDate.getTime() + duracionCantidad * (24 * 60 * 60 * 1000));
+            else if(duracionUnidad == "semanas")
+                endDate = new Date(startDate.getTime() + 7 * duracionCantidad * (24 * 60 * 60 * 1000));
+            else if(duracionUnidad == "meses")
+                endDate = new Date(startDate.getTime() + 30 * duracionCantidad * (24 * 60 * 60 * 1000));
+            
             while(current <= endDate) {
                 if(days[current.getDay()] == undefined)
                     days[current.getDay()] = 1;

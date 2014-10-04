@@ -301,6 +301,7 @@ class AlumnoPracticanteController extends Controller
         $form = $this->createFormBuilder()
             ->add('organizacionAlias', 'entity', array(
                 'class' => 'pDevPracticasBundle:OrganizacionAlias',
+                'label' => 'Organización',
                 'property' => 'nombre',
                 'mapped' => false
             ))
@@ -416,14 +417,6 @@ class AlumnoPracticanteController extends Controller
         
         $entity = new AlumnoPracticante();
         $entity->setAlumno($alumno);
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto());  
         
         // Si hay una practica asociada, la adjuntamos
         if($id)
@@ -442,6 +435,12 @@ class AlumnoPracticanteController extends Controller
             $entity->setDuracionCantidad($practica->getDuracionCantidad());
             $entity->setDuracionUnidad($practica->getDuracionUnidad());
             $entity->setTipo($practica->getTipo());
+            $entity->setEstado(AlumnoPracticante::ESTADO_POSTULADO);
+            
+            $em->persist($entity);
+            $em->flush();
+            
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $entity->getId())));
         }
         elseif($idOrganizacionAlias)
         {
@@ -456,6 +455,14 @@ class AlumnoPracticanteController extends Controller
             $supervisor = $organizacion->getSupervisores()->last();
             
             $entity->setOrganizacionAlias($organizacionAlias);
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
             
             if($supervisor)
                 $entity->setSupervisor($supervisor);
@@ -1026,19 +1033,19 @@ class AlumnoPracticanteController extends Controller
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
         
-        // Verificamos que es el alumno, supervisor, contacto relacionado
+        // Verificamos que es el alumno relacionado
         if($pm->checkType("TYPE_ALUMNO") and $entity->hasAlumno($user->getPersona('TYPE_ALUMNO')))
             $isAlumno = true;
         
-        // Verificamos que es el alumno, supervisor, contacto relacionado
+        // Verificamos que es el supevisor relacionado
         if($pm->checkType("TYPE_PRACTICAS_SUPERVISOR") and $entity->hasSupervisor($user->getPersona('TYPE_PRACTICAS_SUPERVISOR')))
             $isSupervisor = true;
             
-        // Verificamos que es el alumno, supervisor, contacto relacionado
+        // Verificamos que es el contacto relacionado
         if($pm->checkType("TYPE_PRACTICAS_CONTACTO") and $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO')))
             $isContacto = true;
             
-        // Verificamos que es el alumno, supervisor, contacto relacionado
+        // Verificamos que es el profesor relacionado
         if($pm->checkType("TYPE_ACADEMICO") and $entity->hasAcademico($user->getPersona('TYPE_ACADEMICO')))
             $isAcademico = true;
             

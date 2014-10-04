@@ -18,16 +18,9 @@
         {{ form_widget(edit_form) }}
         <p class="pull-right">
             <button id="_submit" class="hide" type="submit">Guardar</button>
-            <a href="#form_delete" class="btn btn-warning submitform">Eliminar</a>
+            <a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="btn btn-default submitform">Volver</a>
             <a href="#form_practica" class="btn btn-primary submitform">Guardar cambios</a>
         </p>
         <div class="clearfix"></div>
     </form>
-
-    <form id="form_delete" class="hide" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post">
-        <input type="hidden" name="_method" value="DELETE" />
-        {{ form_widget(delete_form) }}
-        <button class="hide" id="_submit" type="submit">Eliminar</button>
-    </form>
-    
 {% endblock %}

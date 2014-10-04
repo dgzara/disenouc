@@ -2,28 +2,50 @@
 
 namespace pDev\PracticasBundle\Form;
 
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 class PracticaType extends AbstractType
 {
+    private $securityContext;
+
+    public function __construct(SecurityContext $securityContext)
+    {
+        $this->securityContext = $securityContext;
+    }
+    
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $user = $this->securityContext->getToken()->getUser();
         $builder
-            ->add('organizacionAlias', null, array(
-                'label' => 'Organización'
+            ->add('nombre')
+            ->add('organizacionAlias', 'entity', array(
+                'label' => 'Organización',
+                'class' => 'pDevPracticasBundle:OrganizacionAlias',
+                'query_builder' => function(EntityRepository $er) use($user) {
+                    return $er->createQueryBuilder('oa')
+                        ->leftJoin('oa.organizacion', 'o')
+                        ->leftJoin('o.contactos', 'c')
+                        ->leftJoin('c.usuario', 'u')
+                        ->where('u.id = :id')
+                        ->setParameter('id', $user->getId())
+                        ->orderBy('oa.nombre', 'ASC');
+                },
             ))
             ->add('contacto')
             ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
-                'label_attr' => array('data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
+                'label_attr' => array(  
+                    'data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
 
 - Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
                                         ))           

@@ -49,6 +49,7 @@
                         {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
                         {% elseif entity.estado == 'estado.aprobada' %}Aprobada
                         {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                        {% elseif entity.estado == 'estado.postulado' %}Postulado
                         {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
                         {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
                         {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
@@ -71,11 +72,11 @@
                         </a>
                     </td>
                 </tr> 
-                {% elseif isCoordinacion and entity.estado == 'estado.aceptada' %}
+                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.postulado' %}
                 <tr>
                     <td colspan=2>
                         <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
-                            <span class="glyphicon glyphicon-ok"></span> Autorizar práctica
+                            <span class="glyphicon glyphicon-ok"></span> Aceptar alumno
                         </a>
                     </td>
                 </tr>    
