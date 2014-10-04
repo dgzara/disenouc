@@ -11,12 +11,9 @@
 {% endblock %}
 
 {% block header%}Alumnos{%endblock%}
-{% block lead%}{{total}} alumnos en el sistema{%endblock%}
+{% block lead%}{{ pagination.getTotalItemCount }} alumnos en el sistema{%endblock%}
 
 {% block content %}
-{% set orderBy = app.request.get('orderBy') %}
-    {% set order = app.request.get('order') %}
-    {% set defaultorder = 'asc' %}
     <div id="div_periodo" class="hide" style="margin:0">
         <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -44,7 +41,7 @@
             <a href="{{ path('persona_new', {'tipo':'alumnos'}) }}" class="btn btn-primary onmodal"><span class="glyphicon glyphicon-plus"></span> Crear alumno</a>
             <a href="{{ path('importa_alumnos_upload') }}" class="btn btn-primary onmodal">Importar</a>
             <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
-            <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
+            <a href="{{ path('persona_alumnos_excel',{'periodo':app.request.get('periodo')}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
         <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_alumnos_buscar') }}" method="post" {{ form_enctype(search_form) }}>
               {{ form_widget(search_form.querystring) }}
@@ -56,66 +53,31 @@
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>
-                    {% if orderBy == 'nombres' and order == 'asc' %}
-                        {% set defaultorder = 'desc' %}
-                    {% else %}
-                        {% set defaultorder = 'asc' %}
-                    {% endif %}
-                    Nombres 
+                <th{% if pagination.isSorted('p.nombres') %} class="sorted"{% endif %}>
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
-                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                    </a>
+                    {{ knp_pagination_sortable(pagination, 'Nombres', 'p.nombres') }}
                     {% endif %}
                 </th>
-                <th>
-                    {% if orderBy == 'apellidoPaterno' and order == 'asc' %}
-                        {% set defaultorder = 'desc' %}
-                    {% else %}
-                        {% set defaultorder = 'asc' %}
-                    {% endif %}
-
-                        Apellido paterno
+                <th{% if pagination.isSorted('p.apellidoPaterno') %} class="sorted"{% endif %}>
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
-                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                    </a>
+                    {{ knp_pagination_sortable(pagination, 'Apellido Paterno', 'p.apellidoPaterno') }}
                     {% endif %}
                 </th>
-                <th>
-                    {% if orderBy == 'apellidoMaterno' and order == 'asc' %}
-                        {% set defaultorder = 'desc' %}
-                    {% else %}
-                        {% set defaultorder = 'asc' %}
-                    {% endif %}
-
-                        Apellido materno
+                <th{% if pagination.isSorted('p.apellidoMaterno') %} class="sorted"{% endif %}>
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
-                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                    </a>
+                    {{ knp_pagination_sortable(pagination, 'Apellido Matenro', 'p.apellidoMaterno') }}
                     {% endif %}
                 </th>
-                <th>
-                    {% if orderBy == 'email' and order == 'asc' %}
-                        {% set defaultorder = 'desc' %}
-                    {% else %}
-                        {% set defaultorder = 'asc' %}
-                    {% endif %}
-
-                        Email UC
+                <th{% if pagination.isSorted('p.email') %} class="sorted"{% endif %}>
                     {% if search_form.querystring.vars.value == '' %}
-                    <a href="{{ path('persona_alumnos_page',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'email'}) }}">
-                        <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                    </a>
+                    {{ knp_pagination_sortable(pagination, 'Email UC', 'p.email') }}
                     {% endif %}
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-        {% for entity in alumnos %}
+        {% for entity in pagination %}
             <tr>
                 <td>{{ entity.nombres }}</td>
                 <td>{{ entity.apellidoPaterno }}</td>
@@ -124,27 +86,17 @@
                 <td><a href="{{ path('persona_show',{'id':entity.id ,'tipo':'alumno'}) }}">Ver</a></td>
             </tr>
         {% else %}
-                <tr>
-                    <td colspan=5>
-                        <div class="text-center">No hay alumnos registrados</div>
-                    </td>
-                </tr>
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No hay alumnos registrados</div>
+                </td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
-    {% if siguiente or anterior %}
-    <div class="pager">
-        <ul>
-            {%if anterior %}
-            <li><a href="{{ path('persona_alumnos_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
-            {% endif%}
-            
-            {%if siguiente %}
-            <li><a href="{{ path('persona_alumnos_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
-            {% endif%}
-        </ul>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
     </div>
-{% endif %}
 {% endblock %}
 
 {% block javascriptload %}

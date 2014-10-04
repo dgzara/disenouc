@@ -1,40 +1,37 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
-{%block breadcrumb%}
-{{parent()}}
-                <li class="active"><a href="{{ path('practicas_evaluacion') }}">Evaluaciones</a></li>
-{%endblock%}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="active"><a href="{{ path('practicas_evaluacion') }}">Evaluaciones</a></li>
+{% endblock %}
 
 
 {%block header%}Evaluaciones{%endblock%}
 {%block lead%}Sólo alumnos inscritos en curso{%endblock%}
 
-{%block content %}
-<div id="div_periodo" class="hide" style="margin:0">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Seleccionar periodo</h3>
+{% block content %}
+    <div id="div_periodo" class="hide" style="margin:0">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Seleccionar periodo</h3>
+        </div>
+        <div class="modal-body">
+            <form id="form_periodo" class="form-horizontal" action="{{ path('practicas_evaluacion') }}" method="post" {{ form_enctype(period_form) }}>
+                <div class="control-group" style="margin:0">
+                    {{ form_label(period_form.periodo) }}
+                    <div class="controls">
+                        {{ form_widget(period_form.periodo) }}
+                        <button type="submit" id="_submit" class="hide"></button>
+                
+                    </div></div>
+                {{ form_rest(period_form) }}          
+            </form>
+        </div>
+        <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
+        </div>
     </div>
-    <div class="modal-body">
-        <form id="form_periodo" class="form-horizontal" action="{{ path('practicas_evaluacion') }}" method="post" {{ form_enctype(period_form) }}>
-            <div class="control-group" style="margin:0">
-                {{ form_label(period_form.periodo) }}
-                <div class="controls">
-                    {{ form_widget(period_form.periodo) }}
-                    <button type="submit" id="_submit" class="hide"></button>
-            
-                </div></div>
-            {{ form_rest(period_form) }}          
-        </form>
-    </div>
-    <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-    <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
-    </div>
-</div>
-{% set orderBy = app.request.get('orderBy') %}
-{% set order = app.request.get('order') %}
-{% set defaultorder = 'asc' %}
     <div id="form_ordenar" class="well clearfix no-margin">
         <div class="btn-group">
             <a href="{{ path('practicas_evaluacion_criterios') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Criterios de evaluación</a>        
@@ -43,57 +40,21 @@
             <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
         </div>
             <div class="btn-group">
-            <a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':'excel','order':order,'orderBy':orderBy}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
+            <a href="{{ path('practicas_evaluacion_excel',{'periodo':app.request.get('periodo')}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
     </div>
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Practicante
-                        {% if orderBy == 'practicante' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        <a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'practicante'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a></th>
-                <th>Profesor evaluador
-                {% if orderBy == 'profesor' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        <a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'profesor'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a></th>
-                <th>Supervisor organización
-                {% if orderBy == 'supervisor' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        <a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'supervisor'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a></th>
-                <th>Nota final
-                {% if orderBy == 'nota' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-                        
-                        <a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':1,'order':defaultorder,'orderBy':'nota'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a></th>
+                <th{% if pagination.isSorted('a.apellidoPaterno') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Practicante', 'a.apellidoPaterno') }}</th>
+                <th{% if pagination.isSorted('prof2.apellidoPaterno') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Profesor evaluador', 'prof2.apellidoPaterno') }}</th>
+                <th{% if pagination.isSorted('s.apellidoPaterno') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Supervisor organización', 'a.title') }}</th>
+                <th{% if pagination.isSorted('evaluacion.notaFinal') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nota final', 'a.title') }}</th>
                 <th>···</th>                
             </tr>
         </thead>
         <tbody>
-        {% for practicante in practicantes %}
+        {% for practicante in pagination %}
             <tr>
                 <td>
                     {{ practicante.alumno.nombreCompleto }}
@@ -140,18 +101,8 @@
         {% endfor %}
         </tbody>
     </table>
-{% if siguiente or anterior %}
-<div class="pager">
-    <ul>
-        {%if anterior %}
-        <li><a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
-        {% endif%}
-        
-        {%if siguiente %}
-        <li><a href="{{ path('practicas_evaluacion',{'periodo':app.request.get('periodo'),'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
-        {% endif%}
-    </ul>
-</div>
-{% endif %}
-    
-    {% endblock %}
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

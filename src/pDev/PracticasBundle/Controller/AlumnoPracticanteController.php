@@ -97,27 +97,6 @@ class AlumnoPracticanteController extends Controller
             $fecha2 .= '07-14 00:00:00';
         }
         
-        if(!$page or !$orderBy or !$order)
-        {
-            return $this->redirect($this->generateUrl('practicas_alumno',array('estado'=>$estado,'periodo'=>$periodo,'page'=>1,'orderBy'=>'fechaInicio','order'=>'asc')));
-        }
-                
-        if($orderBy!='tipo' and $orderBy!='organizacion' and $orderBy!='fechaInicio' and $orderBy!='alumno')
-            throw $this->createNotFoundException();
-        else
-            $orderBy = 'p.'.$orderBy;
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        $excel = null;
-        if($page ==='excel')
-        {
-            $page = 1;
-            $excel = true;
-        }
-        $page = !$page?1:intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $isExterno = $user->getExternal();
         $isAlumno = $pm->checkType("TYPE_ALUMNO");
         $isSupervisor = $pm->checkType("TYPE_PRACTICAS_SUPERVISOR");
@@ -198,101 +177,7 @@ class AlumnoPracticanteController extends Controller
             
         }
         
-        $entities = $consulta->setParameter('fecha1', $fecha1)->setParameter('fecha2', $fecha2);
-        $entities2 = $entities->getQuery()->getResult();
-        $count = count($entities2);
-        $anterior = $offset>0?$page-1:false;
-        $siguiente = $page*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        if($orderBy==='p.organizacion')
-        {
-            $orderBy = 'oa.nombre';            
-        }
-        
-        if($orderBy==='p.alumno')
-        {
-            $orderBy = 'a.apellidoPaterno';            
-        }
-        
-        if(!$excel)
-        {
-            $entities = $entities->orderBy($orderBy, $order)
-                        ->setFirstResult( $offset )
-                        ->setMaxResults( $limit )
-                        ->getQuery()
-                        ->getResult();
-        }
-        else
-        {
-            $entities = $entities->orderBy($orderBy, $order)                    
-                    ->getQuery()
-                    ->getResult();
-            $excelService = $this->get('xls.service_xls2007');
-
-            $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
-                                ->setTitle('Practicas')
-                                ->setSubject('');
-
-            $excelService->excelObj->setActiveSheetIndex(0);
-            $ec = 0;
-            $ef = 1;
-
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ALUMNO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'NUMERO ALUMNO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'TIPO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ORGANIZACION');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA INICIO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA TERMINO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ESTADO');
-            $ec++;
-
-            $ef++;
-            $ec = 0;    
-            foreach($entities as $entity)
-            {
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNombreCompleto());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNumeroAlumno());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getTipo());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacionAlias()->getNombre());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaInicio(),'d-m-Y'));
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaTermino(),'d-m-Y'));
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getEstado());
-                $ec++;
-
-                $ef++;
-                $ec = 0;
-            }
-
-            $nombrearchivo = 'exportar';
-
-            $response = $excelService->getResponse();
-            $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-            $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
-
-            // If you are using a https connection, you have to set those two headers for compatibility with IE <9
-            $response->headers->set('Pragma', 'public');
-            $response->headers->set('Cache-Control', 'maxage=1');
-            return $response; 
-        
-        }
-        
+        $query = $consulta->setParameter('fecha1', $fecha1)->setParameter('fecha2', $fecha2);
         $estados = array(
             array('nombre'=>'Pendiente','identificador'=>'pendiente'),
             array('nombre'=>'Enviada','identificador'=>'enviada'),
@@ -306,18 +191,94 @@ class AlumnoPracticanteController extends Controller
             array('nombre'=>'Informe entregado','identificador'=>'informe'),
             array('nombre'=>'Evaluada','identificador'=>'evaluada'),
         );
+        
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
                 
         return array(
-            'entities' => $entities,
+            'pagination' => $pagination,
             'isExterno'=> $isExterno,
             'idAlumno'  => $isAlumno?$alumno->getId():false,
             'isAlumno' => $isAlumno,
             'isSupervisor'=> $isSupervisor,            
             'period_form'=>$periodo_form->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente,
             'estados' => $estados
         );
+    }
+    
+    /**
+     * Lists all AlumnoPracticante entities.
+     *
+     * @Route("/excel/{estado}/{periodo}", name="practicas_alumno_excel")
+     * @Template()
+     */
+    public function excelAction(Reuqest $request)
+    {
+        $entities = $entities->orderBy($orderBy, $order)                    
+                ->getQuery()
+                ->getResult();
+        $excelService = $this->get('xls.service_xls2007');
+
+        $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
+                            ->setTitle('Practicas')
+                            ->setSubject('');
+
+        $excelService->excelObj->setActiveSheetIndex(0);
+        $ec = 0;
+        $ef = 1;
+
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ALUMNO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'NUMERO ALUMNO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'TIPO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ORGANIZACION');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA INICIO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'FECHA TERMINO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,'ESTADO');
+        $ec++;
+
+        $ef++;
+        $ec = 0;    
+        foreach($entities as $entity)
+        {
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNombreCompleto());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getAlumno()->getNumeroAlumno());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getTipo());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacionAlias()->getNombre());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaInicio(),'d-m-Y'));
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaTermino(),'d-m-Y'));
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getEstado());
+            $ec++;
+
+            $ef++;
+            $ec = 0;
+        }
+
+        $nombrearchivo = 'exportar';
+
+        $response = $excelService->getResponse();
+        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
+
+        // If you are using a https connection, you have to set those two headers for compatibility with IE <9
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'maxage=1');
+        return $response; 
     }
     
     /**

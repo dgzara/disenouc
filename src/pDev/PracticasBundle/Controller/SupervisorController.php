@@ -29,11 +29,18 @@ class SupervisorController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $dql   = "SELECT s FROM pDevPracticasBundle:Supervisor s";
+        $query = $em->createQuery($dql);
 
-        $entities = $em->getRepository('pDevPracticasBundle:Supervisor')->findAll();
-
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+        
         return array(
-            'entities' => $entities,
+            'pagination' => $pagination,
         );
     }
     

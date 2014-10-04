@@ -29,7 +29,7 @@ class Practica
     /**
      * @var string
      *
-     * @ORM\Column(name="tipo", type="string", length=255)
+     * @ORM\Column(name="tipo", type="string", length=255, nullable=true)
      */
     private $tipo;
 

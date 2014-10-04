@@ -28,7 +28,8 @@
         "liuggio/ExcelBundle": "v1.0.4",
         "besimple/sso-auth-bundle": "1.0.*@dev",
         "knplabs/knp-snappy-bundle": "dev-master",
-        "friendsofsymfony/jsrouting-bundle": "@stable"
+        "friendsofsymfony/jsrouting-bundle": "@stable",
+        "knplabs/knp-paginator-bundle": "2.4.*@dev"
     },
     "scripts": {
         "post-install-cmd": [

@@ -34,135 +34,105 @@ class OrganizacionController extends Controller
         $user = $pm->getUser();
         $em = $this->getDoctrine()->getManager();
 
-        if(!$page or !$orderBy or !$order)
-        {
-            return $this->redirect($this->generateUrl('practicas_organizacion',array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
-        }
-        
-        if($orderBy!='nombres' and $orderBy!='rut' and $orderBy!='rubro')
-            throw $this->createNotFoundException();
-        else
-            $orderBy = 'p.'.$orderBy;
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-       $excel = null;
-        if($page ==='excel')
-        {
-            $page = 1;
-            $excel = true;
-        }
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
-        $qb = $em->getRepository('pDevPracticasBundle:Organizacion')->createQueryBuilder('p');
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-        
-        $anterior = $offset>0?$page-1:false;
-        $siguiente = $page*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        if($orderBy==='p.nombres')
-            $orderBy = 'alias.nombre';
-        
-        $results = $qb->select('p')
-                    ->leftJoin('p.aliases','alias');
-        
-        if(!$excel)
-        {
-            $results = $results->orderBy($orderBy, $order)
-                ->setFirstResult( $offset )
-                ->setMaxResults( $limit )
-                ->getQuery()
-                ->getResult();
-        }
-        else
-        {
-            $entities = $results->orderBy($orderBy, $order)                    
-                ->getQuery()
-                ->getResult();
-            $excelService = $this->get('xls.service_xls2007');
+        $dql   = "SELECT o 
+                  FROM pDevPracticasBundle:Organizacion o
+                  LEFT JOIN o.aliases a";
+        $query = $em->createQuery($dql);
 
-            $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
-                                ->setTitle('Practicas')
-                                ->setSubject('');
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
 
-            $excelService->excelObj->setActiveSheetIndex(0);
-            $ec = 0;
-            $ef = 1;
-
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NOMBRES');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUT');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUBRO');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'PAIS');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'WEB');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ANTIGUEDAD');
-            $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO PERSONAS');
-            $ec++;
-            
-            $ef++;
-            $ec = 0;    
-            foreach($entities as $entity)
-            {
-                $nombres = '';
-                foreach($entity->getAliases() as $alias)
-                {
-                    $nombres .= $alias->getNombre().', ';
-                }
-                
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nombres);
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRut());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRubro());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPais());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getWeb());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAntiguedad());
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPersonasTotal());
-                $ec++;
-                
-
-                $ef++;
-                $ec = 0;
-            }
-
-            $nombrearchivo = 'exportar';
-
-            $response = $excelService->getResponse();
-            $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-            $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
-
-            // If you are using a https connection, you have to set those two headers for compatibility with IE <9
-            $response->headers->set('Pragma', 'public');
-            $response->headers->set('Cache-Control', 'maxage=1');
-            return $response; 
-        }
-        
         return array(
-            'entities' => $results,
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
+            'pagination' => $pagination,
         );
     }
     
+    /**
+     * Lists all Organizacion entities.
+     *
+     * @Route("/excel", name="practicas_excel")
+     * @Method("GET")
+     * @Template()
+     */
+    public function excelAction()
+    {
+        $pm = $this->get("permission.manager");
+        $user = $pm->getUser();
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $results->orderBy($orderBy, $order)                    
+            ->getQuery()
+            ->getResult();
+        $excelService = $this->get('xls.service_xls2007');
+
+        $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
+                            ->setTitle('Practicas')
+                            ->setSubject('');
+
+        $excelService->excelObj->setActiveSheetIndex(0);
+        $ec = 0;
+        $ef = 1;
+
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NOMBRES');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUT');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'RUBRO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'PAIS');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'WEB');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ANTIGUEDAD');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO PERSONAS');
+        $ec++;
+        
+        $ef++;
+        $ec = 0;    
+        foreach($entities as $entity)
+        {
+            $nombres = '';
+            foreach($entity->getAliases() as $alias)
+            {
+                $nombres .= $alias->getNombre().', ';
+            }
+            
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nombres);
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRut());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRubro());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPais());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getWeb());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getAntiguedad());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getPersonasTotal());
+            $ec++;
+            
+
+            $ef++;
+            $ec = 0;
+        }
+
+        $nombrearchivo = 'exportar';
+
+        $response = $excelService->getResponse();
+        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
+
+        // If you are using a https connection, you have to set those two headers for compatibility with IE <9
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'maxage=1');
+        return $response; 
+    }
     
     /**
      * Creates a new Organizacion entity.

@@ -11,121 +11,69 @@
 {% endblock %}
 
 {%block header%}Académicos{%endblock%}
-{%block lead%}{{total}} académicos registrados en el sistema{%endblock%}
+{%block lead%}{{ pagination.getTotalItemCount }} académicos registrados en el sistema{%endblock%}
 
 {%block content %}
-
-        
-        <div id="form_ordenar" class="well clearfix" style="margin:0">
-            <a href="{{ path('importa_profesores_upload') }}" class="btn btn-primary onmodal">Importar</a>
-            <a href="{{ path('persona_new',{'tipo':'profesores'}) }}" class="pull-left btn onmodal"><span class="glyphicon glyphicon-plus"></span> Crear nuevo académico</a>
-            <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_profesores_buscar') }}" method="post" {{ form_enctype(search_form) }}>
-                  {{ form_widget(search_form.querystring) }}
-                  {{ form_rest(search_form) }}
-                  <button type="submit" id="_submit" class="hide"></button>
-                  <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
-            </form>   
-            {% set orderBy = app.request.get('orderBy') %}
-            {% set order = app.request.get('order') %}
-            {% set defaultorder = 'asc' %}
-        </div>
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        <a href="{{ path('importa_profesores_upload') }}" class="btn btn-primary onmodal">Importar</a>
+        <a href="{{ path('persona_new',{'tipo':'profesores'}) }}" class="pull-left btn onmodal"><span class="glyphicon glyphicon-plus"></span> Crear nuevo académico</a>
+        <form id="form_buscar" class="pull-right form-search" style="margin:0" action="{{ path('persona_profesores_buscar') }}" method="post" {{ form_enctype(search_form) }}>
+              {{ form_widget(search_form.querystring) }}
+              {{ form_rest(search_form) }}
+              <button type="submit" id="_submit" class="hide"></button>
+              <a href="#form_buscar" class="btn btn-primary submitform"><span class="glyphicon glyphicon-search"></span></a>
+        </form>   
+    </div>
     <table class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>
-                        {% if orderBy == 'nombres' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-
-                        Nombres
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_profesores_page',{'page':1,'order':defaultorder,'orderBy':'nombres'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'apellidoPaterno' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-
-                            Apellido paterno
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_profesores_page',{'page':1,'order':defaultorder,'orderBy':'apellidoPaterno'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'apellidoMaterno' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-
-                            Apellido materno
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_profesores_page',{'page':1,'order':defaultorder,'orderBy':'apellidoMaterno'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if orderBy == 'email' and order == 'asc' %}
-                            {% set defaultorder = 'desc' %}
-                        {% else %}
-                            {% set defaultorder = 'asc' %}
-                        {% endif %}
-
-                            Email UC
-                        {% if search_form.querystring.vars.value == '' %}
-                        <a href="{{ path('persona_profesores_page',{'page':1,'order':defaultorder,'orderBy':'email'}) }}">
-                            <span title="Reordenar" class="glyphicon glyphicon-sort-by-alphabet{% if defaultorder == 'desc'%}-alt{%endif%}"></span>
-                        </a>
-                        {% endif %}
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for entity in profesores %}
-                <tr>
-                    <td>{{ entity.nombres }}</td>
-                    <td>{{ entity.apellidoPaterno }}</td>
-                    <td>{{ entity.apellidoMaterno }}</td>
-                    <td>{% if entity.email %}{{ entity.email }}{% else %}<a href="{{ path('persona_email',{'tipo':'profesores','idPersona':entity.id}) }}" class="onmodal">Asignar email UC</a>{% endif %}</td>
-                    <td>
-                            <a href="{{ path('persona_show',{'id':entity.id,'tipo':'academico'}) }}">Ver</a><br>
-                            <a href="{{ path('persona_edit',{'tipo':'profesores','idPersona':entity.id}) }}" class="onmodal">Modificar</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan=5>
-                        <div class="text-center">No hay académicos registrados</div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% if siguiente or anterior %}
-<div class="pager">
-    <ul>
-        {%if anterior %}
-        <li><a href="{{ path('persona_profesores_page',{'page':anterior,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">← Anterior</a></li>
-        {% endif%}
-        
-        {%if siguiente %}
-        <li><a href="{{ path('persona_profesores_page',{'page':siguiente,'order':app.request.get('order'),'orderBy':app.request.get('orderBy')}) }}">Siguiente →</a></li>
-        {% endif%}
-    </ul>
-</div>
-{% endif %}
-    
+        <thead>
+            <tr>
+                <th{% if pagination.isSorted('p.nombres') %} class="sorted"{% endif %}>
+                    {% if search_form.querystring.vars.value == '' %}
+                    {{ knp_pagination_sortable(pagination, 'Nombres', 'p.nombres') }}
+                    {% endif %}
+                </th>
+                <th{% if pagination.isSorted('p.apellidoPaterno') %} class="sorted"{% endif %}>
+                    {% if search_form.querystring.vars.value == '' %}
+                    {{ knp_pagination_sortable(pagination, 'Apellido Paterno', 'p.apellidoPaterno') }}
+                    {% endif %}
+                </th>
+                <th{% if pagination.isSorted('p.apellidoMaterno') %} class="sorted"{% endif %}>
+                    {% if search_form.querystring.vars.value == '' %}
+                    {{ knp_pagination_sortable(pagination, 'Apellido Matenro', 'p.apellidoMaterno') }}
+                    {% endif %}
+                </th>
+                <th{% if pagination.isSorted('p.email') %} class="sorted"{% endif %}>
+                    {% if search_form.querystring.vars.value == '' %}
+                    {{ knp_pagination_sortable(pagination, 'Email', 'p.email') }}
+                    {% endif %}
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in pagination %}
+            <tr>
+                <td>{{ entity.nombres }}</td>
+                <td>{{ entity.apellidoPaterno }}</td>
+                <td>{{ entity.apellidoMaterno }}</td>
+                <td>{% if entity.email %}{{ entity.email }}{% else %}<a href="{{ path('persona_email',{'tipo':'profesores','idPersona':entity.id}) }}" class="onmodal">Asignar email UC</a>{% endif %}</td>
+                <td>
+                    <a href="{{ path('persona_show',{'id':entity.id,'tipo':'academico'}) }}">Ver</a><br>
+                    <a href="{{ path('persona_edit',{'tipo':'profesores','idPersona':entity.id}) }}" class="onmodal">Modificar</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan=5>
+                    <div class="text-center">No hay académicos registrados</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>    
 {% endblock %}
 
 {% block javascriptload %}

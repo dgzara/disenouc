@@ -18,15 +18,15 @@
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Rut</th>
-                <th>Email</th>
-                <th>Cargo</th>
+                <th{% if pagination.isSorted('s.apellidoPaterno') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nombres', 's.apellidoPaterno') }}</th>
+                <th{% if pagination.isSorted('s.rut') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'RUT', 's.rut') }}</th>
+                <th{% if pagination.isSorted('s.email') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nombres', 's.email') }}</th>
+                <th{% if pagination.isSorted('s.apellidoP') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Cargo', 's.cargo') }}</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for entity in pagination %}
             <tr>
                 <td>{{ entity.nombres }} {{ entity.apellidoPaterno }} {{ entity.apellidoMaterno }}</td>
                 <td>{{ entity.rut }}</td>
@@ -52,4 +52,8 @@
         {% endfor %}
         </tbody>
     </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 {% endblock %}

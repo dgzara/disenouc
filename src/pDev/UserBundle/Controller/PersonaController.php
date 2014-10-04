@@ -102,52 +102,28 @@ class PersonaController extends Controller
      * @Method("GET")
      * @Template("pDevUserBundle:Persona:index.html.twig")
      */
-    public function indexPageAction($page,$orderBy,$order)
+    public function indexPageAction()
     {
         $pm = $this->get("permission.manager");
         $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_PERSONAS");
         
         $em = $this->getDoctrine()->getManager();
-        
-        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
-            throw $this->createNotFoundException();
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $sh = $this->get("search.helper");
         $searchform = $this->createSearchPersonasForm('Buscar personas');
         
-        $qb = $em->getRepository('pDevUserBundle:Persona')->createQueryBuilder('p');
+        $query = $em->getRepository('pDevUserBundle:Persona')->createQueryBuilder('p');
         
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-                
-        $anterior = $offset>0?$page-1:false;
-        $siguiente = $page*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        $results = $qb->select('p')
-                    ->orderBy('p.'.$orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-        
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
         return array(
-            'entities' => $results,
+            'pagination' => $pagination,
             'total' => $count,
             'search_form'=>$searchform->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
         );
     }
     
@@ -267,43 +243,10 @@ class PersonaController extends Controller
         
         $periodo_form = $this->createPeriodForm($periodo);
         
-        if(!$page or !$orderBy or !$order)
-        {
-            return $this->redirect($this->generateUrl('persona_alumnos_page',array('periodo'=>$periodo,'page'=>1,'orderBy'=>'nombres','order'=>'asc')));
-        }
-        
-        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
-            throw $this->createNotFoundException();
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-       $excel = null;
-        if($page ==='excel')
-        {
-            $page = 1;
-            $excel = true;
-        }
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $sh = $this->get("search.helper");
         $searchform = $this->createSearchPersonasForm('Buscar alumnos','números de alumno');
         
         $qb = $em->getRepository('pDevUserBundle:Alumno')->createQueryBuilder('p');
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-        
-        $anterior = $offset>0?$page-1:false;
-        $siguiente = $page*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
         $results = $qb->select('p');
         
         if($periodo !== 'todos')
@@ -314,75 +257,74 @@ class PersonaController extends Controller
                        ->setParameter('year',$year);
         }
         
-        
-        
-        if(!$excel)
-            {
-                $results = $results->orderBy('p.'.$orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-            }
-            else
-            {
-                $entities = $results->orderBy('p.'.$orderBy, $order)                    
-                    ->getQuery()
-                    ->getResult();
-                $excelService = $this->get('xls.service_xls2007');
-
-                $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
-                                    ->setTitle('Practicas')
-                                    ->setSubject('');
-
-                $excelService->excelObj->setActiveSheetIndex(0);
-                $ec = 0;
-                $ef = 1;
-
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ALUMNO');
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO ALUMNO');
-                $ec++;
-                $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'EMAIL UC');
-                $ec++;
-                
-                $ef++;
-                $ec = 0;    
-                foreach($entities as $entity)
-                {
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getNombreCompleto());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getNumeroAlumno());
-                    $ec++;
-                    $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getEmail());
-                    
-                    $ec++;
-
-                    $ef++;
-                    $ec = 0;
-                }
-
-                $nombrearchivo = 'exportar';
-
-                $response = $excelService->getResponse();
-                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-                $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
-
-                // If you are using a https connection, you have to set those two headers for compatibility with IE <9
-                $response->headers->set('Pragma', 'public');
-                $response->headers->set('Cache-Control', 'maxage=1');
-                return $response; 
-
-            }
-
-        return array(
-            'alumnos' => $results,
-            'period_form'=>$periodo_form->createView(),
-            'total' => $count,
-            'search_form'=>$searchform->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $results,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
         );
+        
+        return array(
+            'pagination' => $pagination,
+            'period_form'=>$periodo_form->createView(),
+            'search_form'=>$searchform->createView(),
+        );
+    }
+    
+    /**
+     * Lists all Alumnos entities.
+     *
+     * @Route("/alumnos/excel/{periodo}", name="persona_alumnos_excel")
+     * @Template("pDevUserBundle:Persona:alumnos.html.twig")
+     */
+    public function excelAlumnosAction(Request $request)
+    {
+        $entities = $results->orderBy('p.'.$orderBy, $order)                    
+            ->getQuery()
+            ->getResult();
+        $excelService = $this->get('xls.service_xls2007');
+
+        $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
+                            ->setTitle('Practicas')
+                            ->setSubject('');
+
+        $excelService->excelObj->setActiveSheetIndex(0);
+        $ec = 0;
+        $ef = 1;
+
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'ALUMNO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'NUMERO ALUMNO');
+        $ec++;
+        $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,'EMAIL UC');
+        $ec++;
+        
+        $ef++;
+        $ec = 0;    
+        foreach($entities as $entity)
+        {
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getNombreCompleto());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getNumeroAlumno());
+            $ec++;
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getEmail());
+            
+            $ec++;
+
+            $ef++;
+            $ec = 0;
+        }
+
+        $nombrearchivo = 'exportar';
+
+        $response = $excelService->getResponse();
+        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename='.$nombrearchivo.'.xlsx');
+
+        // If you are using a https connection, you have to set those two headers for compatibility with IE <9
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'maxage=1');
+        return $response; 
     }
     
     /**
@@ -471,50 +413,26 @@ class PersonaController extends Controller
         
         $em = $this->getDoctrine()->getManager();
 
-        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
-            throw $this->createNotFoundException();
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $sh = $this->get("search.helper");
         $searchform = $this->createSearchPersonasForm('Buscar académicos');
         
-        $qb = $em->getRepository('pDevUserBundle:Profesor')->createQueryBuilder('p');
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-        
-        $anterior = $offset>0?$page-1:false;
-        $siguiente = $page*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        $results = $qb->select('p')
-                    ->orderBy('p.'.$orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-        
+        $query = $em->getRepository('pDevUserBundle:Profesor')->createQueryBuilder('p');
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+    
         $profesoressinuc = $em->getRepository('pDevUserBundle:Persona')->findBy(array('tipo'=>'TYPE_ACADEMICO','email'=>null));
         
         $aliases = $em->getRepository('pDevUserBundle:ProfesorAlias')->findByProfesor(null);
 
         return array(
-            'profesores' => $results,
+            'pagination' => $pagination,
             'profesoressinuc' => $profesoressinuc,
             'aliases' => $aliases,
-            'total' => $count,
             'search_form'=>$searchform->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
         );
     }
     
@@ -598,46 +516,21 @@ class PersonaController extends Controller
         $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_PERSONAS");
         
         $em = $this->getDoctrine()->getManager();
-
-        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
-            throw $this->createNotFoundException();
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $sh = $this->get("search.helper");
         $searchform = $this->createSearchPersonasForm('Buscar funcionarios');
         
-        $qb = $em->getRepository('pDevUserBundle:Funcionario')->createQueryBuilder('p');
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-        $anterior = ($page - 1)*$limit>0?$page-1:false;
-        $siguiente = ($page + 1)*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        $results = $qb->select('p')
-                    ->orderBy('p.'.$orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-        
-        return array(
-            'funcionarios' => $results,
-            'total' => $count,
-            'search_form'=>$searchform->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
+        $query = $em->getRepository('pDevUserBundle:Funcionario')->createQueryBuilder('p');
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
         );
         
+        return array(
+            'pagination' => $pagination,
+            'search_form'=>$searchform->createView(),
+        );
     }
     
     /**
@@ -716,44 +609,20 @@ class PersonaController extends Controller
         $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_CONTACTOS");
         
         $em = $this->getDoctrine()->getManager();
-
-        if($orderBy!='nombres' and $orderBy!='apellidoPaterno' and $orderBy!='apellidoMaterno' and $orderBy!='email')
-            throw $this->createNotFoundException();
-        if($order!='asc' and $order!='desc')
-            throw $this->createNotFoundException();
-        
-        $page = intval($page);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-        
         $sh = $this->get("search.helper");
         $searchform = $this->createSearchPersonasForm('Buscar contactos');
         
-        $qb = $em->getRepository('pDevPracticasBundle:Contacto')->createQueryBuilder('p');
-        $count = $qb->select('COUNT(p)')
-                    ->getQuery()
-                    ->getSingleScalarResult();
-        $anterior = ($page - 1)*$limit>0?$page-1:false;
-        $siguiente = ($page + 1)*$limit<$count?$page + 1:false;
-        
-        if($offset>$count or $page < 1)
-        {
-            throw $this->createNotFoundException();
-        }
-        
-        $results = $qb->select('p')
-                    ->orderBy('p.'.$orderBy, $order)
-                    ->setFirstResult( $offset )
-                    ->setMaxResults( $limit )
-                    ->getQuery()
-                    ->getResult();
-        
+        $query = $em->getRepository('pDevPracticasBundle:Contacto')->createQueryBuilder('p');
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+    
         return array(
-            'contactos' => $results,
-            'total' => $count,
+            'pagination' => $pagination,
             'search_form'=>$searchform->createView(),
-            'anterior'=>$anterior,
-            'siguiente'=>$siguiente
         );
     }
     
