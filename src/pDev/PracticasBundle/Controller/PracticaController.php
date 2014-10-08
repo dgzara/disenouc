@@ -342,7 +342,8 @@ class PracticaController extends Controller
             throw $this->createNotFoundException('Unable to find Practica entity.');
         }
 
-        $editForm = $this->createForm(new PracticaType(), $entity);
+        $securityContext = $this->container->get('security.context');
+        $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
@@ -370,7 +371,8 @@ class PracticaController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new PracticaType(), $entity);
+        $securityContext = $this->container->get('security.context');
+        $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $editForm->submit($request);
 
         if ($editForm->isValid()) {

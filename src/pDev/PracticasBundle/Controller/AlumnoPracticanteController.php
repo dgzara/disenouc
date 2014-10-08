@@ -21,6 +21,7 @@ use pDev\PracticasBundle\Entity\EvaluacionProfesor;
 use pDev\PracticasBundle\Entity\Criterio;
 use pDev\PracticasBundle\Entity\Desafio;
 use pDev\PracticasBundle\Entity\Proyecto;
+use pDev\PracticasBundle\Entity\Practica;
 
 use pDev\PracticasBundle\Form\AlumnoPracticanteType;
 use pDev\PracticasBundle\Form\AlumnoType;
