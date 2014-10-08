@@ -704,7 +704,7 @@ class Practica
     {
         return $this->practicantes->filter(
             function($entry) {
-               return $entry->getEstado() === AlumnoPracticante::ESTADO_ACEPTADA;
+               return $entry->getEstado() !== AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
             }
         );   
     }

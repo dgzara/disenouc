@@ -45,11 +45,13 @@
             <tbody>
                 <tr>
                     <th>Estado</th>
-                    <td>{% if entity.estado == 'estado.pendiente' %}Pendiente de envío
+                    <td>
+                        {% if entity.estado == 'estado.postulado' %}Postulado
+                        {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada
+                        {% elseif entity.estado == 'estado.pendiente' %}Pendiente de envío
                         {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
                         {% elseif entity.estado == 'estado.aprobada' %}Aprobada
                         {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                        {% elseif entity.estado == 'estado.postulado' %}Postulado
                         {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
                         {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
                         {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
@@ -64,7 +66,15 @@
                     <th>Observaciones</th>
                     <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
                 </tr> 
-                {% if (isCoordinacion and entity.estado == 'estado.enviada') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
+                {% if isAlumno and entity.estado == 'estado.aceptada.contacto'%}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Armar plan de práctica
+                        </a>
+                    </td>
+                </tr> 
+                {% elseif (isCoordinacion and entity.estado == 'estado.enviada') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
                 <tr>
                     <td colspan=2>
                         <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
@@ -184,20 +194,21 @@
                 <td>{{ entity.comoContacto }}</td>
             </tr>
             <tr>
+                <th>Fecha inicio</th>
+                <td>{{ entity.fechaInicio|date('d-m-y') }}</td>
+            </tr>
+            <tr>
+                <th>Duración</th>
+                <td>{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}</td>
+            </tr>
+            {% if entity.estado != 'estado.postulado' and entity.estado != 'estado.aceptada.contacto' %}
+            <tr>
                 <th>Último taller</th>
                 <td>{{ entity.ultimoTaller }}</td>
             </tr>
             <tr>
                 <th>Profesor</th>
                 <td>{{ entity.ultimoTallerProfesor }}</td>
-            </tr>
-            <tr>
-                <th>Fecha inicio</th>
-                <td>{{ entity.fechaInicio|date('d-m-y') }}</td>
-            </tr>
-            <tr>
-                <th>Fecha término</th>
-                <td>{{ entity.fechaTermino|date('d-m-Y') }}</td>
             </tr>
             <tr>
                 <th>Horas</th>
@@ -222,9 +233,11 @@
                     </table>
                 </td>
             </tr>
+            {% endif %}
         </tbody>
     </table>
     
+    {% if entity.estado != 'estado.postulado' and entity.estado != 'estado.aceptada.contacto' %}
     <h4>Proyectos y responsabilidades</h4>
     <table class="table">
         <tbody>
@@ -249,17 +262,18 @@
     
     <table class="table">
         <tbody>
-        {% for desafio in entity.desafios%}
-            <tr>
-                <td><strong>{{ loop.index }}.</strong> {{ desafio.descripcion}}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td class="text-center">Sin información</td>
-            </tr>
-        {% endfor%}
-    </tbody>
+            {% for desafio in entity.desafios%}
+                <tr>
+                    <td><strong>{{ loop.index }}.</strong> {{ desafio.descripcion}}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td class="text-center">Sin información</td>
+                </tr>
+            {% endfor%}
+        </tbody>
     </table>
+    {% endif %}
     
 {% endblock %}
     

@@ -8,7 +8,7 @@
 {%block lead%}2 de 4: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.practica.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacionAlias': entity.organizacionAlias.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
+    <form class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacionAlias': entity.organizacionAlias.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.practica.organizacionAlias }}</strong><br>
@@ -226,7 +226,7 @@
         function calculateTotal()
         {
             {% if entity.practica %}
-            var darr = daysBetween(parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}"), {{ entity.practica.duracionCantidad }}, {{ entity.practica.duracionUnidad }});
+            var darr = daysBetween(parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}"), {{ entity.practica.duracionCantidad }}, '{{ entity.practica.duracionUnidad }}');
             {% else %}
             var darr = daysBetween(parseDate(fechaIn.val()), duracionCantidad.val(), duracionUnidad.val());
             {% endif %}

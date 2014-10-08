@@ -20,7 +20,7 @@
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
     {% if alumnoPractica == false and entity.estado == 'estado.aprobada' %}
     <div class="alert alert-info">
-        <a href="{{ path('practicas_alumno_new_datos_source', {'id': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
+        <a href="{{ path('practicas_alumno_new_datos_practica', {'practicaId': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
     </div>
     {% elseif alumnoPractica %}
     <div class="alert alert-info">
@@ -35,7 +35,7 @@
                 <tr>
                     <td width="35%">Estado</td>
                     <td>{% if entity.estado == 'estado.pendiente' %}<span class="label label-default">Pendiente de aprobación
-                        {% elseif entity.estado == 'estado.aprobada' %}<span class="label label-success">Aprobada
+                        {% elseif entity.estado == 'estado.aprobada' %}<span class="label label-success">Publicada
                         {% elseif entity.estado == 'estado.rechazada' %}<span class="label label-danger">Rechazada
                         {% elseif entity.estado == 'estado.finalizada' %}<span class="label label-default">Finalizada
                         {% endif %}</span>
@@ -56,6 +56,39 @@
             </tbody>
         </table>
     </div>
+    {% endif %}
+    
+    {% if isContacto and entity.postulantes|length > 0 %}
+    <h3>Postulantes</h3>
+    <table class="table table-striped">
+        <tbody>
+            {% for postulante in entity.postulantes %}
+            <tr>
+                <td>Nombre</td>
+                <td>{{ postulante.alumno.nombreCompleto }}</td>
+                <td>
+                    <a class="btn btn-success" href="{{ path('practicas_alumno_postulante_aceptar', {'id': postulante.id}) }}">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
+    {% if (isCoordinacion or isContacto) and entity.aceptados|length > 0 %}
+    <h3>Aceptados</h3>
+    <table class="table table-striped">
+        <tbody>
+            {% for aceptado in entity.aceptados %}
+            <tr>
+                <td>Nombre</td>
+                <td>{{ aceptado.alumno.nombreCompleto }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% endif %}
     
     {% if (isCoordinacion or isContacto) and entity.estado != 'estado.finalizada' %}

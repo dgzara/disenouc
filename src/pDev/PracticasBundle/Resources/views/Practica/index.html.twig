@@ -48,7 +48,7 @@
                 {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
                 <td>
                     {% if entity.estado == 'estado.pendiente' %}Pendiente de aprobacion
-                    {% elseif entity.estado == 'estado.aprobada' %}Aprobada
+                    {% elseif entity.estado == 'estado.aprobada' %}Publicada
                     {% elseif entity.estado == 'estado.rechazada' %}Rechazada
                     {% endif %}
                 </td>
