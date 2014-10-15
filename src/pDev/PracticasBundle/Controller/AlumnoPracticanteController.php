@@ -513,7 +513,7 @@ class AlumnoPracticanteController extends Controller
      * @Method("POST")
      * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
      */
-    public function datosCreateAction(Request $request, $id = null)
+    public function datosCreateAction(Request $request, $id = null, $idOrganizacionAlias = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();

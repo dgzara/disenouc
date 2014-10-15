@@ -87,7 +87,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
             $userProfesor->addRole('ROLE_USER');
             $manager->persist($userProfesor);
             
-		    // Alumno
+		    // Alumno 1
 		    $persona2 = new Alumno();
             $persona2->setNombres("Valentina");
             $persona2->setApellidoPaterno("Urbina");
@@ -110,6 +110,30 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
             $persona2->setUsuario($userAlumno);
             $userAlumno->addRole('ROLE_USER');
             $manager->persist($userAlumno);
+            
+            // Alumno 2
+		    $persona5 = new Alumno();
+            $persona5->setNombres("Eduardo");
+            $persona5->setApellidoPaterno("Torres");
+            $persona5->setApellidoMaterno("Pérez");
+            $persona5->setEmail("alumno2@uc.cl");
+            $persona5->setRut("166249140");
+            $persona5->setNumeroAlumno("08439510");
+		    $manager->persist($persona5);
+		    
+		    $userAlumno2 = new User();
+            $userAlumno2->setUsername('alumno2@uc.cl');
+            $userAlumno2->setPlainPassword('alumno');
+            $userAlumno2->setEmail('alumno2@uc.cl');
+            $userAlumno2->setEnabled(true);
+            $userAlumno2->addPersona($persona5);
+            $userAlumno2->setNombres("Valentina");
+            $userAlumno2->setApellidoPaterno("Urbina");
+            $userAlumno2->setApellidoMaterno("Pérez");
+            $userAlumno2->setRut("173435141");
+            $persona5->setUsuario($userAlumno2);
+            $userAlumno2->addRole('ROLE_USER');
+            $manager->persist($userAlumno2);
             
 		    // Supervisor
 		    $persona3 = new Supervisor();
