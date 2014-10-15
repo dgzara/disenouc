@@ -47,7 +47,7 @@ class PermissionManager
             $user = $this->getUser();
                
         if($user and $user_tipo)
-        {
+        {  
             // chequeamos tipo usuario
             if($user->hasPersona($user_tipo))
                 return true;

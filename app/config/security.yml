@@ -26,6 +26,7 @@ security:
                 always_use_default_target_path: true
                 default_target_path: /inicio
                 success_handler: pdev.security.authentication_handler
+                failure_handler: pdev.security.authentication_handler
             #trusted_sso:
             #    manager: admin_sso
             #    login_action: false

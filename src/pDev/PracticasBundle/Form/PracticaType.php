@@ -25,7 +25,9 @@ class PracticaType extends AbstractType
     {
         $user = $this->securityContext->getToken()->getUser();
         $builder
-            ->add('nombre')
+            ->add('nombre', null, array(
+                'label' => 'Nombre'
+            ))
             ->add('organizacionAlias', 'entity', array(
                 'label' => 'Organización',
                 'class' => 'pDevPracticasBundle:OrganizacionAlias',

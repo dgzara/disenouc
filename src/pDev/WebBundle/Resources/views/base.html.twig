@@ -87,7 +87,13 @@
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
         <!-- jumbotronside -->
         <div class="jumbotronside">
+        {% if isTipo('TYPE_ALUMNO') %}
             <img src="{{ asset('/images/banner-estudiante.jpg') }}">
+        {% elseif isTipo('TYPE_PRACTICAS_SUPERVISOR') or isTipo('TYPE_PRACTICAS_CONTACTO') %}
+            <img src="{{ asset('/images/banner-empresa.jpg') }}">
+        {% else %}
+            <img src="{{ asset('/images/banner-academico.jpg') }}">
+        {% endif %}
             {% block jumbotronside %}{% endblock %}
         </div>
         <!--/.jumbotronside -->

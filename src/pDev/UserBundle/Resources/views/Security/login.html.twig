@@ -7,10 +7,10 @@
         </div>
         <div class="modal-body">
             {% if error %}
-                <div class="alert alert-error">
-                    <a class="close">&times;</a>
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="alert-heading">Error</h4>
-                    {{ error|trans({}, 'FOSUserBundle') }}
+                    {{ error.message|trans({}, 'FOSUserBundle') }}
                 </div>
             {% endif %}
             <p>
@@ -25,7 +25,7 @@
                   <input type="password" class="form-control" id="password" name="_password" required="required" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"/>
                 </div>
             </p>
-            <h5>Si es tu primera vez aquí, favor <a href="{{ path("fos_user_registration_register") }}">regístrate</a>.</h5>
+            <h5>Si es tu primera vez aquí, favor <a href="{{ path('fos_user_registration_register') }}">regístrate</a>.</h5>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
         </div>
         <div class="modal-footer">

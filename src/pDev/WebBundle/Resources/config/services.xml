@@ -17,4 +17,12 @@
         </service>
     </services>
     -->
+    
+    <services>
+        <service id="permission.manager.twig" class="pDev\UserBundle\DependencyInjection\PermissionManagerTwig">
+            <argument type="service" id="permission.manager" />
+            <tag name="twig.extension"/>
+        </service>
+    </services>
+    
 </container>

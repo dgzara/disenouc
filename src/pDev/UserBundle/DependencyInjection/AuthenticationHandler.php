@@ -71,20 +71,17 @@ class AuthenticationHandler implements AuthenticationSuccessHandlerInterface, Au
     {
         // if AJAX login
         if ( $request->isXmlHttpRequest() ) {
- 
-            $array = array( 'success' => false, 'message' => $exception->getMessage() ); // data to return via JSON
-            $response = new Response( json_encode( $array ) );
-            $response->headers->set( 'Content-Type', 'application/json' );
- 
-            return $response;
+            
+            // set authentication exception to session
+            $request->getSession()->set(SecurityContextInterface::AUTHENTICATION_ERROR, $exception);
+            return new RedirectResponse( $this->router->generate( 'fos_user_security_login' ) );
  
         // if form login
         } else {
  
             // set authentication exception to session
             $request->getSession()->set(SecurityContextInterface::AUTHENTICATION_ERROR, $exception);
- 
-            return new RedirectResponse( $this->router->generate( 'login_route' ) );
+            return new RedirectResponse( $this->router->generate( 'fos_user_security_login' ) );
         }
     }
 }
