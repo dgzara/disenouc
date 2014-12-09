@@ -38,9 +38,9 @@ class AlumnoPracticanteType extends AbstractType
                      'Otro' => 'Otro',
                 ),
             ))
-            ->add('ultimoTallerProfesor', null, array('label'=>'Profesor'))
+            ->add('ultimoTallerProfesor', null, array('label'=>'Profesor del taller'))
             ->add('ultimoTaller', 'choice', array(
-                'label'=>'Último taller',
+                'label'=>'Último taller cursado',
                 'choices'   => array(
                     '5. Calidad I' => '5. Calidad I',
                     '6. Calidad II' => '6. Calidad II',

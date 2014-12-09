@@ -25,7 +25,7 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "fabpot/goutte": "v1.0.2",
-        "liuggio/ExcelBundle": "v1.0.4",
+        "liuggio/ExcelBundle": "2.0.*@dev",
         "besimple/sso-auth-bundle": "1.0.*@dev",
         "knplabs/knp-snappy-bundle": "dev-master",
         "friendsofsymfony/jsrouting-bundle": "@stable",

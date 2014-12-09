@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-sm-4">
+<div class="col-sm-3">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Estudiantes</h3>
@@ -22,7 +22,7 @@
     <figure><img src="{{ asset('images/usuario-empresa.jpg') }}"></figure>			
 </div><!--/col-sm-4-->
 
-<div class="col-sm-4">
+<div class="col-sm-3">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Académicos</h3>
@@ -35,13 +35,26 @@
     <figure><img src="{{ asset('images/usuario-empresa.jpg') }}"></figure>						
 </div><!--/col-sm-4-->
 
-<div class="col-sm-4">
+<div class="col-sm-3">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Empresas y fundaciones</h3>
         </div>
         <div class="panel-body">
             <p>Solicita un practicante, monitorea tu oferta y evalúa al estudiante.</p>
+            <a class="btn btn-sm btn-primary onmodal" href="{{ path('fos_user_security_login') }}">Acceder &rarr;</a>
+        </div><!--/panel-body-->
+    </div><!--/panel-->
+    <figure><img src="{{ asset('images/usuario-empresa.jpg') }}"></figure>			
+</div><!--/col-sm-4-->
+
+<div class="col-sm-3">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Coordinadores</h3>
+        </div>
+        <div class="panel-body">
+            <p>adasd.</p>
             <a class="btn btn-sm btn-primary onmodal" href="{{ path('fos_user_security_login') }}">Acceder &rarr;</a>
         </div><!--/panel-body-->
     </div><!--/panel-->
