@@ -15,7 +15,7 @@ class ProyectoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre', null, array('label' => 'Nombre del proyecto')
+            ->add('nombre', null, array('label' => 'Nombre del proyecto'))
             ->add('descripcion',null,array('label'=>'Descripción'));
     }
 

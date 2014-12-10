@@ -16,7 +16,8 @@ class UserBasicType extends AbstractType
             ->add('apellidoPaterno')                
             ->add('apellidoMaterno')
             ->add('numeroTelefono',null,array('label'=>'Número de teléfono'))
-            ->add('direccionCalle',null,array('label'=>'Dirección'))                
+            ->add('direccionCalle',null,array('label'=>'Dirección'))            
+            ->add('recibirCorreo',null,array('label'=>'Activar notificaciones por correo'))         
         ;
     }
 

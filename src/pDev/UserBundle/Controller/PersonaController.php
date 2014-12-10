@@ -89,7 +89,7 @@ class PersonaController extends Controller
         }
             
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         return $this->redirect($this->generateUrl('persona_page',array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
@@ -189,7 +189,7 @@ class PersonaController extends Controller
         }
         
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         return $this->redirect($this->generateUrl('persona_alumnos_page',array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
@@ -392,7 +392,7 @@ class PersonaController extends Controller
         }
             
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         
@@ -495,7 +495,7 @@ class PersonaController extends Controller
         }
         
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         
@@ -591,7 +591,7 @@ class PersonaController extends Controller
         }
         
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
         
         return $this->redirect($this->generateUrl('persona_contactos_page',array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
     }
@@ -700,7 +700,7 @@ class PersonaController extends Controller
                     {
                         $mailaltisset = false;
                         
-                        $nm->createNotificacion('Email alternativo no válido.',
+                        $nm->createNotificacion('Error', 'Email alternativo no válido.',
                                             Notificacion::USER_ERROR
                                             );
                     }
@@ -713,21 +713,21 @@ class PersonaController extends Controller
                     $em->persist($persona);
                     $em->flush();
 
-                    $nm->createNotificacion('La operación se realizó con éxito.',
+                    $nm->createNotificacion('Actualización', 'La operación se realizó con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
                 }
             }
             else 
             {
-                $nm->createNotificacion('Email UC no válido.',
+                $nm->createNotificacion('Error', 'Email UC no válido.',
                                             Notificacion::USER_ERROR
                                             );
             }
         }
         else
         {
-            $nm->createNotificacion('Ocurrio un error, reintente más tarde.',
+            $nm->createNotificacion('Error', 'Ocurrio un error, reintente más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         }
@@ -834,7 +834,7 @@ class PersonaController extends Controller
         $this->get("permission.manager")->createPermisos($user);
         
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('El usuario se ha creado con éxito.',
+        $nm->createNotificacion('Usuario creado', 'El usuario se ha creado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
         
@@ -1028,13 +1028,13 @@ class PersonaController extends Controller
                     //$em->persist($user->getPermisos());
                     $em->flush();
 
-                    $nm->createNotificacion('El email UC se ha modificado con éxito.',
+                    $nm->createNotificacion('Correo modificado', 'El email UC se ha modificado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
                 }
                 else 
                 {
-                    $nm->createNotificacion('Email UC no válido.',
+                    $nm->createNotificacion('Error', 'Email UC no válido.',
                                             Notificacion::USER_ERROR
                                             );
                 }
@@ -1042,7 +1042,7 @@ class PersonaController extends Controller
             }
             else
             {
-                $nm->createNotificacion('Ocurrió un error, intente más tarde.',
+                $nm->createNotificacion('Error', 'Ocurrió un error, intente más tarde.',
                                             Notificacion::USER_ERROR
                                             );
             }
@@ -1151,7 +1151,7 @@ class PersonaController extends Controller
                 {
                     $mailaltisset = false;
 
-                    $nm->createNotificacion('Email alternativo no válido.',
+                    $nm->createNotificacion('Error', 'Email alternativo no válido.',
                                             Notificacion::USER_ERROR
                                             );
                 }
@@ -1164,14 +1164,14 @@ class PersonaController extends Controller
                 $em->persist($persona);
                 $em->flush();
 
-                $nm->createNotificacion('La persona se ha modificado con éxito.',
+                $nm->createNotificacion('Actualización', 'La persona se ha modificado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
             }
         }
         else
         {
-            $nm->createNotificacion('Ocurrió un error, intente más tarde.',
+            $nm->createNotificacion('Error', 'Ocurrió un error, intente más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         }

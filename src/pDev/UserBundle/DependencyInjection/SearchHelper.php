@@ -83,7 +83,7 @@ class SearchHelper
                     ->getResult();
             $nm = $this->container->get("notification.manager");
             $pm = $this->container->get("permission.manager");
-            $nm->createNotificacion('Su muestran solo '.$maxresults.' de '.$resultscount.' resultados, por favor refine su búsqueda',Notificacion::USER_ALERT);
+            $nm->createNotificacion('Límite de resultados', 'Se muestran solo '.$maxresults.' de '.$resultscount.' resultados, por favor refine su búsqueda',Notificacion::USER_ALERT);
         }
             
         return $results;
@@ -102,7 +102,7 @@ class SearchHelper
         if(count($words)>$maxwords)
         {
             $words = array_slice($words,0,$maxwords);            
-            $nm->createNotificacion('La consulta se limita a las primeras '.$maxwords.' palabras.',  Notificacion::USER_ALERT);
+            $nm->createNotificacion('Máximo alcanzado', 'La consulta se limita a las primeras '.$maxwords.' palabras.',  Notificacion::USER_ALERT);
         }
         
         $keywords = array();

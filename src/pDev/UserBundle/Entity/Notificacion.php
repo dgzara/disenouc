@@ -45,6 +45,11 @@ class Notificacion
     /**
     * @ORM\Column(type="string")
     */
+    private $titulo;
+    
+    /**
+    * @ORM\Column(type="string")
+    */
     private $mensaje;
     
     /**
@@ -98,7 +103,30 @@ class Notificacion
     {
         return $this->created;
     }
+    
+    /**
+     * Set titulo
+     *
+     * @param string $titulo
+     * @return Notificacion
+     */
+    public function setTitulo($titulo)
+    {
+        $this->titulo = $titulo;
+    
+        return $this;
+    }
 
+    /**
+     * Get titulo
+     *
+     * @return string 
+     */
+    public function getTitulo()
+    {
+        return $this->titulo;
+    }
+    
     /**
      * Set mensaje
      *

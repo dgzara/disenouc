@@ -83,7 +83,7 @@ class UserController extends Controller
         }
             
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         
@@ -312,7 +312,7 @@ class UserController extends Controller
             {
                 $entity->setFoto(null);
                 
-                $nm->createNotificacion('Debe seleccionar un archivo de imagen.',
+                $nm->createNotificacion('Error', 'Debe seleccionar un archivo de imagen.',
                                             Notificacion::USER_ERROR
                                             );
             }
@@ -321,7 +321,7 @@ class UserController extends Controller
                 $foto->setOwner($entity);
                 $em->persist($foto);
                 
-                $nm->createNotificacion('Su imagen de perfil se ha cambiado con éxito.',
+                $nm->createNotificacion('Imagen actualizada', 'Su imagen de perfil se ha cambiado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
             }
@@ -330,7 +330,7 @@ class UserController extends Controller
         }
         else
         {
-            $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+            $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
         }
@@ -408,14 +408,14 @@ class UserController extends Controller
                 //$em->persist($user->getPermisos());
                 $em->flush();
                 
-                $nm->createNotificacion('Los permisos se han modificado con éxito.',
+                $nm->createNotificacion('Permisos actualizados', 'Los permisos se han modificado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
 
             }
             else
             {
-                $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.',
+                $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.',
                                             Notificacion::USER_ERROR
                                             );
             }

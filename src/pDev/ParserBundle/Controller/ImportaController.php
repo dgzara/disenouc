@@ -107,26 +107,26 @@ class ImportaController extends Controller
                                 $counter++;
                             else
                             {
-                                $nm->createNotificacion('Ocurrio un error, intentelo mas tarde,: '.implode(',',$profesor),
+                                $nm->createNotificacion('Error', 'Ocurrio un error, intentelo mas tarde,: '.implode(',',$profesor),
                                             Notificacion::USER_ERROR
                                             );                                
                             }                
                         }
                         
-                        $nm->createNotificacion('La importación se realizó con éxito.',
+                        $nm->createNotificacion('Importación realizada', 'La importación se realizó con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
                     }
                     else
                     {
-                        $nm->createNotificacion('No se pudo determinar la extensión o el tipo de archivo.',
+                        $nm->createNotificacion('Error en la importación', 'No se pudo determinar la extensión o el tipo de archivo.',
                                             Notificacion::USER_ERROR
                                             );
                     }
                 }
                 else
                 {
-                    $nm->createNotificacion('Debe seleccionar un archivo',
+                    $nm->createNotificacion('Error en la importación', 'Debe seleccionar un archivo',
                                             Notificacion::USER_ERROR
                                             );
                 }
@@ -189,26 +189,26 @@ class ImportaController extends Controller
                                 $counter++;
                             else
                             {
-                                $nm->createNotificacion('Ocurrio un error, intentelo mas tarde,: '.implode(',',$funcionario),
+                                $nm->createNotificacion('Error', 'Ocurrio un error, intentelo mas tarde,: '.implode(',',$funcionario),
                                             Notificacion::USER_ERROR
                                             );
                             }                
                         }
                         
-                        $nm->createNotificacion('La importación se realizó con éxito.',
+                        $nm->createNotificacion('Importación completada', 'La importación se realizó con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
                     }
                     else
                     {
-                        $nm->createNotificacion('No se pudo determinar la extensión o el tipo de archivo.',
+                        $nm->createNotificacion('Error en la importación', 'No se pudo determinar la extensión o el tipo de archivo.',
                                             Notificacion::USER_ERROR
                                             );
                     }
                 }
                 else
                 {
-                    $nm->createNotificacion('Debe seleccionar un archivo',
+                    $nm->createNotificacion('Error en la importación', 'Debe seleccionar un archivo',
                                             Notificacion::USER_ERROR
                                             );
                 }
@@ -271,26 +271,26 @@ class ImportaController extends Controller
                                 $counter++;
                             else
                             {
-                                $nm->createNotificacion('Ocurrio un error, intentelo mas tarde,: '.implode(',',$alumno),
+                                $nm->createNotificacion('Error', 'Ocurrio un error, intentelo mas tarde,: '.implode(',',$alumno),
                                             Notificacion::USER_ERROR
                                             );                                
                             }                
                         }
                         
-                        $nm->createNotificacion('La importación se realizó con éxito.',
+                        $nm->createNotificacion('Importación completada', 'La importación se realizó con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
                     }
                     else
                     {
-                        $nm->createNotificacion('No se pudo determinar la extensión o el tipo de archivo.',
+                        $nm->createNotificacion('Error en la importación', 'No se pudo determinar la extensión o el tipo de archivo.',
                                             Notificacion::USER_ERROR
                                             );
                     }
                 }
                 else
                 {
-                    $nm->createNotificacion('Debe seleccionar un archivo',
+                    $nm->createNotificacion('Error en la importación', 'Debe seleccionar un archivo',
                                             Notificacion::USER_ERROR
                                             );
                 }
@@ -364,7 +364,7 @@ class ImportaController extends Controller
                         
                         if($error)
                         {
-                            $nm->createNotificacion('Ocurrio un error: '.$error,
+                            $nm->createNotificacion('Error', 'Ocurrió un error: '.$error,
                                         Notificacion::USER_ERROR
                                         );
                         } 
@@ -378,28 +378,28 @@ class ImportaController extends Controller
                                     $counter++;
                                 else
                                 {
-                                    $nm->createNotificacion('Ocurrio un error, al crear causal: '.$result,
+                                    $nm->createNotificacion('Error', 'Ocurrió un error, al crear causal: '.$result,
                                                 Notificacion::USER_ERROR
                                                 );
                                 }                
                             }
 
 
-                            $nm->createNotificacion( 'La importación se realizó con éxito.',
+                            $nm->createNotificacion('Importación completada', 'La importación se realizó con éxito.',
                                                 Notificacion::USER_SUCCESS
                                                 );
                         }
                     }
                     else
                     {
-                        $nm->createNotificacion('Tipo de archivo no permitido.',
+                        $nm->createNotificacion('Error en la importación', 'Tipo de archivo no permitido.',
                                             Notificacion::USER_ERROR
                                             );
                     }
                 }
                 else
                 {
-                    $nm->createNotificacion('Debe seleccionar un archivo',
+                    $nm->createNotificacion('Error en la importación', 'Debe seleccionar un archivo',
                                             Notificacion::USER_ERROR
                                             );
                 }

@@ -1,0 +1,15 @@
+pdevuser:
+    email:
+        notificacion:
+            subject: Nueva notificación
+            message : |
+                Hola, %username%
+                <br><br>
+                %mensaje%
+                <br><br>
+                Puedes verlo en el siguiente <a target="_blank" href="%direccion%">link</a>
+                <br><br>
+                Gracias,
+                <br>
+                - El equipo de WorkKey.
+            configuracion: Cambiar la <a target="_blank" style="color:#C6BEAC" href="%direccion%">configuración de notificaciones</a>

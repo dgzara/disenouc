@@ -97,6 +97,12 @@ class User extends BaseUser
      */
     private $direccionCalle;
     
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $recibirCorreo;
+    
+    
     public function __construct()
     {
         parent::__construct();
@@ -106,6 +112,7 @@ class User extends BaseUser
         $this->notificaciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->created = new \DateTime();
         $this->external = false;
+        $this->recibirCorreo = true;
     }
 
     /**
@@ -577,5 +584,38 @@ class User extends BaseUser
     public function getDireccionCalle()
     {
         return $this->direccionCalle;
+    }
+    
+    /**
+     * Set recibirCorreo
+     *
+     * @param boolean $recibirCorreo
+     * @return User
+     */
+    public function setRecibirCorreo($recibirCorreo)
+    {
+        $this->recibirCorreo = $recibirCorreo;
+    
+        return $this;
+    }
+
+    /**
+     * Get recibirCorreo
+     *
+     * @return boolean
+     */
+    public function getRecibirCorreo()
+    {
+        return $this->recibirCorreo;
+    }
+    
+    /**
+     * recibeCorreo
+     *
+     * @return boolean
+     */
+    public function recibeCorreo()
+    {
+        return $this->recibirCorreo;
     }
 }

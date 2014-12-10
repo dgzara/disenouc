@@ -261,7 +261,7 @@ class SupervisorController extends Controller
         }
         
         $nm = $this->get("notification.manager");
-        $nm->createNotificacion('Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
+        $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
         return $this->redirect($this->generateUrl('practicas_supervisor', array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
     }
     

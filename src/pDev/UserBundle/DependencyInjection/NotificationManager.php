@@ -19,7 +19,7 @@ class NotificationManager
     }
         
     //crea un registro para el usuario actual
-    public function createNotificacion($mensaje,$key = Notificacion::USER_NOTICE,$user = null,$leido = false)
+    public function createNotificacion($titulo, $mensaje, $key = Notificacion::USER_NOTICE,$user = null,$leido = false)
     {
         if($key === Notificacion::USER_ALERT 
                 || $key === Notificacion::USER_FORBIDDEN 
@@ -42,6 +42,7 @@ class NotificationManager
             }
 
             $notificacion = new Notificacion();
+            $notificacion->setTitulo($titulo);
             $notificacion->setUser($user);
             $notificacion->setMensaje($mensaje);
             $notificacion->setLlave($key);     
@@ -59,9 +60,9 @@ class NotificationManager
         }
     }
     
-    public function createNotificacionLeida($mensaje,$key = Notificacion::USER_NOTICE,$user = null)
+    public function createNotificacionLeida($titulo, $mensaje, $key = Notificacion::USER_NOTICE,$user = null)
     {
-        $this->createNotificacion($mensaje,$key,$user,true);
+        $this->createNotificacion($titulo, $mensaje, $key, $user, true);
     }
     
     /*

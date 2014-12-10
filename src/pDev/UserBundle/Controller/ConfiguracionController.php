@@ -155,13 +155,13 @@ class ConfiguracionController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            $nm->createNotificacion('El parámetro de ajuste se ha modificado con éxito.',
+            $nm->createNotificacion('Configuración actualizada', 'El parámetro de ajuste se ha modificado con éxito.',
                                             Notificacion::USER_SUCCESS
                                             );
         }
         else
         {
-            $nm->createNotificacion('El valor no es válido',
+            $nm->createNotificacion('Error', 'El valor no es válido',
                                             Notificacion::USER_ERROR
                                             );
         }

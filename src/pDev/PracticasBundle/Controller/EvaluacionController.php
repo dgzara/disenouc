@@ -256,7 +256,7 @@ class EvaluacionController extends Controller
                 return $this->redirect($this->generateUrl('practicas_evaluacion_show', array('id' => $entity->getId())));
             }
             $nm = $this->get('notification.manager');
-            $nm->createNotificacion($flag,  \pDev\UserBundle\Entity\Notificacion::USER_ALERT);
+            $nm->createNotificacion('Evaluación realizada', $flag, \pDev\UserBundle\Entity\Notificacion::USER_ALERT);
         }
 
         return array(

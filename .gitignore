@@ -8,6 +8,7 @@
 # Cache and logs
 /app/cache/*
 /app/logs/*
+/app/spool
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 
