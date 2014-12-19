@@ -375,7 +375,12 @@ class PracticaController extends Controller
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $editForm->submit($request);
 
-        if ($editForm->isValid()) {
+        if ($editForm->isValid()) 
+        {
+            // Si la modifica el usuario, nuevamente es enviada al coordinador
+            if($this->getUser() === $entity->getCreador())
+                $entity->setEstado(Practica::ESTADO_REVISION);
+            
             $em->persist($entity);
             $em->flush();
 

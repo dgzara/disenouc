@@ -46,12 +46,13 @@
                 <tr>
                     <th>Estado</th>
                     <td>
-                        {% if entity.estado == 'estado.postulado' %}Postulado
-                        {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada
-                        {% elseif entity.estado == 'estado.pendiente' %}Pendiente de envío
+                        {% if entity.estado == 'estado.borrador' %}Borrador
+                        {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada por la organización
+                        {% elseif entity.estado == 'estado.pendiente' %}Pendiente
                         {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
                         {% elseif entity.estado == 'estado.aprobada' %}Aprobada
                         {% elseif entity.estado == 'estado.rechazada' %}Rechazada
+                        {% elseif entity.estado == 'estado.revision' %}En revisión
                         {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
                         {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
                         {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
@@ -66,15 +67,15 @@
                     <th>Observaciones</th>
                     <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
                 </tr> 
-                {% if isAlumno and entity.estado == 'estado.aceptada.contacto'%}
+                {% if isAlumno and entity.estado == 'estado.pendiente'%}
                 <tr>
                     <td colspan=2>
                         <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
-                            <span class="glyphicon glyphicon-ok"></span> Armar plan de práctica
+                            <span class="glyphicon glyphicon-ok"></span> Modificar practica
                         </a>
                     </td>
                 </tr> 
-                {% elseif (isCoordinacion and entity.estado == 'estado.enviada') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
+                {% elseif (isCoordinacion and entity.estado == 'estado.aceptada.contacto') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
                 <tr>
                     <td colspan=2>
                         <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
@@ -82,11 +83,11 @@
                         </a>
                     </td>
                 </tr> 
-                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.postulado' %}
+                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.enviada' %}
                 <tr>
                     <td colspan=2>
                         <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
-                            <span class="glyphicon glyphicon-ok"></span> Aceptar alumno
+                            <span class="glyphicon glyphicon-ok"></span> Aceptar plan de práctica
                         </a>
                     </td>
                 </tr>    

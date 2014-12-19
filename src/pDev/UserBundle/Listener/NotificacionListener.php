@@ -86,6 +86,12 @@ class NotificacionListener
                         $mensaje = "La oferta ha sido rechazada";
                         $cambio = true;
                     }
+                    else if($changeSet['estado'][1] == "estado.pendiente")
+                    {
+                        $titulo = "Realizar modificaciones a oferta";
+                        $mensaje = "La oferta puede ser publicada bajo ciertas modificaciones";
+                        $cambio = true;
+                    }
                     
                     if($cambio)
                         $this->armarNotificacion($titulo, $mensaje, $entity->getCreador(), $enlace);
@@ -111,6 +117,24 @@ class NotificacionListener
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
+                    else if($changeSet['estado'][1] == "estado.aceptada.contacto")
+                    {
+                        $titulo = "Plan de práctica aceptada por la empresa";
+                        $mensaje = "";
+                        $cambio = true;
+                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        $usuarios->add($entity->getAlumno()->getUsuario());
+                        foreach($funcionarios as $funcionario)
+                            $usuarios->add($funcionario->getUsuario());
+                    }
+                    elseif($changeSet['estado'][1] == "estado.pendiente")
+                    {
+                        $titulo = "Plan de práctica pendiente";
+                        $mensaje = "";
+                        $cambio = true;
+                        $usuarios->add($entity->getAlumno()->getUsuario());
+                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                    }
                     elseif($changeSet['estado'][1] == "estado.aprobada")
                     {
                         $titulo = "Plan de práctica aprobada por coordinador";
@@ -126,6 +150,14 @@ class NotificacionListener
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         $usuarios->add($entity->getSupervisor()->getUsuario());
+                    }
+                    else if($changeSet['estado'][1] == "estado.revision")
+                    {
+                        $titulo = "Plan de práctica modificada";
+                        $mensaje = "El alumno ha realizado modificaciones al plan de practica";
+                        $cambio = true;
+                        foreach($funcionarios as $funcionario)
+                            $usuarios->add($funcionario->getUsuario());
                     }
                     else if($changeSet['estado'][1] == "estado.aceptada.alumno")
                     {

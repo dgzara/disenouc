@@ -437,7 +437,7 @@ class AlumnoPracticanteController extends Controller
             $entity->setDuracionCantidad($practica->getDuracionCantidad());
             $entity->setDuracionUnidad($practica->getDuracionUnidad());
             $entity->setTipo($practica->getTipo());
-            $entity->setEstado(AlumnoPracticante::ESTADO_POSTULADO);
+            $entity->setEstado(AlumnoPracticante::ESTADO_BORRADOR);
             
             $em->persist($entity);
             $em->flush();
@@ -966,7 +966,11 @@ class AlumnoPracticanteController extends Controller
             {
                 $estado = $entity->getEstado();
                 
-                if($isCoordinacion and $estado === AlumnoPracticante::ESTADO_ENVIADA)
+                if(($isContacto or $isSupervisor) and $estado === AlumnoPracticante::ESTADO_ENVIADA)
+                {
+                    $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
+                }
+                elseif($isCoordinacion and $estado === AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO)
                 {
                     $estado = AlumnoPracticante::ESTADO_APROBADA;
                 }
@@ -1025,7 +1029,7 @@ class AlumnoPracticanteController extends Controller
 
         $estado = $entity->getEstado();
         
-        if($isContacto and $estado === AlumnoPracticante::ESTADO_POSTULADO)
+        if($isContacto and $estado === AlumnoPracticante::ESTADO_ENVIADA)
         {
             $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
         }

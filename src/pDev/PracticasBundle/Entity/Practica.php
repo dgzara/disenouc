@@ -13,6 +13,7 @@ use pDev\UserBundle\Entity\User;
  */
 class Practica
 {
+    const ESTADO_REVISION = "estado.revision";
     const ESTADO_PENDIENTE = "estado.pendiente";
     const ESTADO_APROBADA = "estado.aprobada";
     const ESTADO_RECHAZADA = "estado.rechazada";
@@ -174,7 +175,7 @@ class Practica
     public function __construct()
     {
         $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->estado = Practica::ESTADO_PENDIENTE;
+        $this->estado = Practica::ESTADO_REVISION;
     }
     
     /**

@@ -37,7 +37,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
         $userPersona->setNombres("Diego Alonso");
         $userPersona->setApellidoPaterno("Gómez");
         $userPersona->setApellidoMaterno("Zará");
-        $userPersona->setEmail("dlgomez@uc.cl");
+        $userPersona->setEmail("coordinador@uc.cl");
         $userPersona->setRut("166284740");
         
         $manager->persist($userPersona);
@@ -45,14 +45,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
         $userAdmin = $manager->getRepository('pDevUserBundle:User')->findOneByUsername("dlgomez@uc.cl");
         if(!$userAdmin)
             $userAdmin = new User();
-        $userAdmin->setUsername('dlgomez@uc.cl');
-        $userAdmin->setPlainPassword('holaFaco');
-        $userAdmin->setEmail('dlgomez@uc.cl');
+        $userAdmin->setUsername('coordinador@uc.cl');
+        $userAdmin->setPlainPassword('coordinador');
+        $userAdmin->setEmail('coordinador@uc.cl');
         $userAdmin->setEnabled(true);
         $userAdmin->addPersona($userPersona);
-        $userAdmin->setNombres("Diego Alonso");
-        $userAdmin->setApellidoPaterno("Gómez");
-        $userAdmin->setApellidoMaterno("Zará");
+        $userAdmin->setNombres("María Rosa");
+        $userAdmin->setApellidoPaterno("Dumper");
+        $userAdmin->setApellidoMaterno("");
         $userAdmin->setRut("166284740");
         $userPersona->setUsuario($userAdmin);
         $userAdmin->addRole('ROLE_SUPER_ADMIN');
