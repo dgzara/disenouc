@@ -300,11 +300,9 @@ class AlumnoPracticanteController extends Controller
         
         // Generamos la lista de organizaciones
         $form = $this->createFormBuilder()
-            ->add('organizacionAlias', 'entity', array(
-                'class' => 'pDevPracticasBundle:OrganizacionAlias',
-                'label' => 'Organización',
-                'property' => 'nombre',
-                'mapped' => false
+            ->add('organizacionAlias', 'hidden', array(
+                'mapped' => false,
+                'required' => true
             ))
             ->getForm();
         
@@ -346,10 +344,9 @@ class AlumnoPracticanteController extends Controller
         
         // Generamos la lista de organizaciones
         $form = $this->createFormBuilder()
-            ->add('organizacionAlias', 'entity', array(
-                'class' => 'pDevPracticasBundle:OrganizacionAlias',
-                'property' => 'nombre',
-                'mapped' => false
+            ->add('organizacionAlias', 'hidden', array(
+                'mapped' => false,
+                'required' => true
             ))
             ->getForm();
             
@@ -371,7 +368,12 @@ class AlumnoPracticanteController extends Controller
             
             if($form->isValid())
             {
-                $organizacionAlias = $form->get('organizacionAlias')->getData();
+                $id = $form->get('organizacionAlias')->getData();
+                $organizacionAlias = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->find($id);
+                
+                if(!$organizacionAlias)
+                    throw $this->createNotFoundException('Unable to find OrganizacionAlias entity.');                   
+                    
                 return $this->redirect ($this->generateUrl ('practicas_alumno_new_datos',array('idOrganizacionAlias' => $organizacionAlias->getId())));
             }
             elseif($organizacion_form->isValid() and $organizacionAlias_form->isValid() and $supervisor_form->isValid())

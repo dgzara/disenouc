@@ -151,10 +151,10 @@ class OrganizacionController extends Controller
         $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
         $organizacionAlias_form->submit($request);
 
-        if ($form->isValid() and $organizacionAlias_form->isValid()) {
+        if ($form->isValid() and $organizacionAlias_form->isValid()) 
+        {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
-            
             
             $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
             if($organizacionAlias_tmp)
@@ -377,6 +377,37 @@ class OrganizacionController extends Controller
         return $response;
     } 
 
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/lista.json", name="practicas_organizacion_json")
+     * @Method("GET")
+     */
+    public function jsonAction()
+    {
+        $return = array();
+        
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findAll();
+
+        foreach ($entities as $entity)
+        {
+            $return[] = array(
+                'id' => $entity->getId(),
+                'value' => $entity->getNombre(),
+                'rut' => $entity->getOrganizacion()->getRut(),
+                'rubro'=> $entity->getOrganizacion()->getRubro(),
+                'descripcion' => $entity->getOrganizacion()->getDescripcion(),
+                'pais' => $entity->getOrganizacion()->getPais(),
+                'web' => $entity->getOrganizacion()->getWeb(),
+            );
+        }
+                 
+        $response = new Response(json_encode($return));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    } 
+    
     /**
      * Creates a form to delete a Organizacion entity by id.
      *

@@ -21,24 +21,25 @@
             Postulando a <strong>{{ entity.organizacionAlias }}</strong><br>
             Supervisor: {{ entity.supervisor }}
            </div>
+           {% if form.tipo is defined %}
+            {{ form_row(form.tipo) }}
+           {% endif %}
+           {{ form_row(form.comoContacto) }}
            {{ form_row(form.fechaInicio) }}
            {{ form_row(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
-           {{ form_row(form.comoContacto) }}
+           <div id="endDate"></div>
         {% else %}
-        {{ form_row(form.organizacionAlias) }}
-        {{ form_row(form.supervisor) }}
+            {% if form.tipo is defined %}
+            {{ form_row(form.tipo) }}
+            {% endif %}
+            {{ form_row(form.organizacionAlias) }}
+            {{ form_row(form.supervisor) }}
         {% endif %}
         
-        {% if form.tipo is defined %}
-        {{ form_row(form.tipo) }}
-        {% endif %}
-        
-        {{ form_row(form.ultimoTaller) }}
-        {{ form_row(form.ultimoTallerProfesor) }}
-        
-        <div class="control-group">
-            <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="margin-top:23px;">
-                Horas (240 horas)
+        <div id="horario" class="control-group" style="display:none">
+            <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="margin-top:23px; text-align: left !important;">
+                Estimador de horas <br/>
+                <small>Requiere como mínimo 240 horas</small>
                 <abbr title="Mínimo: 2 veces a la semana. Máximo: 5 veces a la semana. Mínimo diario: 4 horas. Máximo diario: 8 horas." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
             </label>
             <div class="controls">
@@ -64,6 +65,11 @@
                 </table>
             </div>
         </div>
+        <hr/>
+        
+        <h4>Datos del alumno</h4>
+        {{ form_row(form.ultimoTaller) }}
+        {{ form_row(form.ultimoTallerProfesor) }}
         <hr/>
         
         <h4>Proyectos y responsabilidades (en acuerdo con el empleador)
@@ -213,15 +219,32 @@
             
             calculateTotal();
             
-            $( ".date" ).each(function( index ) {
+            $(".date").each(function( index ) {
                 $(this).datetimepicker({
                   pickTime: false
-                }).on('changeDate', function(ev){
+                }).on('dp.change', function(ev){
                     calculateTotal();
+                    desplegarHorario();
                 });
 
             });
+            
+            // Movemos el boton de los dias
+            $("#pdev_practicasbundle_alumnopracticantetype_duracionUnidad").before($("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad"));
+            
+            // Cambio de horarios
+            $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").change(desplegarHorario);
+            desplegarHorario();
         });
+        
+        var desplegarHorario = function () {
+            var val1 = fechaIn.val();
+            var val2 = $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").val();
+            if(val1 != "" && val2 != "" && val2 != 0)
+                $("#horario").show();   
+            else
+                $("#horario").hide();  
+        };
         
         function calculateTotal()
         {
@@ -261,6 +284,10 @@
                 current = new Date(current.getTime() + (24 * 60 * 60 * 1000));
                 
             }
+            
+            if(isNaN(endDate.getTime()) === false)
+                $("#endDate").html("Fecha estimada de término: " + endDate.toLocaleDateString());
+            
             return days;
         }
         

@@ -29,6 +29,7 @@
         "besimple/sso-auth-bundle": "1.0.*@dev",
         "knplabs/knp-snappy-bundle": "dev-master",
         "friendsofsymfony/jsrouting-bundle": "@stable",
+        "twitter/typeahead.js": "dev-master",
         "knplabs/knp-paginator-bundle": "2.4.*@dev"
     },
     "scripts": {

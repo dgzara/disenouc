@@ -4,28 +4,133 @@
     {{parent()}}
 {%endblock%}
 
+{% block styles %}
+    {{ parent() }}
+    <link href="{{ asset('/css/typeahead.css') }}" rel="stylesheet">
+{% endblock %}
+        
 {%block header%}Plan de práctica{%endblock%}
 {%block lead%}1 de 4: Seleccionar organización{%endblock%}
 
 {%block content %}
     
-    <p>1) Busque la organización</p>
-    <form class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
-        {{ form_widget(form) }}
-        <p>
-            <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
-        </p>
-    </form>
-    
-    <p>2) ¿No encuentra la organización? Inscríbala</p>
-    <form class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
-        {{ form_widget(organizacionAlias_form) }}
-        {{ form_widget(organizacion_form) }}
-        <h3>Supervisor</h3>
-        {{ form_widget(supervisor_form) }}
-        <p>
-            <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
-        </p>
-    </form>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Busque la organización
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            <form id="form1" class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
+                <div id="remote">
+                    <input class="typeahead" type="text" placeholder="Escriba la organización">
+                </div> 
+                {{ form_widget(form) }}
+                <span class="error1"></span>
+                <p>
+                    <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
+                </p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+          <h4 class="panel-title">
+            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              ¿No encuentra la organización? Inscríbala
+            </a>
+          </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            <form id="form2" class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
+                {{ form_widget(organizacionAlias_form) }}
+                {{ form_widget(organizacion_form) }}
+                <h3>Supervisor</h3>
+                {{ form_widget(supervisor_form) }}
+                <p>
+                    <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
+                </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts combine=true
+        '@typeahead_js' 
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('/js/handlebars-v2.0.0.js') }}"></script>
+    <script>
+        $('.typeahead').typeahead('destroy');
+        
+        var bestPictures = new Bloodhound({
+            datumTokenizer: function(bestPictures) {
+                return Bloodhound.tokenizers.whitespace(bestPictures.value);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '{{ path("practicas_organizacion_json") }}',
+        });
+         
+        bestPictures.clearPrefetchCache();
+        bestPictures.initialize();
+         
+        $('#remote .typeahead').typeahead(null, {
+            name: 'best-pictures',
+            displayKey: 'value',
+            valueKey: 'id',
+            source: bestPictures.ttAdapter(),
+            templates: {
+                empty: [
+                '<div class="empty-message">',
+                'No hay organizaciones registradas',
+                '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('{% raw %}<strong>{{value}}</strong>{% endraw %}')
+            } 
+        }); 
+        
+        var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
+            $("#form_organizacionAlias").val(suggestionObject.id);
+        };
+
+        $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
+        $('#remote .typeahead').on('typeahead:opened', function(){
+            $(this).val("");
+            $('#form_organizacionAlias').val("");
+            $(".error1").hide();
+        });
+        $('#remote .typeahead').on('typeahead:closed', function(){
+            if($('.tt-suggestion').length === 0){
+                $(this).val("");;
+            }
+        });
+        $('#remote .typeahead').on('keyup', function () {
+            if($('.tt-suggestion').length === 0){
+                $('#form_organizacionAlias').val("");
+            }
+        });
+        
+        $("#form1").submit(function( event ) {
+            if($('#remote .typeahead').typeahead('val') == "")
+                $("#form_organizacionAlias").val("");    
+        
+            if($("#form_organizacionAlias").val() != "" ) {
+                return;
+            }
+            $(".error1").text("Ingrese una organización").show();
+            event.preventDefault();
+        });
+    </script>
 {% endblock %}
 

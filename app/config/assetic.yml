@@ -1,0 +1,27 @@
+# Assetic Configuration
+assetic:
+    debug:          %kernel.debug%
+    use_controller: false
+    bundles:        ["pDevPracticasBundle"]
+    java: /usr/bin/java
+    filters:
+        less:
+            node: /usr/bin/node
+            node_paths: [/usr/lib/node_modules, /usr/local/lib/node_modules] 
+            apply_to: "\.less$"
+        cssembed:
+            jar: %kernel.root_dir%/Resources/java/cssembed-0.4.5.jar
+            #apply_to: "\.css$|\.less$"
+        cssrewrite:
+            apply_to: "\.(css|less)$"
+        yui_css:
+            jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.8.jar
+            apply_to: "\.css$"
+        yui_js:
+            jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.8.jar
+    assets:
+        typeahead_js:
+            inputs:
+                - '%kernel.root_dir%/../vendor/twitter/typeahead.js/dist/bloodhound.js'
+                - '%kernel.root_dir%/../vendor/twitter/typeahead.js/dist/typeahead.jquery.js'
+            filters: [yui_js]

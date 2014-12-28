@@ -26,6 +26,7 @@
                 </div>
             </p>
             <h5>Si es tu primera vez aquí, favor <a href="{{ path('fos_user_registration_register') }}">regístrate</a>.</h5>
+            <small><a href="{{ path('fos_user_resetting_request') }}">Recuperar clave</a></small>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
         </div>
         <div class="modal-footer">

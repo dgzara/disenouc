@@ -28,7 +28,12 @@ class SecurityController extends BaseController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function renderLogin(array $data)
-    {
-        return $this->render('FOSUserBundle:Security:login.html.twig', $data);
+    {   
+        $request = $this->get('request');
+        
+        if($request->isXmlHttpRequest())
+            return $this->render('FOSUserBundle:Security:login.html.twig', $data);
+        else
+            return $this->redirect($this->generateUrl('default'));
     }
 }
