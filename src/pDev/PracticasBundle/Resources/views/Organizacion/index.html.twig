@@ -14,7 +14,7 @@
     <div id="form_ordenar" class="well no-margin">
         <div class="btn-group">
             <a href="{{ path('practicas_organizacion_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-certificate"></span> Registrar organización</a>        
-            <a href="{{ path('practicas_excel') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
+            {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('practicas_excel') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>{% endif %}
         </div>
     </div>
     <table class="table table-bordered">

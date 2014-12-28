@@ -205,16 +205,19 @@ class PracticaController extends Controller
      * Creates a new Practica entity.
      *
      * @Route("/create", name="practicas_create")
+     * @Route("/create/organizacion/{id}", name="practicas_create_organizacion")
      * @Method("POST")
      * @Template("pDevPracticasBundle:Practica:new.html.twig")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $id = null)
     {   
         $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
         $user = $pm->getUser();
-        $entity  = new Practica();
         
-        // Si es un contacto, lo agrega dentro del formulario
+        $entity = new Practica();
+        
+        // Si es un contacto, lo agrega
         $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");  
         if($isContacto){
             $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
@@ -223,9 +226,24 @@ class PracticaController extends Controller
         
         $securityContext = $this->container->get('security.context');
         $form = $this->createForm(new PracticaType($securityContext), $entity);
-        
+        $ruta = $this->generateUrl('practicas_create');
+                    
         if($isContacto){
             $form->remove('contacto');
+            $form->remove('tipo');
+        }
+        
+        // Comprobamos si fue realizada desde una organizacion
+        if($id)
+        {
+            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+            if (!$organizacion) {
+                throw $this->createNotFoundException('Unable to find Organizacion entity.');
+            }
+            $organizacionAlias = $organizacion->getAliases()->last();
+            $entity->setOrganizacionAlias($organizacionAlias);
+            $form->remove('organizacionAlias');
+            $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
         }
         
         $form->handleRequest($request);
@@ -244,6 +262,7 @@ class PracticaController extends Controller
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
+            'ruta' => $ruta
         );
     }
 
@@ -251,17 +270,19 @@ class PracticaController extends Controller
      * Displays a form to create a new Practica entity.
      *
      * @Route("/new", name="practicas_new")
+     * @Route("/organizacion/{id}", name="practicas_new_organizacion")
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($id = null)
     {
         $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
         $user = $pm->getUser();
         
         $entity = new Practica();
         
-        // Si es un contacto, lo agrega altiro
+        // Si es un contacto, lo agrega
         $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");  
         if($isContacto){
             $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
@@ -270,15 +291,30 @@ class PracticaController extends Controller
         
         $securityContext = $this->container->get('security.context');
         $form = $this->createForm(new PracticaType($securityContext), $entity);
-        
+        $ruta = $this->generateUrl('practicas_create');
+                    
         if($isContacto){
             $form->remove('contacto');
             $form->remove('tipo');
         }
         
+        // Comprobamos si fue realizada desde una organizacion
+        if($id)
+        {
+            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+            if (!$organizacion) {
+                throw $this->createNotFoundException('Unable to find Organizacion entity.');
+            }
+            $organizacionAlias = $organizacion->getAliases()->last();
+            $entity->setOrganizacionAlias($organizacionAlias);
+            $form->remove('organizacionAlias');
+            $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
+        }
+        
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
+            'ruta' => $ruta
         );
     }
 

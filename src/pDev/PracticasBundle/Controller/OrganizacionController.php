@@ -36,7 +36,15 @@ class OrganizacionController extends Controller
 
         $dql   = "SELECT o 
                   FROM pDevPracticasBundle:Organizacion o
-                  LEFT JOIN o.aliases a";
+                  LEFT JOIN o.aliases a ";
+        
+        if($pm->checkType("TYPE_PRACTICAS_CONTACTO") or $pm->checkType("TYPE_PRACTICAS_SUPERVISOR")){         
+            $dql .= "LEFT JOIN o.contactos c
+                 LEFT JOIN c.usuario u
+                 WHERE u.id = ".$this->getUser()->getId()." ";
+        }  
+        
+        $dql .= "ORDER BY a.nombre";
         $query = $em->createQuery($dql);
 
         $paginator  = $this->get('knp_paginator');
@@ -143,6 +151,8 @@ class OrganizacionController extends Controller
      */
     public function createAction(Request $request)
     {
+        $pm = $this->get("permission.manager");
+        
         $entity  = new Organizacion();
         $form = $this->createForm(new OrganizacionType(), $entity);
         $form->submit($request);
@@ -154,9 +164,19 @@ class OrganizacionController extends Controller
         if ($form->isValid() and $organizacionAlias_form->isValid()) 
         {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
             
+            // Lo agregamos como creador
+            $entity->addCreador($this->getUser());
+            
+            // Agregamos a la persona como creador
+            if($pm->checkType("TYPE_PRACTICAS_CONTACTO"))
+            {
+                $contacto = $this->getUser()->getPersona("TYPE_PRACTICAS_CONTACTO");
+                $entity->addContacto($contacto);
+            }                        
+                        
             $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
+            
             if($organizacionAlias_tmp)
             {
                 $organizacionAlias_tmp->setOrganizacion ($entity);  
@@ -167,6 +187,8 @@ class OrganizacionController extends Controller
                 $organizacionAlias->setOrganizacion($entity);
                 $em->persist($organizacionAlias);
             }
+
+            $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('practicas_organizacion_show', array('id' => $entity->getId())));
@@ -210,40 +232,24 @@ class OrganizacionController extends Controller
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
+        $user = $this->getUser();
+        
         $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Organizacion entity.');
         }
-        
-        
-        $supervisores = $em->getRepository('pDevPracticasBundle:Supervisor')->createQueryBuilder('p')
-                ->leftJoin('p.practicantes','pr')
-                ->leftJoin('pr.organizacionAlias','oa')
-                ->leftJoin('oa.organizacion','o')
-                ->where('o.id = :id')
-                ->setParameter('id',$entity->getId())
-                ->getQuery()
-                ->getResult();
-                   
-        
-        $contactos = $em->getRepository('pDevPracticasBundle:Contacto')->createQueryBuilder('p')
-                ->leftJoin('p.practicas','pr')
-                ->leftJoin('pr.organizacionAlias','oa')
-                ->leftJoin('oa.organizacion','o')
-                ->where('o.id = :id')
-                ->setParameter('id',$entity->getId())
-                ->getQuery()
-                ->getResult();
 
-        $deleteForm = $this->createDeleteForm($id);
-
+        $permiso = $user === $entity->getCreador();
+        
+        if($user->hasPersona("TYPE_PRACTICAS_CONTACTO")){
+            $contacto = $user->getPersona("TYPE_PRACTICAS_CONTACTO");
+            $permiso = $permiso or $entity->hasContacto($contacto);
+        }        
+        
         return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-            'supervisores'    => $supervisores,
-            'contactos' => $contactos 
+            'entity' => $entity,
+            'permiso' => $permiso
         );
     }
 
@@ -308,6 +314,7 @@ class OrganizacionController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+    
     /**
      * Deletes a Organizacion entity.
      *
@@ -407,6 +414,200 @@ class OrganizacionController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     } 
+    
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/{id}/contacto/add", name="practicas_organizacion_add_contacto")
+     * @Method({"GET", "POST"})
+     * @Template("pDevPracticasBundle:Organizacion:addContacto.html.twig")
+     */
+    public function addContactoAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+
+        $editForm = $this->createFormBuilder()
+                         ->add('contacto', 'contacto_selector')
+                         ->getForm();
+                         
+        if($this->getRequest()->isMethod('POST'))
+        {
+            $request = $this->getRequest();
+            $editForm->submit($request);
+            if ($editForm->isValid()) 
+            {
+                $contacto = $editForm->get('contacto')->getData();
+                if($entity->hasContacto($contacto) === false){
+                    $entity->addContacto($contacto);
+                    $em->persist($entity);
+                    $em->flush();
+                }
+            }
+            
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_organizacion_show', array('id' => $id))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
+        );
+    }
+    
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/{id}/supervisor/add", name="practicas_organizacion_add_supervisor")
+     * @Method({"GET", "POST"})
+     * @Template("pDevPracticasBundle:Organizacion:addSupervisor.html.twig")
+     */
+    public function addSupervisorAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+
+        $editForm = $this->createFormBuilder()
+                         ->add('supervisor', 'supervisor_selector')
+                         ->getForm();
+        
+        if($this->getRequest()->isMethod('POST'))
+        {
+            $request = $this->getRequest();
+            $editForm->submit($request);
+            if ($editForm->isValid()) 
+            {
+                $supervisor = $editForm->get('supervisor')->getData();
+                if($entity->hasSupervisor($supervisor) === false){
+                    $entity->addSupervisor($supervisor);
+                    $em->persist($entity);
+                    $em->flush();
+                }
+            }
+            
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_organizacion_show', array('id' => $id))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+        return array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
+        );
+    }
+    
+    /**
+     * Deletes a Organizacion entity.
+     *
+     * @Route("/{id}/contacto/{contactoId}/remove", name="practicas_organizacion_remove_contacto")
+     * @Method({"GET", "POST"})
+     * @Template("pDevPracticasBundle:Organizacion:removeContacto.html.twig")
+     */
+    public function removeContactoAction($id, $contactoId)
+    {   
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+        $contacto = $em->getRepository('pDevPracticasBundle:Contacto')->find($contactoId);
+
+        if (!$entity or !$contacto) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+            
+        $deleteForm = $this->createDeleteForm($id);
+        
+        if($this->getRequest()->isMethod('POST'))
+        {
+            $request = $this->getRequest();
+            $deleteForm->submit($request);
+            if($deleteForm->isValid()) 
+            {
+                if($entity->hasContacto($contacto)){
+                    $entity->removeContacto($contacto);
+                    $contacto->removeOrganizacion($entity);
+                }
+                    
+                $em->persist($contacto);
+                $em->persist($entity);
+                $em->flush();
+            }
+            
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_organizacion_show', array('id' => $id))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+    
+        return array(
+            'entity'      => $entity,
+            'contacto'    => $contacto,
+            'delete_form'   => $deleteForm->createView(),
+        );
+    }
+    
+    /**
+     * Deletes a Organizacion entity.
+     *
+     * @Route("/{id}/supervisor/{supervisorId}/remove", name="practicas_organizacion_remove_supervisor")
+     * @Method({"GET", "POST"})
+     * @Template("pDevPracticasBundle:Organizacion:removeSupervisor.html.twig")
+     */
+    public function removeSupervisorAction($id, $supervisorId)
+    {   
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->find($id);
+        $supervisor = $em->getRepository('pDevPracticasBundle:Supervisor')->find($supervisorId);
+
+        if (!$entity or !$supervisor) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+            
+        $deleteForm = $this->createDeleteForm($id);
+        
+        if($this->getRequest()->isMethod('POST'))
+        {
+            $request = $this->getRequest();
+            $deleteForm->submit($request);
+            if($deleteForm->isValid()) 
+            {
+                if($entity->hasSupervisor($supervisor)){
+                    $entity->removeSupervisor($supervisor);
+                    $supervisor->removeOrganizacion($entity);
+                }
+                    
+                $em->persist($supervisor);
+                $em->persist($entity);
+                $em->flush();
+            }
+            
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_organizacion_show', array('id' => $id))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+    
+        return array(
+            'entity'      => $entity,
+            'supervisor'    => $supervisor,
+            'delete_form'   => $deleteForm->createView(),
+        );
+    }
     
     /**
      * Creates a form to delete a Organizacion entity by id.

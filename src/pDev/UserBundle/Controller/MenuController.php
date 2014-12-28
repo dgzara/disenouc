@@ -41,8 +41,10 @@ class MenuController extends Controller
             
             if($isCoordinacion or $isAlumno or !$isExterno)
                 $practicas_items[] = $this->createItem('Planes de práctica',$this->generateUrl('practicas_alumno'));
-            elseif($isAcademico or $isSupervisor or $isContacto)
+            elseif($isAcademico or $isSupervisor or $isContacto){
                 $practicas_items[] = $this->createItem('Practicantes',$this->generateUrl('practicas_alumno'));
+                $practicas_items[] = $this->createItem('Organizaciones',$this->generateUrl('practicas_organizacion'));
+            }
             
             if($isCoordinacion)
                 $practicas_items[] = $this->createItem('Evaluaciones',$this->generateUrl('practicas_evaluacion'));
@@ -76,9 +78,6 @@ class MenuController extends Controller
             if($pm->isGranted("ROLE_SUPER_USER","SITE_PERMISOS"))
                 $admin_items[] = $this->createItem('Permisos',$this->generateUrl('user'));
             
-            
-            
-                        
             $ajustes_granted = $pm->isGranted("ROLE_SUPER_USER","SITE_AJUSTES");            
             if($ajustes_granted)
                 $admin_items[] = $this->createItem('Ajustes generales',$this->generateUrl('configuracion'));

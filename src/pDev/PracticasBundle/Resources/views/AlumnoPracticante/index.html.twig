@@ -6,7 +6,13 @@
 {%endblock%}
 
 
-{% block header %}Planes de práctica{% endblock %}
+{% block header %}
+    {% if isTipo("TYPE_CONTACTO") or isTipo("TYPE_SUPERVISOR") %}    
+    Practicantes
+    {% else %}
+    Planes de práctica
+    {% endif %}
+{% endblock %}
 {% block lead %}{% endblock %}
 
 {% block content %}

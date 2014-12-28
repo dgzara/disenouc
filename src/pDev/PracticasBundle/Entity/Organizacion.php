@@ -86,6 +86,12 @@ class Organizacion
     private $supervisores;
     
     /**
+     * @ORM\ManyToOne(targetEntity="pDev\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="creador_id", referencedColumnName="id", nullable=false)
+     */
+    private $creador;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -313,7 +319,30 @@ class Organizacion
     {
         return $this->aliases;
     }
+    
+    /**
+     * Set creador
+     *
+     * @param \pDev\UserBundle\Entity\Creador $creador
+     * @return Organizacion
+     */
+    public function setCreador(\pDev\UserBundle\Entity\User $creador)
+    {
+        $this->creador = $creador;
+    
+        return $this;
+    }
 
+    /**
+     * Get creador
+     *
+     * @return \pDev\UserBundle\Entity\User
+     */
+    public function getCreador()
+    {
+        return $this->creador;
+    }
+    
     /**
      * Add contactos
      *

@@ -8,28 +8,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use pDev\PracticasBundle\Entity\Supervisor;
-use pDev\PracticasBundle\Form\SupervisorType;
+use pDev\PracticasBundle\Entity\Contacto;
+use pDev\PracticasBundle\Form\ContactoType;
 
 /**
- * Supervisor controller.
+ * Contacto controller.
  *
- * @Route("/practicas/supervisor")
+ * @Route("/practicas/contacto")
  */
-class SupervisorController extends Controller
+class ContactoController extends Controller
 {
 
     /**
-     * Lists all Supervisor entities.
+     * Lists all Contacto entities.
      *
-     * @Route("/", name="practicas_supervisor")
+     * @Route("/", name="practicas_contacto")
      * @Method("GET")
      * @Template()
      */
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $dql   = "SELECT s FROM pDevPracticasBundle:Supervisor s";
+        $dql   = "SELECT s FROM pDevPracticasBundle:Contacto s";
         $query = $em->createQuery($dql);
 
         $paginator  = $this->get('knp_paginator');
@@ -45,16 +45,16 @@ class SupervisorController extends Controller
     }
     
     /**
-     * Creates a new Supervisor entity.
+     * Creates a new Contacto entity.
      *
-     * @Route("/", name="practicas_supervisor_create")
+     * @Route("/", name="practicas_contacto_create")
      * @Method("POST")
-     * @Template("pDevPracticasBundle:Supervisor:new.html.twig")
+     * @Template("pDevPracticasBundle:Contacto:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity  = new Supervisor();
-        $form = $this->createForm(new SupervisorType(), $entity);
+        $entity  = new Contacto();
+        $form = $this->createForm(new ContactoType(), $entity);
         $form->submit($request);
 
         if ($form->isValid()) 
@@ -75,7 +75,7 @@ class SupervisorController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('practicas_supervisor_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('practicas_contacto_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -85,16 +85,16 @@ class SupervisorController extends Controller
     }
 
     /**
-     * Displays a form to create a new Supervisor entity.
+     * Displays a form to create a new Contacto entity.
      *
-     * @Route("/new", name="practicas_supervisor_new")
+     * @Route("/new", name="practicas_contacto_new")
      * @Method("GET")
      * @Template()
      */
     public function newAction()
     {
-        $entity = new Supervisor();
-        $form   = $this->createForm(new SupervisorType(), $entity);
+        $entity = new Contacto();
+        $form   = $this->createForm(new ContactoType(), $entity);
 
         return array(
             'entity' => $entity,
@@ -103,9 +103,9 @@ class SupervisorController extends Controller
     }
 
     /**
-     * Finds and displays a Supervisor entity.
+     * Finds and displays a Contacto entity.
      *
-     * @Route("/{id}/show", name="practicas_supervisor_show")
+     * @Route("/{id}/show", name="practicas_contacto_show")
      * @Method("GET")
      * @Template()
      */
@@ -113,10 +113,10 @@ class SupervisorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('pDevPracticasBundle:Supervisor')->find($id);
+        $entity = $em->getRepository('pDevPracticasBundle:Contacto')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Supervisor entity.');
+            throw $this->createNotFoundException('Unable to find Contacto entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -128,9 +128,9 @@ class SupervisorController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing Supervisor entity.
+     * Displays a form to edit an existing Contacto entity.
      *
-     * @Route("/{id}/edit", name="practicas_supervisor_edit")
+     * @Route("/{id}/edit", name="practicas_contacto_edit")
      * @Method("GET")
      * @Template()
      */
@@ -138,13 +138,13 @@ class SupervisorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('pDevPracticasBundle:Supervisor')->find($id);
+        $entity = $em->getRepository('pDevPracticasBundle:Contacto')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Supervisor entity.');
+            throw $this->createNotFoundException('Unable to find Contacto entity.');
         }
 
-        $editForm = $this->createForm(new SupervisorType(), $entity);
+        $editForm = $this->createForm(new ContactoType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
@@ -155,31 +155,31 @@ class SupervisorController extends Controller
     }
 
     /**
-     * Edits an existing Supervisor entity.
+     * Edits an existing Contacto entity.
      *
-     * @Route("/{id}", name="practicas_supervisor_update")
+     * @Route("/{id}", name="practicas_contacto_update")
      * @Method("PUT")
-     * @Template("pDevPracticasBundle:Supervisor:edit.html.twig")
+     * @Template("pDevPracticasBundle:Contacto:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('pDevPracticasBundle:Supervisor')->find($id);
+        $entity = $em->getRepository('pDevPracticasBundle:Contacto')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Supervisor entity.');
+            throw $this->createNotFoundException('Unable to find Contacto entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new SupervisorType(), $entity);
+        $editForm = $this->createForm(new ContactoType(), $entity);
         $editForm->submit($request);
 
         if ($editForm->isValid()) {
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('practicas_supervisor_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('practicas_contacto_edit', array('id' => $id)));
         }
 
         return array(
@@ -190,9 +190,9 @@ class SupervisorController extends Controller
     }
     
     /**
-     * Deletes a Supervisor entity.
+     * Deletes a Contacto entity.
      *
-     * @Route("/{id}", name="practicas_supervisor_delete")
+     * @Route("/{id}", name="practicas_contacto_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -202,33 +202,33 @@ class SupervisorController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('pDevPracticasBundle:Supervisor')->find($id);
+            $entity = $em->getRepository('pDevPracticasBundle:Contacto')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Supervisor entity.');
+                throw $this->createNotFoundException('Unable to find Contacto entity.');
             }
 
             $em->remove($entity);
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('practicas_supervisor'));
+        return $this->redirect($this->generateUrl('practicas_contacto'));
     }
     
     /**
      * Lists all Alumnos entities.
      *
-     * @Route("/supervisor/buscar", name="persona_supervisores_buscar")
+     * @Route("/contacto/buscar", name="persona_contactoes_buscar")
      * @Method("POST")
-     * @Template("pDevPracticaBundle:Supervisor:index.html.twig")
+     * @Template("pDevPracticaBundle:Contacto:index.html.twig")
      */
-    public function supervisoresBuscarAction()
+    public function contactoesBuscarAction()
     {
         $pm = $this->get("permission.manager");
         $pm->isGrantedForbidden('ROLE_SUPER_USER',"SITE_SUPERVISOR");
                 
         $sh = $this->get("search.helper");
-        $searchform = $this->createSearchPersonasForm('Buscar supervisores', 'números de alumno');
+        $searchform = $this->createSearchPersonasForm('Buscar contactoes', 'números de alumno');
         $request = $this->getRequest();
         
         if ($request->isMethod('POST'))
@@ -238,7 +238,7 @@ class SupervisorController extends Controller
             if ($searchform->isValid())
             {
                 $query = ((string)$searchform['querystring']->getData());                        
-                $entitystring = 'pDevPracticaBundle:Supervisor';            
+                $entitystring = 'pDevPracticaBundle:Contacto';            
 
                 // preparamos la consulta
                 $em = $this->getDoctrine()->getManager();
@@ -250,7 +250,7 @@ class SupervisorController extends Controller
                 $results = $sh->getResultados($fields,$query,$qb);
 
                 return array(
-                    'supervisores' => $results,
+                    'contactoes' => $results,
                     'total' => $totalcount,
                     'search_form' => $searchform->createView(),
                     'anterior'=> false,
@@ -262,13 +262,13 @@ class SupervisorController extends Controller
         
         $nm = $this->get("notification.manager");
         $nm->createNotificacion('Error', 'Ocurrió un error, inténtelo más tarde.', Notificacion::USER_ERROR);
-        return $this->redirect($this->generateUrl('practicas_supervisor', array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
+        return $this->redirect($this->generateUrl('practicas_contacto', array('page'=>1,'orderBy'=>'nombres','order'=>'asc')));
     }
     
     /**
      * Displays a form to create a new Organizacion entity.
      *
-     * @Route("/find", name="practicas_supervisor_find")
+     * @Route("/find", name="practicas_contacto_find")
      * @Method("GET")
      */
     public function searchAction()
@@ -280,7 +280,7 @@ class SupervisorController extends Controller
         $em = $this->getDoctrine()->getManager();
 
 
-        $qb = $em->getRepository('pDevPracticasBundle:Supervisor')->createQueryBuilder('p');
+        $qb = $em->getRepository('pDevPracticasBundle:Contacto')->createQueryBuilder('p');
         $entities = $qb
                         ->where('p.rut like :rut')
                         ->setParameter('rut',$data.'%')
@@ -311,7 +311,7 @@ class SupervisorController extends Controller
     /**
      * Displays a form to create a new Organizacion entity.
      *
-     * @Route("/lista.json", name="practicas_supervisor_json")
+     * @Route("/lista.json", name="practicas_contacto_json")
      * @Method("GET")
      */
     public function jsonAction()
@@ -319,7 +319,7 @@ class SupervisorController extends Controller
         $return = array();
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('pDevPracticasBundle:Supervisor')->findAll();
+        $entities = $em->getRepository('pDevPracticasBundle:Contacto')->findAll();
 
         foreach ($entities as $entity)
         {
@@ -328,7 +328,6 @@ class SupervisorController extends Controller
                 'value' => $entity->__toString(),
                 'apellidoPaterno'=>$entity->getApellidoPaterno(),
                 'apellidoMaterno'=>$entity->getApellidoMaterno(),
-                'cargo'=>$entity->getCargo(),
                 'email'=>$entity->getEmail(),
             );
         }
@@ -339,7 +338,7 @@ class SupervisorController extends Controller
     }
     
     /**
-     * Creates a form to delete a Supervisor entity by id.
+     * Creates a form to delete a Contacto entity by id.
      *
      * @param mixed $id The entity id
      *

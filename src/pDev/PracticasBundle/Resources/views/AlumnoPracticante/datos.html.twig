@@ -26,7 +26,8 @@
            {% endif %}
            {{ form_row(form.comoContacto) }}
            {{ form_row(form.fechaInicio) }}
-           {{ form_row(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+           {{ form_label(form.duracionCantidad) }}<br>
+           {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
            <div id="endDate"></div>
         {% else %}
             {% if form.tipo is defined %}
@@ -229,11 +230,9 @@
 
             });
             
-            // Movemos el boton de los dias
-            $("#pdev_practicasbundle_alumnopracticantetype_duracionUnidad").before($("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad"));
-            
             // Cambio de horarios
             $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").change(desplegarHorario);
+            $("#pdev_practicasbundle_alumnopracticantetype_duracionUnidad").change(desplegarHorario);
             desplegarHorario();
         });
         

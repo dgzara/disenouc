@@ -1,0 +1,80 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+    <form id="formSupervisor" class="form-horizontal form-small form-well" action="{{ path('practicas_organizacion_add_supervisor', {'id': entity.id }) }}" method="post">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Agregar supervisor</h4>
+        </div>
+        <div class="modal-body">
+            <div id="remote">
+                <input class="typeahead" type="text" placeholder="Escriba el nombre y/o apellido" style="width:300px !important;">
+            </div>
+            {{ form_widget(edit_form) }}
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+    </div>
+</div>
+<script>
+    $('.typeahead').typeahead('destroy');
+    var $supervisor = $("#form_supervisor");
+    var supervisors = new Bloodhound({
+        datumTokenizer: function(supervisors) {
+            return Bloodhound.tokenizers.whitespace(supervisors.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: '{{ path("practicas_supervisor_json") }}',
+    });
+     
+    supervisors.clearPrefetchCache();
+    supervisors.initialize();
+     
+    $('#remote .typeahead').typeahead(null, {
+        name: 'supervisors',
+        displayKey: 'value',
+        valueKey: 'id',
+        source: supervisors.ttAdapter(),
+        templates: {
+            empty: [
+            '<div class="empty-message">',
+            'No se encontraron supervisores',
+            '</div>'
+            ].join('\n'),
+            suggestion: Handlebars.compile('{% raw %}<strong>{{value}}</strong>( {{ email }} ){% endraw %}')
+        } 
+    }); 
+    
+    var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
+        $supervisor.val(suggestionObject.id);
+    };
+
+    $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
+    $('#remote .typeahead').on('typeahead:opened', function(){
+        $(this).val("");
+        $supervisor.val("");
+        $(".error1").hide();
+    });
+    $('#remote .typeahead').on('typeahead:closed', function(){
+        if($('.tt-suggestion').length === 0){
+            $(this).val("");;
+        }
+    });
+    $('#remote .typeahead').on('keyup', function () {
+        if($('.tt-suggestion').length === 0){
+            $supervisor.val("");
+        }
+    });
+    
+    $("#formSupervisor").submit(function( event ) {
+        if($('#remote .typeahead').typeahead('val') == "")
+            $supervisor.val("");    
+    
+        if($supervisor.val() != "" ) {
+            return;
+        }
+        $(".error1").text("Escriba un nombre válido").show();
+        event.preventDefault();
+    });
+</script>

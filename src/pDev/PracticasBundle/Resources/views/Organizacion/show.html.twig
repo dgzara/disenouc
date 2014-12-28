@@ -5,28 +5,35 @@
                 
 {%endblock%}
 
+{% block styles %}
+    {{ parent() }}
+    <link href="{{ asset('/css/typeahead.css') }}" rel="stylesheet">
+{% endblock %}
 
-{%block header%}Organización{%endblock%}
+{%block header%}Organización "{{ entity.aliases|first }}" {%endblock%}
 {%block lead%}{%endblock%}
 
-{%block content %}
+{% block sidebar %}
     <div id="form_ordenar" class="well clearfix" style="margin:0">
-        
+        {% if permiso %}
         <a href="{{ path('practicas_organizacion_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
             <span class="glyphicon glyphicon-edit"></span> Modificar
         </a>
-        <a href="{{ path('practicas_new') }}"  class="pull-left btn btn-primary">
+        {% endif %}
+        <a href="{{ path('practicas_new_organizacion', {'id': entity.id}) }}"  class="pull-left btn btn-primary">
             <span class="glyphicon glyphicon-plus-sign"></span> Solicitar practicante
         </a>
     </div>
+{% endblock %}
 
+{% block content %}
     <table class="table table-bordered">
         <tbody>
             <tr>
-                <th>Nombres organización</th>
+                <th width="30%">Nombres asociados</th>
                 <td>
                     {% for alias in entity.aliases %}
-                        {{alias.nombre}}<br>
+                        {{ alias.nombre }}<br>
                     {% endfor%}
                 </td>
             </tr>
@@ -48,7 +55,7 @@
             </tr>
             <tr>
                 <th>Dirección web</th>
-                <td>{{ entity.web }}</td>
+                <td><a href="{{ entity.web }}">{{ entity.web }}</a></td>
             </tr>
             <tr>
                 <th>Número de personas que trabajan en la organización</th>
@@ -61,8 +68,9 @@
         </tbody>
     </table>
 
-    
-<h4>Contactos asociados</h4>
+    <h4>Contactos asociados
+        {% if permiso %}<a class="onmodal" href="{{ path('practicas_organizacion_add_contacto', {'id': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>{% endif %}
+    </h4>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -74,7 +82,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for contacto in contactos %}
+        {% for contacto in entity.contactos %}
             <tr>
                 <td>{{ contacto.nombreCompleto }}</td>
                 <td>{{ contacto.rut }}</td>
@@ -83,8 +91,13 @@
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('persona_show', { 'id': contacto.id,'tipo':'contacto' }) }}">Ver</a>
-                    </li>                    
+                        <a href="{{ path('persona_show', { 'id': contacto.id, 'tipo':'contacto' }) }}">Ver</a>
+                    </li> 
+                    {% if contacto.usuario.id != app.user.id %}
+                    <li>
+                        <a class="onmodal" href="{{ path('practicas_organizacion_remove_contacto', { 'id': entity.id, 'contactoId': contacto.id }) }}">Borrar</a>
+                    </li>                   
+                    {% endif %}
                 </ul>
                 </td>
             </tr>
@@ -98,7 +111,9 @@
         </tbody>
     </table>
     
-   <h4>Supervisores asociados</h4>
+    <h4>Supervisores asociados
+        {% if permiso %}<a class="onmodal" href="{{ path('practicas_organizacion_add_supervisor', {'id': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>{% endif %}
+    </h4>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -110,7 +125,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for supervisor in supervisores %}
+        {% for supervisor in entity.supervisores %}
             <tr>
                 <td>{{ supervisor.nombreCompleto }}</td>
                 <td>{{ supervisor.rut }}</td>
@@ -120,7 +135,12 @@
                 <ul>
                     <li>
                         <a href="{{ path('persona_show', { 'id': supervisor.id,'tipo':'supervisor' }) }}">Ver</a>
-                    </li>                    
+                    </li> 
+                    {% if supervisor.usuario.id != app.user.id %}
+                    <li>
+                        <a class="onmodal" href="{{ path('practicas_organizacion_remove_supervisor', { 'id': entity.id, 'supervisorId': supervisor.id }) }}">Borrar</a>
+                    </li>                   
+                    {% endif %}                   
                 </ul>
                 </td>
             </tr>
@@ -133,12 +153,14 @@
         {% endfor %}
         </tbody>
     </table>
-   
-   
-        <form id="form_delete" class="hide" action="{{ path('practicas_organizacion_delete', { 'id': entity.id }) }}" method="post">
-            <input type="hidden" name="_method" value="DELETE" />
-            {{ form_widget(delete_form) }}
-            <button id="_submit" type="submit">Eliminar</button>
-        </form>
-    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts combine=true
+        '@typeahead_js' 
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('/js/handlebars-v2.0.0.js') }}"></script>
 {% endblock %}

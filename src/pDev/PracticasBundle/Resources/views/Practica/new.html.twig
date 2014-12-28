@@ -5,22 +5,39 @@
     <li><a href="{{ path('practicas_new') }}">Solicitar practicante</a></li>
 {% endblock %}
 
+{% block styles %}
+    {{ parent() }}
+    <link href="{{ asset('/css/typeahead.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block javascript %}
     <script src="{{ asset('/js/pdev.submit.js') }}"></script>
 {% endblock %}
         
-{% block header %}Solicitar practicante{%endblock%}
+{% block header %}
+    Solicitar practicante {% if entity.organizacionAlias %}para "{{ entity.organizacionAlias.organizacion }}"{% endif %}
+{% endblock %}
+
 {% block lead %}Detalles de la práctica{%endblock%}
 
 {% block content %}
-    <form id="form_practica" class="form-well form-horizontal" action="{{ path('practicas_create') }}" method="post" {{ form_enctype(form) }}>
+    <form id="form_practica" class="form-well form-horizontal" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
         {{ form_row(form.nombre) }}
+        {% if form.organizacionAlias is defined %}
         {{ form_row(form.organizacionAlias) }}
+        <div id="remote" class="control-group">
+            {{ form_label(form.organizacionAlias) }}
+            <div class="controls">
+                <input class="typeahead" type="text">
+            </div>
+        </div> 
+        {% endif %}
         {{ form_row(form.descripcion) }}
         {{ form_row(form.jornadas) }}
         {{ form_row(form.fechaInicio) }}
         {{ form_label(form.duracionCantidad) }}<br>
         {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+        <div id="endDate"></div>
         {{ form_rest(form) }}
         <p class="pull-right">            
             <button id="_submit" class="hide" type="submit"></button>         
@@ -31,10 +48,125 @@
     </form>
 {% endblock %}
 
-{% block javascriptload%}
-<script type="text/javascript">
-    var input_alias = $('input#pdev_practicasbundle_organizacionalias');
-    var source_url = '{{path('practicas_organizacion_find')}}';
-    var fillable_base = 'pdev_practicasbundle_organizaciontype_';
-</script>
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts combine=true
+        '@typeahead_js' 
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('/js/handlebars-v2.0.0.js') }}"></script>
+    <script>
+        var fechaIn = $('input#pdev_practicasbundle_practicatype_fechaInicio');
+        var duracionCantidad = $('input#pdev_practicasbundle_practicatype_duracionCantidad');    
+        var duracionUnidad = $('#pdev_practicasbundle_practicatype_duracionUnidad');    
+        
+        {% if form.organizacionAlias is defined %}
+        var organizacionId = $("#pdev_practicasbundle_practicatype_organizacionAlias");
+        $('.typeahead').typeahead('destroy');
+        
+        var organizaciones = new Bloodhound({
+            datumTokenizer: function(organizaciones) {
+                return Bloodhound.tokenizers.whitespace(organizaciones.value);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '{{ path("practicas_organizacion_json") }}',
+        });
+         
+        organizaciones.clearPrefetchCache();
+        organizaciones.initialize();
+         
+        $('#remote .typeahead').typeahead(null, {
+            name: 'best-pictures',
+            displayKey: 'value',
+            valueKey: 'id',
+            source: organizaciones.ttAdapter(),
+            templates: {
+                empty: [
+                '<div class="empty-message">',
+                'No hay organizaciones registradas',
+                '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('{% raw %}<strong>{{value}}</strong>{% endraw %}')
+            } 
+        }); 
+        
+        var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
+            organizacionId.val(suggestionObject.id);
+        };
+
+        $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
+        $('#remote .typeahead').on('typeahead:opened', function(){
+            $(this).val("");
+            organizacionId.val("");
+            $(".error1").hide();
+        });
+        $('#remote .typeahead').on('typeahead:closed', function(){
+            if($('.tt-suggestion').length === 0){
+                $(this).val("");;
+            }
+        });
+        $('#remote .typeahead').on('keyup', function () {
+            if($('.tt-suggestion').length === 0){
+                organizacionId.val("");
+            }
+        });
+        
+        $("#form1").submit(function( event ) {
+            if($('#remote .typeahead').typeahead('val') == "")
+                organizacionId.val("");    
+        
+            if(organizacionId.val() != "" ) {
+                return;
+            }
+            $(".error1").text("Ingrese una organización").show();
+            event.preventDefault();
+        });
+        {% endif %}
+        
+        jQuery(document).ready(function() {
+            daysBetween();
+            $(".date").each(function( index ) {
+                $(this).datetimepicker({
+                  pickTime: false
+                }).on('dp.change', daysBetween);
+            });
+            $("#pdev_practicasbundle_practicatype_duracionCantidad").change(daysBetween);
+            $("#pdev_practicasbundle_practicatype_duracionUnidad").change(daysBetween);
+        });
+        
+        var daysBetween = function () 
+        {
+            var startDate = parseDate(fechaIn.val()); 
+            var dCantidad = duracionCantidad.val();
+            var dUnidad = duracionUnidad.val();
+            var days = [], current = startDate, endDate = startDate;
+            
+            if(dUnidad == "días")
+                endDate = new Date(startDate.getTime() + dCantidad * (24 * 60 * 60 * 1000));
+            else if(dUnidad == "semanas")
+                endDate = new Date(startDate.getTime() + 7 * dCantidad * (24 * 60 * 60 * 1000));
+            else if(dUnidad == "meses")
+                endDate = new Date(startDate.getTime() + 30 * dCantidad * (24 * 60 * 60 * 1000));
+            
+            while(current <= endDate) {
+                if(days[current.getDay()] == undefined)
+                    days[current.getDay()] = 1;
+                else
+                    days[current.getDay()]++;
+                current = new Date(current.getTime() + (24 * 60 * 60 * 1000));
+                
+            }
+            
+            if(isNaN(endDate.getTime()) === false)
+                $("#endDate").html("Fecha estimada de término: " + endDate.toLocaleDateString());
+        };
+        
+        var parseDate = function (datestr)//dd-mm-yyyy
+        {
+            var datearr = datestr.split('-');
+            return new Date(parseInt(datearr[2]), parseInt(datearr[1]-1), parseInt(datearr[0]));
+        };
+    </script>
 {% endblock %}

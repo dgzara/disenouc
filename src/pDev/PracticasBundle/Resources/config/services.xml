@@ -8,13 +8,20 @@
     <parameters>
         <parameter key="p_dev_practicas.example.class">pDev\PracticasBundle\Example</parameter>
     </parameters>
-
+    -->
     <services>
-        <service id="p_dev_practicas.example" class="%p_dev_practicas.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+        <service id="p_dev_practicas.type.organizacion_selector" class="pDev\PracticasBundle\Form\Type\OrganizacionAliasSelectorType">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <tag name="form.type" alias="organizacion_selector" />
+        </service>
+        <service id="p_dev_practicas.type.contacto_selector" class="pDev\PracticasBundle\Form\Type\ContactoSelectorType">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <tag name="form.type" alias="contacto_selector" />
+        </service>
+        <service id="p_dev_practicas.type.supervisor_selector" class="pDev\PracticasBundle\Form\Type\SupervisorSelectorType">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <tag name="form.type" alias="supervisor_selector" />
         </service>
     </services>
-    -->
+    
 </container>

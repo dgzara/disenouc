@@ -1,0 +1,80 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+    <form id="formContacto" class="form-horizontal form-small form-well" action="{{ path('practicas_organizacion_add_contacto', {'id': entity.id }) }}" method="post">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Agregar contacto</h4>
+        </div>
+        <div class="modal-body">
+            <div id="remote">
+                <input class="typeahead" type="text" placeholder="Escriba el nombre y/o apellido" style="width:300px !important;">
+            </div>
+            {{ form_widget(edit_form) }}
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+    </div>
+</div>
+<script>
+    $('.typeahead').typeahead('destroy');
+    var $contacto = $("#form_contacto");
+    var contactos = new Bloodhound({
+        datumTokenizer: function(contactos) {
+            return Bloodhound.tokenizers.whitespace(contactos.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: '{{ path("practicas_contacto_json") }}',
+    });
+     
+    contactos.clearPrefetchCache();
+    contactos.initialize();
+     
+    $('#remote .typeahead').typeahead(null, {
+        name: 'contactos',
+        displayKey: 'value',
+        valueKey: 'id',
+        source: contactos.ttAdapter(),
+        templates: {
+            empty: [
+            '<div class="empty-message">',
+            'No se encontraron usuarios',
+            '</div>'
+            ].join('\n'),
+            suggestion: Handlebars.compile('{% raw %}<strong>{{value}}</strong>( {{ email }} ){% endraw %}')
+        } 
+    }); 
+    
+    var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
+        $contacto.val(suggestionObject.id);
+    };
+
+    $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
+    $('#remote .typeahead').on('typeahead:opened', function(){
+        $(this).val("");
+        $contacto.val("");
+        $(".error1").hide();
+    });
+    $('#remote .typeahead').on('typeahead:closed', function(){
+        if($('.tt-suggestion').length === 0){
+            $(this).val("");;
+        }
+    });
+    $('#remote .typeahead').on('keyup', function () {
+        if($('.tt-suggestion').length === 0){
+            $contacto.val("");
+        }
+    });
+    
+    $("#formContacto").submit(function( event ) {
+        if($('#remote .typeahead').typeahead('val') == "")
+            $contacto.val("");    
+    
+        if($contacto.val() != "" ) {
+            return;
+        }
+        $(".error1").text("Escriba un nombre válido").show();
+        event.preventDefault();
+    });
+</script>

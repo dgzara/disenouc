@@ -36,6 +36,7 @@ class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, 
 		    $organizacion->setPais("Chile");
 		    $organizacion->setAntiguedad(43);
 		    $organizacion->setWeb("http://www.designcorp.cl");
+		    $organizacion->setCreador($this->getReference('user-contacto'));
 		    $organizacion->setPersonasTotal(210);
 		    $organizacion->addContacto($this->getReference('persona-contacto'));
 		    $organizacion->addSupervisor($this->getReference('persona-supervisor'));

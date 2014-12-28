@@ -26,21 +26,9 @@ class PracticaType extends AbstractType
         $user = $this->securityContext->getToken()->getUser();
         $builder
             ->add('nombre', null, array(
-                'label' => 'Nombre'
+                'label' => 'Asunto'
             ))
-            ->add('organizacionAlias', 'entity', array(
-                'label' => 'Organización',
-                'class' => 'pDevPracticasBundle:OrganizacionAlias',
-                'query_builder' => function(EntityRepository $er) use($user) {
-                    return $er->createQueryBuilder('oa')
-                        ->leftJoin('oa.organizacion', 'o')
-                        ->leftJoin('o.contactos', 'c')
-                        ->leftJoin('c.usuario', 'u')
-                        ->where('u.id = :id')
-                        ->setParameter('id', $user->getId())
-                        ->orderBy('oa.nombre', 'ASC');
-                },
-            ))
+            ->add('organizacionAlias', 'organizacion_selector', array('label' => 'Organización'))
             ->add('contacto')
             ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
             ->add('tipo', 'choice', array(
