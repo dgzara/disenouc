@@ -255,7 +255,12 @@ class PracticaController extends Controller
             
             $em->persist($entity);
             $em->flush();
-
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'La práctica ha sido enviada a revisión'
+            );
+        
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $entity->getId())));
         }
 
@@ -346,7 +351,7 @@ class PracticaController extends Controller
         
         // Si es alumno, comprobamos si ya postuló
         if($isAlumno)
-            $alumnoPractica = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->findOneByAlumno($user->getPersona('TYPE_ALUMNO'));
+            $alumnoPractica = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->findOneBy(array("alumno" => $user->getPersona('TYPE_ALUMNO'), "practica" => $entity));
         
         $deleteForm = $this->createDeleteForm($id);
 
@@ -370,6 +375,7 @@ class PracticaController extends Controller
      */
     public function editAction($id)
     {
+        $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
@@ -380,12 +386,14 @@ class PracticaController extends Controller
 
         $securityContext = $this->container->get('security.context');
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm->remove('organizacionAlias');
+        
+        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false)
+            $editForm->remove('tipo');
 
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         );
     }
 
@@ -398,6 +406,7 @@ class PracticaController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
+        $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
@@ -406,9 +415,13 @@ class PracticaController extends Controller
             throw $this->createNotFoundException('Unable to find Practica entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
         $securityContext = $this->container->get('security.context');
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
+        $editForm->remove('organizacionAlias');
+        
+        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false)
+            $editForm->remove('tipo');
+            
         $editForm->submit($request);
 
         if ($editForm->isValid()) 
@@ -419,6 +432,11 @@ class PracticaController extends Controller
             
             $em->persist($entity);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'La práctica ha sido actualizada'
+            );
 
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
@@ -426,7 +444,6 @@ class PracticaController extends Controller
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         );
     }
     
@@ -456,6 +473,12 @@ class PracticaController extends Controller
             if ($editForm->isValid()) {
                 $em->persist($entity);
                 $em->flush();
+                
+                // Mensaje
+                $request->getSession()->getFlashBag()->add(
+                    'notice',
+                    'La práctica ha cambiado al estado: '.$entity->getEstado()
+                );
                 
                 // Devolvemos la respuesta
                 $array = array('redirect' => $this->generateUrl('practicas_show', array('id' => $id))); // data to return via JSON
@@ -523,9 +546,14 @@ class PracticaController extends Controller
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Practica entity.');
             }
-
+            
             $em->remove($entity);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'La práctica ha sido eliminada'
+            );
         }
 
         return $this->redirect($this->generateUrl('practicas'));

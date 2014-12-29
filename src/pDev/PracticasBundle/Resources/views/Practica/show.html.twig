@@ -34,11 +34,8 @@
             <tbody>
                 <tr>
                     <td width="35%">Estado</td>
-                    <td>{% if entity.estado == 'estado.pendiente' %}<span class="label label-default">Pendiente de aprobación
-                        {% elseif entity.estado == 'estado.aprobada' %}<span class="label label-success">Publicada
-                        {% elseif entity.estado == 'estado.rechazada' %}<span class="label label-danger">Rechazada
-                        {% elseif entity.estado == 'estado.finalizada' %}<span class="label label-default">Finalizada
-                        {% endif %}</span>
+                    <td>
+                        {% include 'pDevPracticasBundle:Practica:estadoLabel.html.twig' %}
                     </td>
                 </tr>
                 <tr>
@@ -94,9 +91,11 @@
     {% if (isCoordinacion or isContacto) and entity.estado != 'estado.finalizada' %}
     <div id="form_ordenar" class="well clearfix no-margin">
         <div class="btn-group">
+            {% if entity.estado != 'estado.rechazada' %}
             <a href="{{ path('practicas_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
                 <span class="glyphicon glyphicon-edit"></span> Modificar
             </a>
+            {% endif %}
             <a href="#form_delete"  class="pull-left btn btn-danger submitform">
                 <span class="glyphicon glyphicon-remove"></span> Eliminar
             </a>
@@ -125,7 +124,11 @@
         <table class="table table-striped">
             <tbody>
                 <tr>
-                    <td width="35%">Habilidades necesarias</td>
+                    <td width="35%">Tipo</td>
+                    <td>{{ entity.tipo }}</td>
+                </tr>
+                <tr>
+                    <td>Habilidades necesarias</td>
                     <td>{{ entity.manejoSoftware }}</td>
                 </tr>
                 <tr>

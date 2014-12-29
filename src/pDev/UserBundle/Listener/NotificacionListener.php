@@ -31,18 +31,37 @@ class NotificacionListener
             return;
         }
         
+        // Obtenemos los funcionarios
+        $funcionarios = $this->em->getRepository('pDevUserBundle:Funcionario')->findAll();
+        
         if ($entity instanceof \pDev\PracticasBundle\Entity\Practica) 
         {
             $enlace = $this->container->get('router')->generate('practicas_show',array('id'=>$entity->getId()), true);
-            $this->armarNotificacion("Oferta de práctica publicada", "Ha sido publicada la oferta", $user, $enlace);
-            
-            // Obtenemos los funcionarios
-            $funcionarios = $this->em->getRepository('pDevUserBundle:Funcionario')->findAll();
-            $mensaje = "La empresa ".$entity->getOrganizacionAlias()." ha publicado la oferta ".$entity->getNombre();
+            $this->armarNotificacion("Oferta de práctica enviada a revisión", "Los datos han sido enviados y serán revisados para su publicación", $user, $enlace);
+            $mensaje = "La empresa ".$entity->getOrganizacionAlias()." ha enviado la oferta ".$entity->getNombre();
             
             foreach($funcionarios as $funcionario)
-            {
                 $this->armarNotificacion("Nueva oferta de práctica", $mensaje, $funcionario->getUsuario(), $enlace);
+            
+            $this->em->flush();
+        }
+        elseif($entity instanceof \pDev\PracticasBundle\Entity\AlumnoPracticante) 
+        {
+            $enlace = $this->container->get('router')->generate('practicas_alumno_show',array('id'=>$entity->getId()), true);
+            
+            if($entity->getPractica())
+            {
+                $this->armarNotificacion("Postulación realizada ", "Los datos han sido enviados y serán revisados para su aprobación", $user, $enlace);
+                $mensaje = "El alumno ".$entity->getAlumno()." ha postulado a la practica ".$entity->getPractica()->getNombre();
+                $this->armarNotificacion("Nueva postulación", $mensaje, $entity->getPractica()->getCreador(), $enlace);      
+            }
+            else 
+            {
+                $this->armarNotificacion("Plan de práctica enviado a revisión", "Los datos han sido enviados y serán revisados para su aprobación", $user, $enlace);
+                $mensaje = "El alumno ".$entity->getAlumno()." ha enviado el plan de practica en ".$entity->getOrganizacion();
+                
+                foreach($funcionarios as $funcionario)
+                    $this->armarNotificacion("Nuevo plan de práctica", $mensaje, $funcionario->getUsuario(), $enlace); 
             }
             
             $this->em->flush();
@@ -63,7 +82,10 @@ class NotificacionListener
         
         $uow = $this->em->getUnitOfWork();
         $usuarios = new ArrayCollection();
-                
+
+        // Obtenemos los funcionarios
+        $funcionarios = $this->em->getRepository('pDevUserBundle:Funcionario')->findAll();
+
         foreach ($uow->getScheduledEntityUpdates() AS $entity) 
         {
             if ($entity instanceof \pDev\PracticasBundle\Entity\Practica)
@@ -71,30 +93,41 @@ class NotificacionListener
                 $enlace = $this->container->get('router')->generate('practicas_show',array('id'=>$entity->getId()), true);
                 $changeSet = $uow->getEntityChangeSet($entity);
                 $cambio = false;
-            
+                $usuarios->add($entity->getCreador());
+                
                 if(array_key_exists('estado', $changeSet))
                 {
                     if($changeSet['estado'][1] == "estado.aprobada")
                     {
                         $titulo = "Oferta publicada";
-                        $mensaje = "La oferta ha sido aprobada, ahora se encuentra publicada en la bolsa de trabajo";
+                        $mensaje = "La oferta '".$entity->getNombre()."' ha sido aprobada, ahora se encuentra publicada en la bolsa de trabajo";
                         $cambio = true;
                     }
                     else if($changeSet['estado'][1] == "estado.rechazada")
                     {
                         $titulo = "Oferta rechazada";
-                        $mensaje = "La oferta ha sido rechazada";
+                        $mensaje = "La oferta '".$entity->getNombre()."' ha sido rechazada";
                         $cambio = true;
                     }
                     else if($changeSet['estado'][1] == "estado.pendiente")
                     {
                         $titulo = "Realizar modificaciones a oferta";
-                        $mensaje = "La oferta puede ser publicada bajo ciertas modificaciones";
+                        $mensaje = "La oferta '".$entity->getNombre()."' puede ser publicada bajo ciertas modificaciones";
                         $cambio = true;
                     }
+                    else if($changeSet['estado'][1] == "estado.revision")
+                    {
+                        $titulo = "Oferta enviada a revisión";
+                        $mensaje = "La oferta '".$entity->getNombre()."' ha sido enviada a los coordinadores para su revisión";
+                        $cambio = true;
+                        foreach($funcionarios as $funcionario)
+                            $usuarios->add($funcionario->getUsuario());
+                    }
                     
-                    if($cambio)
-                        $this->armarNotificacion($titulo, $mensaje, $entity->getCreador(), $enlace);
+                    if($cambio){
+                        foreach($usuarios as $usuario)
+                            $this->armarNotificacion($titulo, $mensaje, $usuario, $enlace);
+                    }
                 }
             }
             elseif ($entity instanceof \pDev\PracticasBundle\Entity\AlumnoPracticante)
@@ -105,15 +138,13 @@ class NotificacionListener
             
                 if(array_key_exists('estado', $changeSet))
                 {   
-                    // Obtenemos los funcionarios
-                    $funcionarios = $this->em->getRepository('pDevUserBundle:Funcionario')->findAll();
-                    
                     if($changeSet['estado'][1] == "estado.enviada")
                     {
                         $titulo = "Nuevo plan de práctica";
-                        $mensaje = "";
+                        $mensaje = "El alumno ".$entity->getAlumno()." ha enviado un plan de práctica con la organización ".$entity->getOrganizacion();
                         $cambio = true;
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -122,8 +153,9 @@ class NotificacionListener
                         $titulo = "Plan de práctica aceptada por la empresa";
                         $mensaje = "";
                         $cambio = true;
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
                         $usuarios->add($entity->getAlumno()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -133,7 +165,10 @@ class NotificacionListener
                         $mensaje = "";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
                     elseif($changeSet['estado'][1] == "estado.aprobada")
                     {
@@ -141,7 +176,10 @@ class NotificacionListener
                         $mensaje = "Plan de práctica aprobada por coordinador";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
                     else if($changeSet['estado'][1] == "estado.rechazada")
                     {
@@ -149,7 +187,10 @@ class NotificacionListener
                         $mensaje = "";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
                     else if($changeSet['estado'][1] == "estado.revision")
                     {
@@ -164,7 +205,10 @@ class NotificacionListener
                         $titulo = "Plan de práctica aceptada por el alumno";
                         $mensaje = "";
                         $cambio = true;
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -179,11 +223,12 @@ class NotificacionListener
                     }
                     else if($changeSet['estado'][1] == "estado.aceptada")
                     {
-                        $titulo = "Plan de práctica aceptada";
+                        $titulo = "Plan de práctica aceptada por el supervisor y alumno";
                         $mensaje = "";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
-                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }

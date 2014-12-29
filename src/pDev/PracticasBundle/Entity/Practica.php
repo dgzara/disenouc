@@ -710,6 +710,26 @@ class Practica
         );   
     }
     
+    public function isPostulado(\pDev\UserBundle\Entity\Alumno $p)
+    {
+        foreach($this->getPostulantes() as $postulante)
+        {
+            if($postulante->getAlumno() === $p)
+                return true;
+        }
+        return false;
+    }
+    
+    public function isAceptado(\pDev\UserBundle\Entity\Alumno $a)
+    {
+        foreach($this->getAceptados() as $aceptado)
+        {
+            if($aceptado->getAlumno() === $a)
+                return true;
+        }
+        return false;
+    }
+    
     public function hasContacto($user)
     {
         if($this->contacto === $user)

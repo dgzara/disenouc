@@ -1,0 +1,6 @@
+{% if entity.estado == 'estado.revision' %}<span class="label label-warning">En revisión
+{% elseif entity.estado == 'estado.pendiente' %}<span class="label label-default">Pendiente de aprobación
+{% elseif entity.estado == 'estado.aprobada' %}<span class="label label-info">Publicada
+{% elseif entity.estado == 'estado.rechazada' %}<span class="label label-danger">Rechazada
+{% elseif entity.estado == 'estado.finalizada' %}<span class="label label-success">{% if entity.cupos > 1 %}Asignadas{% else %}Asignada{% endif %}
+{% endif %}</span>

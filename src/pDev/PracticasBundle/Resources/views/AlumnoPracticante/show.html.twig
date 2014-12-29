@@ -22,6 +22,64 @@
 {% block lead%}{%endblock%}
 
 {% block sidebar %}
+    <div id="estado">
+        <h4>Estado del plan de práctica</h4>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Estado</th>
+                    <td>
+                        {% include 'pDevPracticasBundle:AlumnoPracticante:estadoLabel.html.twig' %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Observaciones</th>
+                    <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
+                </tr> 
+                {% if isAlumno and entity.estado == 'estado.aceptada.contacto' %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Armar plan de practica
+                        </a>
+                    </td>
+                </tr> 
+                {% elseif isAlumno and entity.estado == 'estado.pendiente' %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Modificar practica
+                        </a>
+                    </td>
+                </tr> 
+                {% elseif (isCoordinacion and entity.estado == 'estado.aceptada.contacto') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
+                            <span class="glyphicon glyphicon-ok"></span> Aceptar práctica
+                        </a>
+                    </td>
+                </tr> 
+                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.postulado' %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_postulante_aceptar', {'id': entity.id}) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Aceptar postulante
+                        </a>
+                    </td>
+                </tr> 
+                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.enviada' %}
+                <tr>
+                    <td colspan=2>
+                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
+                            <span class="glyphicon glyphicon-ok"></span> Aceptar plan de práctica
+                        </a>
+                    </td>
+                </tr>    
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
     <div class="btn-group">
         {% if isCoordinacion %}
         <a href="{{ path('practicas_alumno_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-primary onmodal">
@@ -38,62 +96,6 @@
             <span class="glyphicon glyphicon-check"></span> Evaluación supervisor
         </a>
         {% endif %}
-    </div>
-    <div id="estado">
-        <h4>Estado del plan de práctica</h4>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th>Estado</th>
-                    <td>
-                        {% if entity.estado == 'estado.borrador' %}Borrador
-                        {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada por la organización
-                        {% elseif entity.estado == 'estado.pendiente' %}Pendiente
-                        {% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
-                        {% elseif entity.estado == 'estado.aprobada' %}Aprobada
-                        {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                        {% elseif entity.estado == 'estado.revision' %}En revisión
-                        {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
-                        {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
-                        {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
-                        {% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
-                        {% elseif entity.estado == 'estado.terminada' %}Finalizada
-                        {% elseif entity.estado == 'estado.informe' %}Informe entregado
-                        {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado
-                        {% endif %}    
-                    </td>
-                </tr>
-                <tr>
-                    <th>Observaciones</th>
-                    <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
-                </tr> 
-                {% if isAlumno and entity.estado == 'estado.pendiente'%}
-                <tr>
-                    <td colspan=2>
-                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
-                            <span class="glyphicon glyphicon-ok"></span> Modificar practica
-                        </a>
-                    </td>
-                </tr> 
-                {% elseif (isCoordinacion and entity.estado == 'estado.aceptada.contacto') or (isAlumno and (entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.supervisor')) or ((isSupervisor or isContacto) and ( entity.estado == 'estado.aprobada' or entity.estado == 'estado.aceptada.alumno' )) %}
-                <tr>
-                    <td colspan=2>
-                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
-                            <span class="glyphicon glyphicon-ok"></span> Aceptar práctica
-                        </a>
-                    </td>
-                </tr> 
-                {% elseif (isSupervisor or isContacto) and entity.estado == 'estado.enviada' %}
-                <tr>
-                    <td colspan=2>
-                        <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
-                            <span class="glyphicon glyphicon-ok"></span> Aceptar plan de práctica
-                        </a>
-                    </td>
-                </tr>    
-                {% endif %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}
 

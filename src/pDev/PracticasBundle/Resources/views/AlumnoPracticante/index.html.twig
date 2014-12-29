@@ -84,20 +84,7 @@
                 <td>{{ entity.organizacionAlias.nombre }}</td>
                 <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %} / {% if entity.fechaTermino %}{{ entity.fechaTermino|date('d-m-Y') }}{% endif %}</td>
                 <td>
-                    {% if entity.estado == 'estado.postulado' %}Postulante
-                    {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada
-                    {% elseif entity.estado == 'estado.pendiente' %}Pendiente de envío
-                    {% elseif entity.estado == 'estado.enviada' %}Enviada para aprobación
-                    {% elseif entity.estado == 'estado.aprobada' %}Aprobada
-                    {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                    {% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
-                    {% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
-                    {% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y oganización
-                    {% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
-                    {% elseif entity.estado == 'estado.terminada' %}Finalizada
-                    {% elseif entity.estado == 'estado.informe' %}Informe entregado
-                    {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado
-                    {% endif %} 
+                    {% include 'pDevPracticasBundle:AlumnoPracticante:estadoLabel.html.twig' %}
                 </td>
                 <td>
                 <ul>

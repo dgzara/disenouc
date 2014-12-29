@@ -11,10 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  */
 class AlumnoPracticante
-{
+{   
+    const ESTADO_POSTULADO = "estado.postulado";
+    const ESTADO_ACEPTADA_CONTACTO = "estado.aceptada.contacto";
     const ESTADO_BORRADOR = "estado.borrador";
     const ESTADO_ENVIADA = "estado.enviada";
-    const ESTADO_ACEPTADA_CONTACTO = "estado.aceptada.contacto";
     const ESTADO_REVISION = "estado.revision";
     const ESTADO_PENDIENTE = "estado.pendiente";
     const ESTADO_APROBADA = "estado.aprobada";
@@ -878,5 +879,25 @@ class AlumnoPracticante
     public function hasContacto(\pDev\PracticasBundle\Entity\Contacto $contactoBuscado)
     {
         return $this->organizacionAlias->getOrganizacion()->hasContacto($contactoBuscado);
+    }
+    
+    /**
+     * Get contactos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContactos()
+    {
+        return $this->organizacionAlias->getOrganizacion()->getContactos();
+    }
+    
+    /**
+     * Get desafios
+     *
+     * @return \pDev\PracticasBundle\Entity\Organizacion
+     */
+    public function getOrganizacion()
+    {
+        return $this->organizacionAlias->getOrganizacion();
     }
 }

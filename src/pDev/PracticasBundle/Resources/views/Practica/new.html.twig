@@ -29,8 +29,13 @@
             {{ form_label(form.organizacionAlias) }}
             <div class="controls">
                 <input class="typeahead" type="text">
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; margin-top: 0; float:right;">
+                    <h4>Registro de organizaciones</h4>
+                    <p>¿No está la organización? Haga click <a class="onmodal" href="{{ path('practicas_organizacion_new_modal') }}">aquí</a> para ingresar una nueva.</p>
+                </div> 
             </div>
-        </div> 
+            <div class="error1"></div>
+        </div>
         {% endif %}
         {{ form_row(form.descripcion) }}
         {{ form_row(form.jornadas) }}
@@ -64,6 +69,8 @@
         
         {% if form.organizacionAlias is defined %}
         var organizacionId = $("#pdev_practicasbundle_practicatype_organizacionAlias");
+        var divPosition = organizacionId.offset();
+        
         $('.typeahead').typeahead('destroy');
         
         var organizaciones = new Bloodhound({
@@ -113,7 +120,7 @@
             }
         });
         
-        $("#form1").submit(function( event ) {
+        $("#form_practica").submit(function( event ) {
             if($('#remote .typeahead').typeahead('val') == "")
                 organizacionId.val("");    
         
@@ -121,6 +128,7 @@
                 return;
             }
             $(".error1").text("Ingrese una organización").show();
+            $('html, body').animate({scrollTop: divPosition.top}, "slow");
             event.preventDefault();
         });
         {% endif %}

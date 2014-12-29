@@ -28,9 +28,10 @@ class PracticaType extends AbstractType
             ->add('nombre', null, array(
                 'label' => 'Asunto'
             ))
-            ->add('organizacionAlias', 'organizacion_selector', array('label' => 'Organización'))
-            ->add('contacto')
-            ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
+            ->add('organizacionAlias', 'organizacion_selector', array(
+                'label' => 'Organización',
+                'required' => true
+            ))
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
@@ -38,12 +39,14 @@ class PracticaType extends AbstractType
                     'data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
 
 - Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
-                                        ))           
+            ))
+            ->add('contacto')
+            ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
             ->add('jornadas', 'choice', array(
                 'choices'   => array(
                     'Part-time' => 'Part-time', 
                     'Full-time' => 'Full-time'),
-                'required'  => false,
+                'required'  => true,
                 'label'=> 'Tipo de jornada',
                 'label_attr' => array('data-help' => '240 horas')
             ))

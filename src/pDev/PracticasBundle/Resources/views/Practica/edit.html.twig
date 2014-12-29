@@ -7,18 +7,16 @@
 {%endblock%}
 
 
-{%block header%}Prácticas{%endblock%}
-{%block lead%}Periodo académico {%endblock%}
+{% block header%}Prácticas{%endblock%}
+{% block lead%}Periodo académico {%endblock%}
 
-{%block content %}
-    
-
+{% block content %}
     <form id="form_practica" class="well form-horizontal" action="{{ path('practicas_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
         <input type="hidden" name="_method" value="PUT" />
         {{ form_widget(edit_form) }}
         <p class="pull-right">
             <button id="_submit" class="hide" type="submit">Guardar</button>
-            <a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="btn btn-default submitform">Volver</a>
+            <a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="btn btn-default">Volver</a>
             <a href="#form_practica" class="btn btn-primary submitform">Guardar cambios</a>
         </p>
         <div class="clearfix"></div>

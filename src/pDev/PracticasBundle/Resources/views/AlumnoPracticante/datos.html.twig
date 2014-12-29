@@ -237,8 +237,14 @@
         });
         
         var desplegarHorario = function () {
+            {% if entity.practica %}
+            var val1 = parseDate("{{ entity.practica.fechaInicio|date('d-m-Y') }}");
+            var val2 = {{ entity.duracionCantidad }};
+            {% else %}
             var val1 = fechaIn.val();
             var val2 = $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").val();
+            {% endif %}
+            
             if(val1 != "" && val2 != "" && val2 != 0)
                 $("#horario").show();   
             else

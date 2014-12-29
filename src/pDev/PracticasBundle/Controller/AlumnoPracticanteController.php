@@ -439,10 +439,15 @@ class AlumnoPracticanteController extends Controller
             $entity->setDuracionCantidad($practica->getDuracionCantidad());
             $entity->setDuracionUnidad($practica->getDuracionUnidad());
             $entity->setTipo($practica->getTipo());
-            $entity->setEstado(AlumnoPracticante::ESTADO_BORRADOR);
+            $entity->setEstado(AlumnoPracticante::ESTADO_POSTULADO);
             
             $em->persist($entity);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'Practica postulada'
+            );
             
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $entity->getId())));
         }
@@ -475,14 +480,18 @@ class AlumnoPracticanteController extends Controller
         }
         
         // Generamos los datos defecto
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto());
+        if($entity->getDesafios()->count() == 0){
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+        }
+        if($entity->getProyectos()->count() == 0){
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+        }
         
         $form = $this->createForm(new AlumnoPracticanteType(), $entity);
         
@@ -555,14 +564,19 @@ class AlumnoPracticanteController extends Controller
                 $entity->setSupervisor($supervisor);
         }
         
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addDesafio(new Desafio());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto());
-        $entity->addProyecto(new Proyecto()); 
+        // Generamos los datos defecto
+        if($entity->getDesafios()->count() == 0){
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+        }
+        if($entity->getProyectos()->count() == 0){
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+        }
         
         $form = $this->createForm(new AlumnoPracticanteType(), $entity);
 
@@ -589,16 +603,19 @@ class AlumnoPracticanteController extends Controller
             $tomorrow = new \DateTime();
             $tomorrow->modify('+1 day');
             
-            // Creamos las tareas
+            // Creamos las tareas si no las posee
             foreach($entity->getProyectos() as $proyecto)
             {
-                $tarea = new ProyectoTask();
-                $tarea->setFechaInicio(new \DateTime());
-                $tarea->setFechaTermino($tomorrow);
-                $tarea->setNombre('Tarea 1');
-                $tarea->setProyecto($proyecto);
-                $proyecto->addTarea($tarea);
-                $em->persist($tarea);
+                if($proyecto->getTareas()->count() == 0)
+                {
+                    $tarea = new ProyectoTask();
+                    $tarea->setFechaInicio(new \DateTime());
+                    $tarea->setFechaTermino($tomorrow);
+                    $tarea->setNombre('Tarea 1');
+                    $tarea->setProyecto($proyecto);
+                    $proyecto->addTarea($tarea);
+                    $em->persist($tarea);
+                }
             }
             
             // Guardamos
@@ -683,6 +700,11 @@ class AlumnoPracticanteController extends Controller
             $entity->setEstado(AlumnoPracticante::ESTADO_ENVIADA);
             $em->persist($entity);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'El plan de práctica ha sido enviada a revisión'
+            );
             
             return $this->redirect($this->generateUrl('practicas_alumno'));
         }
@@ -911,11 +933,21 @@ class AlumnoPracticanteController extends Controller
         {
             $editForm->submit($request);
 
-            if ($editForm->isValid()) {
+            if ($editForm->isValid()) 
+            {
                 $em->persist($entity);
                 $em->flush();
 
-                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+                $request->getSession()->getFlashBag()->add(
+                    'notice',
+                    'El plan de práctica ha cambiado de estado: '.$entity->getEstado()
+                );
+                
+                // Devuelve la ruta
+                $array = array('redirect' => $this->generateUrl('practicas_alumno_show', array('id' => $id))); // data to return via JSON
+                $response = new Response(json_encode($array));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
             }
         }
         
@@ -967,14 +999,17 @@ class AlumnoPracticanteController extends Controller
             if ($aceptaForm->isValid()) 
             {
                 $estado = $entity->getEstado();
+                $mensaje = "";
                 
                 if(($isContacto or $isSupervisor) and $estado === AlumnoPracticante::ESTADO_ENVIADA)
                 {
                     $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
+                    $mensaje = "Ha aceptado el plan de práctica";
                 }
                 elseif($isCoordinacion and $estado === AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO)
                 {
                     $estado = AlumnoPracticante::ESTADO_APROBADA;
+                    $mensaje = "Ha aceptado el plan de práctica";
                 }
                 elseif($estado === AlumnoPracticante::ESTADO_APROBADA)
                 {
@@ -982,15 +1017,31 @@ class AlumnoPracticanteController extends Controller
                         $estado = AlumnoPracticante::ESTADO_ACEPTADA_ALUMNO;
                     elseif($isContacto or $isSupervisor)
                         $estado = AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR;
+                    $mensaje = "Ha aceptado el plan de práctica";
                 }
                 elseif($estado === AlumnoPracticante::ESTADO_ACEPTADA_ALUMNO or $estado === AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR)
+                {
+                    $mensaje = "Ha aceptado el plan de práctica";
                     $estado = AlumnoPracticante::ESTADO_ACEPTADA;
+                }
                 elseif($isCoordinacion and $estado = AlumnoPracticante::ESTADO_ACEPTADA)
+                {
                     $estado = AlumnoPracticante::ESTADO_INICIADA;
+                    $mensaje = "Plan de práctica iniciado";
+                }
                 
                 $entity->setEstado($estado);
                 $em->persist($entity);
                 $em->flush();
+                
+                // Envio de mensaje
+                if($mensaje != "")
+                {
+                    $request->getSession()->getFlashBag()->add(
+                        'notice',
+                        $mensaje
+                    );
+                }
                 
                 // Devuelve la ruta
                 $array = array('redirect' => $this->generateUrl('practicas_alumno_show', array('id' => $id))); // data to return via JSON
@@ -1031,7 +1082,7 @@ class AlumnoPracticanteController extends Controller
 
         $estado = $entity->getEstado();
         
-        if($isContacto and $estado === AlumnoPracticante::ESTADO_ENVIADA)
+        if($isContacto and $estado === AlumnoPracticante::ESTADO_POSTULADO)
         {
             $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
         }
@@ -1051,6 +1102,11 @@ class AlumnoPracticanteController extends Controller
         $em->persist($entity);
         $em->persist($practica);
         $em->flush();
+        
+        $request->getSession()->getFlashBag()->add(
+            'notice',
+            'Ha aceptado al postulante '.$entity->getAlumno()
+        );
         
         return $this->redirect($this->generateUrl('practicas_show', array('id' => $entity->getPractica()->getId())));
     }
@@ -1159,6 +1215,11 @@ class AlumnoPracticanteController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'El plan de práctica ha sido actualizado'
+            );
+                    
             return $this->redirect($this->generateUrl('practicas_alumno_edit', array('id' => $id)));
         }
 
@@ -1190,6 +1251,11 @@ class AlumnoPracticanteController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'El plan de práctica ha sido borrado'
+            );
         }
 
         return $this->redirect($this->generateUrl('practicas_alumno'));

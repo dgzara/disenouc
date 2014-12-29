@@ -145,7 +145,7 @@ class OrganizacionController extends Controller
     /**
      * Creates a new Organizacion entity.
      *
-     * @Route("/", name="practicas_organizacion_create")
+     * @Route("/create", name="practicas_organizacion_create")
      * @Method("POST")
      * @Template("pDevPracticasBundle:Organizacion:new.html.twig")
      */
@@ -166,7 +166,7 @@ class OrganizacionController extends Controller
             $em = $this->getDoctrine()->getManager();
             
             // Lo agregamos como creador
-            $entity->addCreador($this->getUser());
+            $entity->setCreador($this->getUser());
             
             // Agregamos a la persona como creador
             if($pm->checkType("TYPE_PRACTICAS_CONTACTO"))
@@ -199,7 +199,69 @@ class OrganizacionController extends Controller
             'form'   => $form->createView(),
         );
     }
+    
+    /**
+     * Creates a new Organizacion entity.
+     *
+     * @Route("/create/modal", name="practicas_organizacion_create_modal")
+     * @Method("POST")
+     * @Template("pDevPracticasBundle:Organizacion:newModal.html.twig")
+     */
+    public function createModalAction(Request $request)
+    {
+        $pm = $this->get("permission.manager");
+        
+        $entity  = new Organizacion();
+        $form = $this->createForm(new OrganizacionType(), $entity);
+        $form->submit($request);
+        
+        $organizacionAlias = new OrganizacionAlias();
+        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
+        $organizacionAlias_form->submit($request);
 
+        if ($form->isValid() and $organizacionAlias_form->isValid()) 
+        {
+            $em = $this->getDoctrine()->getManager();
+            
+            // Lo agregamos como creador
+            $entity->setCreador($this->getUser());
+            
+            // Agregamos a la persona como creador
+            if($pm->checkType("TYPE_PRACTICAS_CONTACTO"))
+            {
+                $contacto = $this->getUser()->getPersona("TYPE_PRACTICAS_CONTACTO");
+                $entity->addContacto($contacto);
+            }                        
+                        
+            $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
+            
+            if($organizacionAlias_tmp)
+            {
+                $organizacionAlias_tmp->setOrganizacion ($entity);  
+                $organizacionAlias = $organizacionAlias_tmp;
+            }
+            else
+            {
+                $organizacionAlias->setOrganizacion($entity);
+                $em->persist($organizacionAlias);
+            }
+
+            $em->persist($entity);
+            $em->flush();
+            
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_new_organizacion', array('id' => $entity->getId()))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+        );
+    }
+    
     /**
      * Displays a form to create a new Organizacion entity.
      *
@@ -221,7 +283,29 @@ class OrganizacionController extends Controller
             'organizacionAlias_form' => $organizacionAlias_form->createView()
         );
     }
+    
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/new/modal", name="practicas_organizacion_new_modal")
+     * @Method("GET")
+     * @Template()
+     */
+    public function newModalAction()
+    {
+        $entity = new Organizacion();
+        $form   = $this->createForm(new OrganizacionType(), $entity);
+        
+        $organizacionAlias = new OrganizacionAlias();
+        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
 
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+            'organizacionAlias_form' => $organizacionAlias_form->createView()
+        );
+    }
+    
     /**
      * Finds and displays a Organizacion entity.
      *

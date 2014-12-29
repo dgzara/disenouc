@@ -362,6 +362,7 @@ class Persona
     {
         return $this->direccion;
     }
+    
     /**
      * Constructor
      */
@@ -369,6 +370,11 @@ class Persona
     {
         $this->telefonos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->direccion = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    public function __toString()
+    {
+        return "".$this->getNombreCompleto();
     }
     
     /**

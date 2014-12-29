@@ -27,12 +27,15 @@
         <thead>
             <tr>
                 <th {% if pagination.isSorted('p.codigo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Código', 'p.id') }}</th>
-                <th {% if pagination.isSorted('p.tipo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Tipo', 'p.tipo') }}</th>
+                <th {% if pagination.isSorted('p.nombre') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Asunto', 'p.nombre') }}</th> 
                 <th {% if pagination.isSorted('p.organizacionAlias') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Organización', 'p.organizacionAlias') }}</th>
                 <th {% if pagination.isSorted('p.fechaInicio') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Fecha de inicio', 'p.fechaInicio') }}</th>
                 <th {% if pagination.isSorted('p.duracionCantidad') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Duración', 'p.duracionCantidad') }}</th>
+                <th {% if pagination.isSorted('p.tipo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Tipo', 'p.tipo') }}</th>
                 {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
                 <th {% if pagination.isSorted('p.estado') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Estado', 'p.estado') }}</th>
+                {% else %}
+                <th>Estado</th>
                 {% endif %}
                 <th></th>
             </tr>
@@ -41,27 +44,31 @@
         {% for entity in pagination %}
             <tr>
                 <td>{{ entity.id }}</td>
-                <td>{{ entity.tipo }}</td>
+                <td>{{ entity.nombre }}</td>
                 <td>{{ entity.organizacionAlias.nombre }}</td>
                 <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
                 <td>{% if entity.duracionCantidad %}{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}{% endif %}</td>
-                {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
+                <td>{{ entity.tipo is empty ? 'Por definir' : entity.tipo }}</td>
                 <td>
-                    {% if entity.estado == 'estado.pendiente' %}Pendiente de aprobacion
-                    {% elseif entity.estado == 'estado.aprobada' %}Publicada
-                    {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-                    {% endif %}
-                </td>
+                {% if app.user.hasPersona('TYPE_ALUMNO') == false %}
+                    {% include 'pDevPracticasBundle:Practica:estadoLabel.html.twig' %}
+                {% else %}
+                    {% if entity.isPostulado(app.user.getPersona('TYPE_ALUMNO')) %}Postulado
+                    {% elseif entity.isAceptado(app.user.getPersona('TYPE_ALUMNO')) %}Aceptado
+                    {% else %}Sin postular{% endif %}
                 {% endif %}
+                </td>
                 <td>
                     <ul>
                         <li>
                             <a href="{{ path('practicas_show', { 'id': entity.id }) }}">Ver detalles</a>
                         </li>
                         {% if isCoordinacion or app.user.id == entity.creador.id %}
+                        {% if entity.estado != "estado.rechazada" %}
                         <li>
                             <a href="{{ path('practicas_edit', { 'id': entity.id }) }}">Modificar</a>
                         </li>
+                        {% endif %}
                         <li>
                             <a class="onmodal" href="{{ path('practicas_delete_modal', { 'id': entity.id }) }}">Borrar</a>
                         </li>

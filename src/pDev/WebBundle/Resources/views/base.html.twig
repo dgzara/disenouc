@@ -16,6 +16,7 @@
         <link href="{{ asset('/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">
         <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,300italic,400italic' rel='stylesheet' type='text/css'>
         <link href="{{ asset('/css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('/css/docs.css') }}" rel="stylesheet">
         <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" />
         <style>
             .jumbotron{background-image:url('images/bg-{{ 1 + random(4) }}.png');}
@@ -114,11 +115,16 @@
                 <div class="col-sm-8">
                 {% endif %}
                 
-                {% block notification %}
-                {% if app.user is defined and app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    {{ render(controller('pDevUserBundle:Notificacion:notificaciones')) }}
-                {% endif %}
-                {% endblock %}
+                {% for flashMessage in app.session.flashbag.get('notice') %}
+                    <div class="alert alert-success" role="alert">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('error') %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
                 
                 {% if block('header') is not empty %}
                 <h3>{% block header %}{% endblock %}</h3>
