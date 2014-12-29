@@ -15,8 +15,10 @@ class CriterioType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('valor','choice',array('choices'   => array('2' => 'No logra', '4' => 'Logra en forma mínima', '5.5' => 'Logra', '7' => 'Logra y aporta')))
-            ;
+            ->add('valor','choice',array(
+                'choices' => array('2' => 'No logra', '4' => 'Logra en forma mínima', '5.5' => 'Logra', '7' => 'Logra y aporta'),
+                'label' => ' '
+            ));
     }
 
     /**

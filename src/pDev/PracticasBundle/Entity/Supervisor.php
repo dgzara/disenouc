@@ -14,11 +14,6 @@ use pDev\UserBundle\Entity\Persona;
 class Supervisor extends Persona
 {
     /**
-     * @ORM\OneToMany(targetEntity="EvaluacionSupervisor", mappedBy="supervisor")
-     */
-    private $evaluaciones;
-
-    /**
      * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Practica", mappedBy="supervisor")     
      */
     private $practicas;
@@ -37,9 +32,16 @@ class Supervisor extends Persona
     /**
      * @var string
      *
-     * @ORM\Column(name="cargo", type="string", length=255)
+     * @ORM\Column(name="cargo", type="string", length=255, nullable= true)
      */
     private $cargo;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="profesion", type="string", length=255, nullable= true)
+     */
+    private $profesion;
     
     /**
      * Constructor
@@ -47,7 +49,6 @@ class Supervisor extends Persona
     public function __construct()
     {
         $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->evaluaciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->organizaciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tipo = "TYPE_PRACTICAS_SUPERVISOR";
@@ -80,38 +81,28 @@ class Supervisor extends Persona
     {
         return $this->cargo;
     }
-
+    
     /**
-     * Add evaluaciones
+     * Set profesion
      *
-     * @param \pDev\PracticasBundle\Entity\EvaluacionSupervisor $evaluaciones
+     * @param string $profesion
      * @return Supervisor
      */
-    public function addEvaluacione(\pDev\PracticasBundle\Entity\EvaluacionSupervisor $evaluaciones)
+    public function setProfesion($profesion)
     {
-        $this->evaluaciones[] = $evaluaciones;
+        $this->profesion = $profesion;
     
         return $this;
     }
 
     /**
-     * Remove evaluaciones
+     * Get profesion
      *
-     * @param \pDev\PracticasBundle\Entity\EvaluacionSupervisor $evaluaciones
+     * @return string 
      */
-    public function removeEvaluacione(\pDev\PracticasBundle\Entity\EvaluacionSupervisor $evaluaciones)
+    public function getProfesion()
     {
-        $this->evaluaciones->removeElement($evaluaciones);
-    }
-
-    /**
-     * Get evaluaciones
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getEvaluaciones()
-    {
-        return $this->evaluaciones;
+        return $this->profesion;
     }
     
     /**

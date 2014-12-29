@@ -10,37 +10,9 @@
 {%block lead%}Sólo alumnos inscritos en curso{%endblock%}
 
 {% block content %}
-    <div id="div_periodo" class="hide" style="margin:0">
-        <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Seleccionar periodo</h3>
-        </div>
-        <div class="modal-body">
-            <form id="form_periodo" class="form-horizontal" action="{{ path('practicas_evaluacion') }}" method="post" {{ form_enctype(period_form) }}>
-                <div class="control-group" style="margin:0">
-                    {{ form_label(period_form.periodo) }}
-                    <div class="controls">
-                        {{ form_widget(period_form.periodo) }}
-                        <button type="submit" id="_submit" class="hide"></button>
-                
-                    </div></div>
-                {{ form_rest(period_form) }}          
-            </form>
-        </div>
-        <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-        <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
-        </div>
-    </div>
     <div id="form_ordenar" class="well clearfix no-margin">
         <div class="btn-group">
             <a href="{{ path('practicas_evaluacion_criterios') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Criterios de evaluación</a>        
-        </div>
-        <div class="btn-group">
-            <a href="#div_periodo" class="pull-left btn btn-primary onmodal"><span class="glyphicon glyphicon-calendar"></span> Cambiar periodo ({{app.request.get('periodo')}})</a>
-        </div>
-            <div class="btn-group">
-            <a href="{{ path('practicas_evaluacion_excel',{'periodo':app.request.get('periodo')}) }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-file"></span> Exportar</a>
         </div>
     </div>
     <table class="table table-bordered">
@@ -61,11 +33,11 @@
                 </td>
                 <td>
                     {% if practicante.profesor %}
-                        {{ practicante.profesor.profesor.nombreCompleto }}
-                    {% else %}
+                        {{ practicante.profesor.nombreCompleto }}
+                    {% elseif isCoordinacion %}
                     <ul>    
                         <li>
-                            <a class="onmodal" href="{{ path('practicas_evaluacion_asignar', { 'idPracticante': practicante.id }) }}">Asignar profesor evaluador</a>
+                            <a class="onmodal" href="{{ path('practicas_alumno_asignar_profesor', { 'id': practicante.id }) }}">Asignar profesor evaluador</a>
                         </li>
                     </ul>
                     {% endif %}
@@ -81,14 +53,29 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('practicas_evaluacion_show_profesor', { 'idPracticante': practicante.id }) }}">Evaluación profesor</a>
+                            {% if practicante.profesorEvaluacion %}
+                            <a href="{{ path('practicas_evaluacion_profesor_show', { 'id': practicante.profesorEvaluacion.id }) }}">Evaluación profesor</a>
+                            {% else %}
+                            Evaluación del profesor aún no disponible
+                            {% endif %}
                         </li>
+                        {% if isAcademico and practicante.profesorEvaluacion %}
                         <li>
-                            <a href="{{ path('practicas_evaluacion_show_supervisor', { 'idPracticante': practicante.id }) }}">Evaluación supervisor</a>
+                            <a href="{{ path('practicas_evaluacion_profesor_new', { 'idPracticante': practicante.id }) }}">Evaluar</a>
                         </li>
+                        {% endif %}
                         <li>
-                            <a class="onmodal" href="{{ path('practicas_evaluacion_asignar', { 'idPracticante': practicante.id }) }}">Asignar profesor evaluador</a>
+                            {% if practicante.supervisorEvaluacion %}
+                            <a href="{{ path('practicas_evaluacion_supervisor_show', { 'id': practicante.supervisorEvaluacion.id }) }}">Evaluación supervisor</a>
+                            {% else %}
+                            Evaluación del supervisor aún no disponible
+                            {% endif %}
                         </li>
+                        {% if isSupervisor  %}
+                        <li>
+                            <a href="{{ path('practicas_evaluacion_supervisor_new', { 'idPracticante': practicante.id }) }}">Evaluar</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </td>
             </tr>

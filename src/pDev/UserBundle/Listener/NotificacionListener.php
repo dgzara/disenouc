@@ -150,7 +150,7 @@ class NotificacionListener
                     }
                     else if($changeSet['estado'][1] == "estado.aceptada.contacto")
                     {
-                        $titulo = "Plan de práctica aceptada por la empresa";
+                        $titulo = "Postulación aceptada por la empresa";
                         $mensaje = "";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
@@ -173,7 +173,7 @@ class NotificacionListener
                     elseif($changeSet['estado'][1] == "estado.aprobada")
                     {
                         $titulo = "Plan de práctica aprobada por coordinador";
-                        $mensaje = "Plan de práctica aprobada por coordinador";
+                        $mensaje = "Tu práctica ha sido aprobada por Coordinación, puedes comenzar de acuerdo a la fecha estipulada en tu Plan. Recuerda que debes asistir a la supervisión intermedia con la ficha de supervisión que puedes encontrar en este mismo sitio.";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($entity->getContactos() as $contacto)
@@ -192,43 +192,12 @@ class NotificacionListener
                         if($entity->getSupervisor())
                             $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
-                    else if($changeSet['estado'][1] == "estado.revision")
-                    {
-                        $titulo = "Plan de práctica modificada";
-                        $mensaje = "El alumno ha realizado modificaciones al plan de practica";
-                        $cambio = true;
-                        foreach($funcionarios as $funcionario)
-                            $usuarios->add($funcionario->getUsuario());
-                    }
-                    else if($changeSet['estado'][1] == "estado.aceptada.alumno")
-                    {
-                        $titulo = "Plan de práctica aceptada por el alumno";
-                        $mensaje = "";
-                        $cambio = true;
-                        if($entity->getSupervisor())
-                            $usuarios->add($entity->getSupervisor()->getUsuario());
-                        foreach($entity->getContactos() as $contacto)
-                            $usuarios->add($contacto->getUsuario());
-                        foreach($funcionarios as $funcionario)
-                            $usuarios->add($funcionario->getUsuario());
-                    }
                     else if($changeSet['estado'][1] == "estado.aceptada.supervisor")
                     {
                         $titulo = "Plan de práctica aceptada por el supervisor";
                         $mensaje = "";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
-                        foreach($funcionarios as $funcionario)
-                            $usuarios->add($funcionario->getUsuario());
-                    }
-                    else if($changeSet['estado'][1] == "estado.aceptada")
-                    {
-                        $titulo = "Plan de práctica aceptada por el supervisor y alumno";
-                        $mensaje = "";
-                        $cambio = true;
-                        $usuarios->add($entity->getAlumno()->getUsuario());
-                        if($entity->getSupervisor())
-                            $usuarios->add($entity->getSupervisor()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }

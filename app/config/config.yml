@@ -2,7 +2,8 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: assetic.yml }
-
+    - { resource: liip.yml }
+    
 framework:
     #esi:             ~
     translator:      { fallback: %locale% }

@@ -14,6 +14,7 @@
 {%block lead%}{%endblock%}
 
 {% block sidebar %}
+    <img src="{{ entity.webPath | imagine_filter('thumb300') }}" alt="">
     <div id="form_ordenar" class="well clearfix" style="margin:0">
         {% if permiso %}
         <a href="{{ path('practicas_organizacion_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">

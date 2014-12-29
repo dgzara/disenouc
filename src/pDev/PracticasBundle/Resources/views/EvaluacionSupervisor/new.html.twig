@@ -1,0 +1,39 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+        
+{% block breadcrumb%}
+    {{parent()}}
+{% endblock%}
+
+{% block header%}Crear evaluación{%endblock%}
+{% block lead%}{%endblock%}
+
+{% block content %}
+    <form class="well form-horizontal" action="{{ path('practicas_evaluacion_supervisor_create', {'idPracticante': entity.practica.id}) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_row(form.fechaDesde) }}
+        {{ form_row(form.fechaHasta) }}
+        {{ form_row(form.horas) }}
+        {{ form_row(form.horario) }}
+        
+        <h3>Criterios</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Evaluación</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for criterio in form.criterios %}
+                <tr>
+                    <td>{{ criterio.vars.value.criterioTipo.nombre }}</td>
+                    <td>{{ form_widget(criterio) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        {{ form_rest(form) }}
+        <button class="btn btn-primary pull-right" type="submit">Guardar</button>
+        <div class="clearfix"></div>
+    </form>
+{% endblock %}

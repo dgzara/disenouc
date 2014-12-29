@@ -1,0 +1,85 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+    {{parent()}}
+{%endblock%}
+
+{%block header%}Evaluación plan de práctica{%endblock%}
+{%block lead%}Profesor{%endblock%}
+
+{%block content %}
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Profesor evaluador</th>
+                <td>{{ entity.profesor.nombreCompleto }}</td>
+            </tr>
+            <tr>
+                <th>Título informe</th>
+                <td>{{ entity.tituloInforme }}</td>
+            </tr>
+            <tr>
+                <th>Nota evaluación</th>
+                <td>{{ entity.nota is empty ? '-' : entity.nota }}</td>
+            </tr>
+            <tr>
+                <th>Descuento</th>
+                <td>{{ entity.descuento}} <a class="onmodal" href="{{ path('practicas_evaluacion_profesor_descuento', { 'id': entity.id }) }}" >
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Nota final</th>
+                <td>{{ entity.notaFinal is empty ? '-' : entity.notaFinal }}</td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{% if entity.observaciones %}{{ entity.observaciones }}{% else %}Sin observaciones{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>Criterios a evaluar</h4>
+    <table class="table table-bordered">
+        <tr>
+            {% for criterio in entity.criterios %}
+            <th>
+                {{ criterio.criterioTipo.nombre}}                            
+            </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for criterio in entity.criterios %}
+            <td>{{ criterio.criterioTipo.descripcion}}</td>                            
+            {% endfor %}
+        </tr>
+    </table>
+    <h4>Evaluación</h4>
+    <div id="criterios">
+        <table class="table table-bordered table-hover">
+        {% for criterio in entity.criterios %}
+            <tr>
+                <td>
+                    <strong>{{criterio.criterioTipo.nombre}}</strong><br>
+                    {{criterio.criterioTipo.explicacion}}
+                </td>
+                <td style="width:100px;vertical-align: middle;text-align: center">
+                    <strong>
+                    {% if criterio.valor == '2' %}
+                        No logra
+                    {% elseif criterio.valor == '4' %}
+                        Logra en forma mínima
+                    {% elseif criterio.valor == '5.5' %}
+                        Logra
+                    {% elseif criterio.valor == '7' %}
+                        Logra y aporta
+                    {% else %}
+                        No evaluado
+                    {% endif %}
+                    </strong>
+                </td>                            
+            </tr>                               
+        {% endfor %}
+        </table> 
+    </div>
+{% endblock %}

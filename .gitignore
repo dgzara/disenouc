@@ -25,6 +25,7 @@
 /web/bundles/
 /web/uploads/
 /web/assetic/
+/web/media/
 
 # PHPUnit
 /app/phpunit.xml

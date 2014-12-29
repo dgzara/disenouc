@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Liuggio\ExcelBundle\LiuggioExcelBundle(),
             new BeSimple\SsoAuthBundle\BeSimpleSsoAuthBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
             new pDev\UserBundle\pDevUserBundle(),
             new pDev\ParserBundle\pDevParserBundle(),
             new pDev\PracticasBundle\pDevPracticasBundle(),

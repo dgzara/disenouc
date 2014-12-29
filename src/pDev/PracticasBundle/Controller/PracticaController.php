@@ -21,66 +21,20 @@ use pDev\PracticasBundle\Form\PracticaEstadoType;
 /**
  * Practica controller.
  *
- * @Route("/practicas")
+ * @Route("/practicas/ofertas")
  */
 class PracticaController extends Controller
 {
     /**
      * Lists all Practica entities.
      *
-     * @Route("/todas/{periodo}/{page}/{orderBy}/{order}", name="practicas")
+     * @Route("/", name="practicas")
      * @Template()
      */
-    public function indexAction($periodo = null, $page = null, $orderBy = null, $order = null)
+    public function indexAction()
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
-        
-        if(!$periodo)
-        {
-            $request = $this->getRequest();
-            $ch = $this->get("context.helper");    
-            $year = $ch->getYearActual();
-            $semestre = $ch->getSemestreActual();
-
-            $periodo = $year.'-'.$semestre;
-            $periodoform = $this->createPeriodForm($periodo);
-
-            if ($request->isMethod('POST'))
-            {
-                $periodoform->bind($request);
-
-                if ($periodoform->isValid())
-                {
-                    $periodo = ((string)$periodoform['periodo']->getData());                    
-                }
-            }
-            
-            return $this->redirect($this->generateUrl('practicas',array('periodo'=>$periodo)));
-        }
-        
-        $periodo2 = explode('-', $periodo);
-                                
-        if(count($periodo2)==2)
-        {
-            $year = intval($periodo2[0]);
-            $semestre = intval($periodo2[1]);
-            $periodo = $year.'-'.$semestre;
-        }
-        
-        $periodo_form = $this->createPeriodForm($periodo);
-        $fecha1 = $year.'-';
-        $fecha2 = $year.'-';
-        if($semestre == 2)
-        {
-            $fecha1 .= '07-15 00:00:00';
-            $fecha2 .= '12-31 00:00:00';
-        }
-        else
-        {
-            $fecha1 .= '01-01 00:00:00';
-            $fecha2 .= '07-14 00:00:00';
-        }
         
         $isExterno = $user->getExternal();
         $isAlumno = $pm->checkType("TYPE_ALUMNO");
@@ -93,8 +47,7 @@ class PracticaController extends Controller
         $qb = $em->getRepository('pDevPracticasBundle:Practica')->createQueryBuilder('p');
         $entities = $qb->leftJoin('p.creador','cr')
                     ->leftJoin('p.contacto','co')
-                    ->leftJoin('p.organizacionAlias','oa')
-                    ->where('p.fechaInicio >= :fecha1 and p.fechaInicio <= :fecha2');
+                    ->leftJoin('p.organizacionAlias','oa');
         
         if(!$isCoordinacion)
         {
@@ -121,7 +74,7 @@ class PracticaController extends Controller
             $entities = $entities->andWhere($where);   
         }
         
-        $query = $entities->setParameter('fecha1', $fecha1)->setParameter('fecha2', $fecha2);
+        $query = $entities->orderBy('p.id', 'DESC');
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -135,7 +88,6 @@ class PracticaController extends Controller
             'isContacto'    =>$isContacto,
             'isCoordinacion'    =>$isCoordinacion,
             'isAlumno'      =>  $isAlumno,
-            'period_form' => $periodo_form->createView(),
         );
     }
     

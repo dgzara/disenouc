@@ -16,13 +16,10 @@ class AlumnoPracticante
     const ESTADO_ACEPTADA_CONTACTO = "estado.aceptada.contacto";
     const ESTADO_BORRADOR = "estado.borrador";
     const ESTADO_ENVIADA = "estado.enviada";
-    const ESTADO_REVISION = "estado.revision";
+    const ESTADO_ACEPTADA_SUPERVISOR = "estado.aceptada.supervisor";
     const ESTADO_PENDIENTE = "estado.pendiente";
     const ESTADO_APROBADA = "estado.aprobada";
     const ESTADO_RECHAZADA = "estado.rechazada";
-    const ESTADO_ACEPTADA_ALUMNO = "estado.aceptada.alumno";
-    const ESTADO_ACEPTADA_SUPERVISOR = "estado.aceptada.supervisor";
-    const ESTADO_ACEPTADA = "estado.aceptada";
     const ESTADO_INICIADA = "estado.iniciada";
     const ESTADO_TERMINADA = "estado.terminada";
     const ESTADO_INFORME = "estado.informe";
@@ -38,7 +35,7 @@ class AlumnoPracticante
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="pDev\PracticasBundle\Entity\ProfesorEvaluador", inversedBy="practicantes")
+     * @ORM\ManyToOne(targetEntity="pDev\UserBundle\Entity\Profesor", inversedBy="practicantes")
      * @ORM\JoinColumn(name="profesor_id", referencedColumnName="id", nullable=true)
      */
     private $profesor;
@@ -50,14 +47,12 @@ class AlumnoPracticante
     private $supervisor;
     
     /**
-     * @ORM\ManyToOne(targetEntity="pDev\PracticasBundle\Entity\EvaluacionProfesor", inversedBy="practicantes")
-     * @ORM\JoinColumn(name="evaluacion_profesor_id", referencedColumnName="id", nullable=true)
+     * @ORM\OneToOne(targetEntity="pDev\PracticasBundle\Entity\EvaluacionProfesor", mappedBy="practica")
      */
     private $profesorEvaluacion;
     
     /**
-     * @ORM\ManyToOne(targetEntity="pDev\PracticasBundle\Entity\EvaluacionSupervisor", inversedBy="practicantes")
-     * @ORM\JoinColumn(name="evaluacion_supervisor_id", referencedColumnName="id", nullable=true)
+     * @ORM\OneToOne(targetEntity="pDev\PracticasBundle\Entity\EvaluacionSupervisor", mappedBy="practica")
      */
     private $supervisorEvaluacion;
     
@@ -613,20 +608,20 @@ class AlumnoPracticante
     /**
      * Set profesor
      *
-     * @param \pDev\PracticasBundle\Entity\ProfesorEvaluador $profesor
+     * @param \pDev\UserBundle\Entity\Profesor $profesor
      * @return AlumnoPracticante
      */
-    public function setProfesor(\pDev\PracticasBundle\Entity\ProfesorEvaluador $profesor = null)
+    public function setProfesor(\pDev\UserBundle\Entity\Profesor $profesor = null)
     {
         $this->profesor = $profesor;
-    
+        
         return $this;
     }
 
     /**
      * Get profesor
      *
-     * @return \pDev\PracticasBundle\Entity\ProfesorEvaluador 
+     * @return \pDev\UserBundle\Entity\Profesor
      */
     public function getProfesor()
     {
@@ -899,5 +894,16 @@ class AlumnoPracticante
     public function getOrganizacion()
     {
         return $this->organizacionAlias->getOrganizacion();
+    }
+    
+    /**
+     * Has academico
+     *
+     * @param \pDev\UserBundle\Entity\Profesor $profesorBuscado
+     * @return boolean 
+     */
+    public function hasAcademico(\pDev\UserBundle\Entity\Profesor $profesorBuscado)
+    {
+        return $this->profesor->getProfesor() === $profesorBuscado;
     }
 }

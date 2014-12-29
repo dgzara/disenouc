@@ -5,8 +5,9 @@ namespace pDev\PracticasBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
-class SupervisorType extends AbstractType
+class AlumnoPracticanteProfesorType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,14 +16,14 @@ class SupervisorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('rut',null,array('attr'=>array('autocomplete'=>'off')))
-            ->add('nombres')
-            ->add('apellidoPaterno')
-            ->add('apellidoMaterno')
-            ->add('organizaciones')        
-            ->add('email')            
-            ->add('cargo')
-            ->add('profesion');
+            ->add('profesor', 'entity', array(
+                'class' => 'pDevUserBundle:Profesor',
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('u')                                                
+                              ->orderBy('u.nombres', 'ASC');
+                },
+                'label'=>'Profesor'
+            ));
     }
 
     /**
@@ -31,7 +32,7 @@ class SupervisorType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'pDev\PracticasBundle\Entity\Supervisor'
+            'data_class' => 'pDev\PracticasBundle\Entity\AlumnoPracticante'
         ));
     }
 
@@ -40,6 +41,6 @@ class SupervisorType extends AbstractType
      */
     public function getName()
     {
-        return 'pdev_practicasbundle_supervisortype';
+        return 'pdev_practicasbundle_alumnopracticante_asignartype';
     }
 }

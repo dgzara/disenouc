@@ -3,6 +3,7 @@ namespace pDev\UserBundle\DataFixtures\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -28,6 +29,10 @@ class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, 
     {
         if($this->container->getParameter('fixtures') == 'si')
 		{
+		    // Copiamos el archivo del logotipo
+            copy(realpath(dirname(__FILE__))."/logo.jpg", realpath(dirname(__FILE__))."/logo2.jpg");
+            $logo = new File(realpath(dirname(__FILE__))."/logo2.jpg", "logo.jpg");
+            
 		    // Organizacion 
 		    $organizacion = new Organizacion();
 		    $organizacion->setRubro("Diseño industrial");
@@ -40,6 +45,7 @@ class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, 
 		    $organizacion->setPersonasTotal(210);
 		    $organizacion->addContacto($this->getReference('persona-contacto'));
 		    $organizacion->addSupervisor($this->getReference('persona-supervisor'));
+		    $organizacion->setProfilePic($logo);
             
             $manager->persist($organizacion);
             $manager->flush();

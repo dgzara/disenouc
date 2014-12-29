@@ -13,15 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
 class EvaluacionProfesor extends Evaluacion
 {
     /**
-     * @ORM\ManyToOne(targetEntity="ProfesorEvaluador", inversedBy="evaluaciones")
-     * @ORM\JoinColumn(name="evaluador_id", referencedColumnName="id", nullable=false)
+     * @ORM\OneToOne(targetEntity="pDev\PracticasBundle\Entity\AlumnoPracticante", inversedBy="profesorEvaluacion")     
+     * @ORM\JoinColumn(name="practica_id", referencedColumnName="id", nullable=false)
      */
-    private $profesor;
-    
-    /**
-     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\AlumnoPracticante", mappedBy="profesorEvaluacion")     
-     */
-    private $practicantes;
+    private $practica;
 
     /**
      * @var string
@@ -54,14 +49,14 @@ class EvaluacionProfesor extends Evaluacion
     /**
      * @var float
      *
-     * @ORM\Column(name="descuento_nota", type="float")
+     * @ORM\Column(name="descuento_nota", type="float", nullable=true)
      */
     private $descuento;
     
     /**
      * @var float
      *
-     * @ORM\Column(name="nota_final", type="float")
+     * @ORM\Column(name="nota_final", type="float", nullable=true)
      */
     private $notaFinal;
 
@@ -71,7 +66,6 @@ class EvaluacionProfesor extends Evaluacion
     public function __construct()
     {
         parent::__construct();
-        $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->descuento = 0;
     }
     
@@ -145,26 +139,13 @@ class EvaluacionProfesor extends Evaluacion
     }
 
     /**
-     * Set profesor
-     *
-     * @param \pDev\PracticasBundle\Entity\ProfesorEvaluador $profesor
-     * @return EvaluacionProfesor
-     */
-    public function setProfesor(\pDev\PracticasBundle\Entity\ProfesorEvaluador $profesor)
-    {
-        $this->profesor = $profesor;
-    
-        return $this;
-    }
-
-    /**
      * Get profesor
      *
      * @return \pDev\PracticasBundle\Entity\ProfesorEvaluador 
      */
     public function getProfesor()
     {
-        return $this->profesor;
+        return $this->practica->getProfesor();
     }
 
     /**
@@ -191,39 +172,6 @@ class EvaluacionProfesor extends Evaluacion
     }
     
     /**
-     * Add practicantes
-     *
-     * @param \pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes
-     * @return EvaluacionProfesor
-     */
-    public function addPracticante(\pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes)
-    {
-        $this->practicantes[] = $practicantes;
-    
-        return $this;
-    }
-
-    /**
-     * Remove practicantes
-     *
-     * @param \pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes
-     */
-    public function removePracticante(\pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes)
-    {
-        $this->practicantes->removeElement($practicantes);
-    }
-
-    /**
-     * Get practicantes
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPracticantes()
-    {
-        return $this->practicantes;
-    }
-    
-    /**
      * Set descuento
      *
      * @param float $descuento
@@ -246,7 +194,28 @@ class EvaluacionProfesor extends Evaluacion
         return $this->descuento;
     }
     
+    /**
+     * Set practica
+     *
+     * @param \pDev\PracticasBundle\Entity\Practica $practica
+     * @return EvaluacionProfesor
+     */
+    public function setPractica($practica)
+    {
+        $this->practica = $practica;
     
+        return $this;
+    }
+
+    /**
+     * Get practica
+     *
+     * @return \pDev\PracticasBundle\Entity\Practica 
+     */
+    public function getPractica()
+    {
+        return $this->practica;
+    }
     
     /**
      * Get descuento

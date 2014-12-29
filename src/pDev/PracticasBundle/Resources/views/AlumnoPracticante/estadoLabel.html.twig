@@ -1,15 +1,12 @@
 {% if entity.estado == 'estado.postulado' %}Postulación
 {% elseif entity.estado == 'estado.borrador' %}Borrador
 {% elseif entity.estado == 'estado.aceptada.contacto' %}Postulación aceptada por la organización
+{% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación de la organización
+{% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor
 {% elseif entity.estado == 'estado.pendiente' %}Modificaciones pendientes
-{% elseif entity.estado == 'estado.enviada' %}Pendiente de aprobación
-{% elseif entity.estado == 'estado.aprobada' %}Aprobada
+{% elseif entity.estado == 'estado.aprobada' %}Aprobada para iniciar
 {% elseif entity.estado == 'estado.rechazada' %}Rechazada
-{% elseif entity.estado == 'estado.revision' %}En revisión
-{% elseif entity.estado == 'estado.aceptada.alumno' %}Aceptada por alumno (Pendiente organización / supervisor)
-{% elseif entity.estado == 'estado.aceptada.supervisor' %}Aceptada por organización / supervisor (Pendiente alumno)
-{% elseif entity.estado == 'estado.aceptada' %}Aceptada por alumno y organización
-{% elseif entity.estado == 'estado.iniciada' %}Autorizada para inicio / iniciada
+{% elseif entity.estado == 'estado.iniciada' %}Iniciada
 {% elseif entity.estado == 'estado.terminada' %}Finalizada
 {% elseif entity.estado == 'estado.informe' %}Informe entregado
 {% elseif entity.estado == 'estado.evaluada' %}Informe evaluado / plan cerrado

@@ -27,6 +27,10 @@ class CriterioTipoController extends Controller
      */
     public function indexAction()
     {
+        $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");        
+        $isAcademico = $pm->checkType("TYPE_ACADEMICO");
+        
         $em = $this->getDoctrine()->getManager();
         $dql   = "SELECT c FROM pDevPracticasBundle:CriterioTipo c";
         $query = $em->createQuery($dql);
@@ -39,7 +43,9 @@ class CriterioTipoController extends Controller
         );
         
         return array(
-            'pagination' => $pagination,
+            'pagination' => $pagination,    
+            'isCoordinacion' => $isCoordinacion,
+            'isAcademico' => $isAcademico
         );
     }
     

@@ -24,6 +24,7 @@ use pDev\PracticasBundle\Entity\Proyecto;
 use pDev\PracticasBundle\Entity\Practica;
 
 use pDev\PracticasBundle\Form\AlumnoPracticanteType;
+use pDev\PracticasBundle\Form\AlumnoPracticanteProfesorType;
 use pDev\PracticasBundle\Form\AlumnoType;
 use pDev\PracticasBundle\Form\SupervisorType;
 use pDev\PracticasBundle\Form\OrganizacionAliasType;
@@ -44,59 +45,13 @@ class AlumnoPracticanteController extends Controller
     /**
      * Lists all AlumnoPracticante entities.
      *
-     * @Route("/todas/{estado}/{periodo}/{page}/{orderBy}/{order}", name="practicas_alumno")
+     * @Route("/", name="practicas_alumno")
      * @Template()
      */
-    public function indexAction($estado = 'todos', $periodo = null, $page = null, $orderBy = null, $order = null)
+    public function indexAction(Request $request)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
-        
-        if(!$periodo)
-        {
-            $request = $this->getRequest();
-            $ch = $this->get("context.helper");    
-            $year = $ch->getYearActual();
-            $semestre = $ch->getSemestreActual();
-
-            $periodo = $year.'-'.$semestre;
-            $periodoform = $this->createPeriodForm($periodo);
-
-            if ($request->isMethod('POST'))
-            {
-                $periodoform->bind($request);
-
-                if ($periodoform->isValid())
-                {
-                    $periodo = ((string)$periodoform['periodo']->getData());                    
-                }
-            }
-            
-            return $this->redirect($this->generateUrl('practicas_alumno',array('estado'=>$estado,'periodo'=>$periodo)));
-        }
-        
-        $periodo2 = explode('-', $periodo);
-                                
-        if(count($periodo2)==2)
-        {
-            $year = intval($periodo2[0]);
-            $semestre = intval($periodo2[1]);
-            $periodo = $year.'-'.$semestre;
-        }
-        
-        $periodo_form = $this->createPeriodForm($periodo);
-        $fecha1 = $year.'-';
-        $fecha2 = $year.'-';
-        if($semestre == 2)
-        {
-            $fecha1 .= '07-15 00:00:00';
-            $fecha2 .= '12-31 00:00:00';
-        }
-        else
-        {
-            $fecha1 .= '01-01 00:00:00';
-            $fecha2 .= '07-14 00:00:00';
-        }
         
         $isExterno = $user->getExternal();
         $isAlumno = $pm->checkType("TYPE_ALUMNO");
@@ -114,8 +69,7 @@ class AlumnoPracticanteController extends Controller
                     //->leftJoin('oa.organizacion','o')
                     ->leftJoin('oa.practicas','pr')
                     ->leftJoin('pr.contacto','c')
-                    ->leftJoin('p.profesor','prof')
-                    ->where('p.fechaInicio >= :fecha1 and p.fechaInicio <= :fecha2');
+                    ->leftJoin('p.profesor','prof');
         
         $practicantes = array();
         $alumno = null;
@@ -164,35 +118,12 @@ class AlumnoPracticanteController extends Controller
                     $where .= ' or ';
                 $where = 'prof.id = :id';
                 $consulta = $consulta->setParameter('id', $profesor->getId());               
-                
             }
             
             $consulta = $consulta->andWhere($where); 
         }
         
-        if($estado!=='todos')
-        {
-            $estado = 'estado.'.$estado;
-            $consulta = $consulta->andWhere('p.estado = :estado'); 
-            $consulta = $consulta->setParameter('estado', $estado);
-            
-        }
-        
-        $query = $consulta->setParameter('fecha1', $fecha1)->setParameter('fecha2', $fecha2);
-        $estados = array(
-            array('nombre'=>'Pendiente','identificador'=>'pendiente'),
-            array('nombre'=>'Enviada','identificador'=>'enviada'),
-            array('nombre'=>'Aprobada','identificador'=>'aprobada'),
-            array('nombre'=>'Rechazada','identificador'=>'rechazada'),
-            array('nombre'=>'Aceptada por alumno','identificador'=>'aceptada.alumno'),
-            array('nombre'=>'Aceptada por organización','identificador'=>'aceptada.supervisor'),
-            array('nombre'=>'Aceptada por alumno y organización','identificador'=>'aceptada'),
-            array('nombre'=>'Iniciada','identificador'=>'iniciada'),
-            array('nombre'=>'Terminada','identificador'=>'terminada'),
-            array('nombre'=>'Informe entregado','identificador'=>'informe'),
-            array('nombre'=>'Evaluada','identificador'=>'evaluada'),
-        );
-        
+        $query = $consulta->orderBy('p.id', 'DESC');
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
             $query,
@@ -206,8 +137,6 @@ class AlumnoPracticanteController extends Controller
             'idAlumno'  => $isAlumno?$alumno->getId():false,
             'isAlumno' => $isAlumno,
             'isSupervisor'=> $isSupervisor,            
-            'period_form'=>$periodo_form->createView(),
-            'estados' => $estados
         );
     }
     
@@ -408,7 +337,7 @@ class AlumnoPracticanteController extends Controller
      * @Route("/new/datos/{id}", name="practicas_alumno_new_datos_source")
      * @Template()
      */
-    public function datosAction($id = null, $idOrganizacionAlias = null, $practicaId = null)
+    public function datosAction(Request $request, $id = null, $idOrganizacionAlias = null, $practicaId = null)
     {
         $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
@@ -1000,34 +929,36 @@ class AlumnoPracticanteController extends Controller
             {
                 $estado = $entity->getEstado();
                 $mensaje = "";
-                
-                if(($isContacto or $isSupervisor) and $estado === AlumnoPracticante::ESTADO_ENVIADA)
+
+                if(($isContacto or $isSupervisor) and $estado === AlumnoPracticante::ESTADO_POSTULADO)
                 {
                     $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
+                    $mensaje = "Ha aceptado al postulante";
+                }
+                elseif(($isContacto or $isSupervisor) and $estado === AlumnoPracticante::ESTADO_ENVIADA)
+                {
+                    $estado = AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR;
                     $mensaje = "Ha aceptado el plan de práctica";
                 }
-                elseif($isCoordinacion and $estado === AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO)
+                elseif($isCoordinacion and $estado === AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR)
                 {
+                    $mensaje = "Ha aceptado el plan de práctica";
                     $estado = AlumnoPracticante::ESTADO_APROBADA;
-                    $mensaje = "Ha aceptado el plan de práctica";
                 }
-                elseif($estado === AlumnoPracticante::ESTADO_APROBADA)
-                {
-                    if($isAlumno)
-                        $estado = AlumnoPracticante::ESTADO_ACEPTADA_ALUMNO;
-                    elseif($isContacto or $isSupervisor)
-                        $estado = AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR;
-                    $mensaje = "Ha aceptado el plan de práctica";
-                }
-                elseif($estado === AlumnoPracticante::ESTADO_ACEPTADA_ALUMNO or $estado === AlumnoPracticante::ESTADO_ACEPTADA_SUPERVISOR)
-                {
-                    $mensaje = "Ha aceptado el plan de práctica";
-                    $estado = AlumnoPracticante::ESTADO_ACEPTADA;
-                }
-                elseif($isCoordinacion and $estado = AlumnoPracticante::ESTADO_ACEPTADA)
+                elseif($isAlumno and $estado === AlumnoPracticante::ESTADO_APROBADA)
                 {
                     $estado = AlumnoPracticante::ESTADO_INICIADA;
-                    $mensaje = "Plan de práctica iniciado";
+                    $mensaje = "Ha iniciado la práctica";
+                }
+                elseif($isAlumno and $estado === AlumnoPracticante::ESTADO_INICIADA)
+                {
+                    $estado = AlumnoPracticante::ESTADO_TERMINADA;
+                    $mensaje = "Ha finalizado la práctica";
+                }
+                elseif($isCoordinacion and $estado === AlumnoPracticante::ESTADO_INFORME)
+                {
+                    $estado = AlumnoPracticante::ESTADO_EVALUADA;
+                    $mensaje = "Ha sido evaluada la práctica";
                 }
                 
                 $entity->setEstado($estado);
@@ -1173,7 +1104,6 @@ class AlumnoPracticanteController extends Controller
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
 
         if (!$entity) {
@@ -1181,12 +1111,10 @@ class AlumnoPracticanteController extends Controller
         }
 
         $editForm = $this->createForm(new AlumnoPracticanteType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
 
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         );
     }
 
@@ -1200,14 +1128,12 @@ class AlumnoPracticanteController extends Controller
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createForm(new AlumnoPracticanteType(), $entity);
         $editForm->submit($request);
 
@@ -1226,7 +1152,6 @@ class AlumnoPracticanteController extends Controller
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         );
     }
     
@@ -1294,6 +1219,49 @@ class AlumnoPracticanteController extends Controller
     }
     
     /**
+     * Asignar un profesor
+     *
+     * @Route("/{id}/asignar", name="practicas_alumno_asignar_profesor")
+     * @Template()
+     */
+    public function asignarProfesorAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+
+        $editForm = $this->createForm(new AlumnoPracticanteProfesorType(), $entity);
+        
+        if($request->isMethod('POST'))
+        {
+            $editForm->submit($request);
+            if ($editForm->isValid()) 
+            {
+                $em->persist($entity);
+                $em->flush();
+
+                $request->getSession()->getFlashBag()->add(
+                    'notice',
+                    'El profesor '.$entity->getProfesor().' fue asignado para esta práctica'
+                );
+            }
+            // Devuelve la ruta
+            $array = array('redirect' => $this->generateUrl('practicas_alumno_show', array('id' => $id))); // data to return via JSON
+            $response = new Response(json_encode($array));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+        return array(
+            'entity' => $entity,
+            'form'   => $editForm->createView(),
+        );   
+    }
+    
+    /**
      * Creates a form to delete a AlumnoPracticante entity by id.
      *
      * @param mixed $id The entity id
@@ -1319,38 +1287,6 @@ class AlumnoPracticanteController extends Controller
     {
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
-            ->getForm()
-        ;
-    }
-    
-    private function createPeriodForm($data = null, $tooltip='Periodo académico')
-    {
-        $attr = array();
-        //$attr = array('placeholder'=>$placeholder);
-        if($tooltip)
-        {
-            $attr['title']=$tooltip;
-            $attr['data-toggle']='tooltip';
-        }
-        
-        $periodos = array();
-        $ch = $this->get("context.helper");    
-        $year = $ch->getYearActual();
-        $semestre = $ch->getSemestreActual();
-        
-        while($year>1969)
-        {
-            $periodo = $year.'-'.$semestre--;
-            $periodos[$periodo] = $periodo;
-            if($semestre==0)
-            {
-                $semestre=2;
-                $year--;
-            }
-        }
-        return $this->createFormBuilder()
-            ->add('periodo', 'choice',array('label'=>'Periodo académico','attr' => $attr,
-                    'choices' => $periodos,'data' => $data))
             ->getForm()
         ;
     }

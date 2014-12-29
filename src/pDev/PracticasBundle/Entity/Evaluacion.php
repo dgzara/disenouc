@@ -35,14 +35,14 @@ class Evaluacion
     private $observaciones;
 
     /**
-     * @ORM\OneToMany(targetEntity="Criterio", mappedBy="evaluacion")
+     * @ORM\OneToMany(targetEntity="Criterio", mappedBy="evaluacion",cascade={"persist"})
      */
     protected $criterios;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="nota", type="float")
+     * @ORM\Column(name="nota", type="float", nullable=true)
      */
     protected $nota;
     

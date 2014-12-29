@@ -13,15 +13,10 @@ use pDev\PracticasBundle\Entity\Evaluacion;
 class EvaluacionSupervisor extends Evaluacion
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Supervisor", inversedBy="evaluaciones")
-     * @ORM\JoinColumn(name="supervisor_id", referencedColumnName="id", nullable=false)
+     * @ORM\OneToOne(targetEntity="pDev\PracticasBundle\Entity\AlumnoPracticante", inversedBy="supervisorEvaluacion")     
+     * @ORM\JoinColumn(name="practica_id", referencedColumnName="id", nullable=false)
      */
-    private $supervisor;
-    
-    /**
-     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\AlumnoPracticante", mappedBy="supervisorEvaluacion")     
-     */
-    private $practicantes;
+    private $practica;
 
     /**
      * @var integer
@@ -57,7 +52,6 @@ class EvaluacionSupervisor extends Evaluacion
     public function __construct()
     {
         parent::__construct();
-        $this->practicantes = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -153,58 +147,35 @@ class EvaluacionSupervisor extends Evaluacion
     }
 
     /**
-     * Set supervisor
-     *
-     * @param \pDev\PracticasBundle\Entity\Supervisor $supervisor
-     * @return EvaluacionSupervisor
-     */
-    public function setSupervisor(\pDev\PracticasBundle\Entity\Supervisor $supervisor)
-    {
-        $this->supervisor = $supervisor;
-    
-        return $this;
-    }
-
-    /**
      * Get supervisor
      *
      * @return \pDev\PracticasBundle\Entity\Supervisor 
      */
     public function getSupervisor()
     {
-        return $this->supervisor;
+        return $this->practica->getSupervisor();
     }
-
+    
     /**
-     * Add practicantes
+     * Set practica
      *
-     * @param \pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes
+     * @param \pDev\PracticasBundle\Entity\Practica $practica
      * @return EvaluacionSupervisor
      */
-    public function addPracticante(\pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes)
+    public function setPractica($practica)
     {
-        $this->practicantes[] = $practicantes;
+        $this->practica = $practica;
     
         return $this;
     }
 
     /**
-     * Remove practicantes
+     * Get practica
      *
-     * @param \pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes
+     * @return \pDev\PracticasBundle\Entity\Practica 
      */
-    public function removePracticante(\pDev\PracticasBundle\Entity\AlumnoPracticante $practicantes)
+    public function getPractica()
     {
-        $this->practicantes->removeElement($practicantes);
-    }
-
-    /**
-     * Get practicantes
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPracticantes()
-    {
-        return $this->practicantes;
+        return $this->practica;
     }
 }

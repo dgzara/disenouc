@@ -28,7 +28,7 @@ class Criterio
     private $criterioTipo;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Evaluacion", inversedBy="criterios")
+     * @ORM\ManyToOne(targetEntity="Evaluacion", inversedBy="criterios", cascade={"persist"})
      * @ORM\JoinColumn(name="evaluacion_id", referencedColumnName="id", nullable=false)
      */
     private $evaluacion;
@@ -39,9 +39,6 @@ class Criterio
      * @ORM\Column(name="valor", type="string", length=255, nullable=true)
      */
     private $valor;
-
-
-    
 
     /**
      * Get id

@@ -35,18 +35,17 @@ class MenuController extends Controller
             $practicas_items = array();
             //$practicas_items[] = $this->createItem('Foro',$this->generateUrl('practicas',array('filtro'=>'foro')));
             
+            if(!$isAcademico)
+                $practicas_items[] = $this->createItem('Ofertas',$this->generateUrl('practicas'));
             
-            //if($isContacto or $isCoordinacion)
-                $practicas_items[] = $this->createItem('Prácticas',$this->generateUrl('practicas'));
-            
-            if($isCoordinacion or $isAlumno or !$isExterno)
+            if($isCoordinacion or $isAlumno)
                 $practicas_items[] = $this->createItem('Planes de práctica',$this->generateUrl('practicas_alumno'));
-            elseif($isAcademico or $isSupervisor or $isContacto){
+            elseif($isSupervisor or $isContacto){
                 $practicas_items[] = $this->createItem('Practicantes',$this->generateUrl('practicas_alumno'));
                 $practicas_items[] = $this->createItem('Organizaciones',$this->generateUrl('practicas_organizacion'));
             }
             
-            if($isCoordinacion)
+            if($isCoordinacion or $isAcademico)
                 $practicas_items[] = $this->createItem('Evaluaciones',$this->generateUrl('practicas_evaluacion'));
             
             $items = array_merge($items,$practicas_items);     

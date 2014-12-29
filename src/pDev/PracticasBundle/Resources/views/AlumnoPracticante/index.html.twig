@@ -16,52 +16,11 @@
 {% block lead %}{% endblock %}
 
 {% block content %}
-    <div id="div_periodo" class="hide" style="margin:0">
-        <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Seleccionar periodo</h3>
-        </div>
-        <div class="modal-body">
-            <form id="form_periodo" class="form-horizontal" action="{{ path('practicas_alumno') }}" method="post" {{ form_enctype(period_form) }}>
-                <div class="control-group" style="margin:0">
-                    {{ form_label(period_form.periodo) }}
-                    <div class="controls">
-                        {{ form_widget(period_form.periodo) }}
-                        <button type="submit" id="_submit" class="hide"></button>
-                
-                    </div></div>
-                {{ form_rest(period_form) }}          
-            </form>
-        </div>
-        <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-        <a href="#form_periodo" class="btn btn-primary submitform">Seleccionar</a>
-        </div>
-    </div>
-    {% set estado_actual = app.request.get('estado') %}
-    
     <div id="form_ordenar" class="well clearfix" style="margin:0">
         <div class="btn-group">
             {% if isAlumno %}  
             <a href="{{ path('practicas_alumno_new') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Crear plan de práctica</a>        
             {% endif %}
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                {% if estado_actual %}
-                    Estado: {{estado_actual}}
-                {% else %}
-                    Estado: Todos
-                {% endif %}
-                <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                {% for estado in estados%}
-                    <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo'),'estado':estado.identificador}) }}">{{estado.nombre}}</a></li>
-                {% endfor %}
-                    <li class="divider"></li>
-                    <li><a href="{{ path('practicas_alumno',{'periodo':app.request.get('periodo')}) }}">Ver todas</a></li>
-                </ul>
-            </div>
         </div>
     </div>
     

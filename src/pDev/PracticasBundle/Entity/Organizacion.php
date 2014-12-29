@@ -3,11 +3,13 @@
 namespace pDev\PracticasBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Organizacion
  *
  * @ORM\Table(name="nb_practicas_organizacion")
+ * @ORM\HasLifecycleCallbacks 
  * @ORM\Entity
  */
 class Organizacion
@@ -87,9 +89,39 @@ class Organizacion
     
     /**
      * @ORM\ManyToOne(targetEntity="pDev\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="creador_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="creador_id", referencedColumnName="id", nullable=true)
      */
     private $creador;
+    
+    /**
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 */
+	private $path;
+	
+	/**
+     * @Assert\Image(maxSize="6000000")
+     */
+    private $profilePic;
+    
+    /**
+	 * @ORM\Column(type="boolean", nullable=true)
+	 */
+	private $isFileChanged;
+	
+	/**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->aliases = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->contactos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->supervisores = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function __toString() 
+    {
+        return count($this->aliases)>0?$this->aliases[0]->getNombre():'sin nombre';
+    }
     
     /**
      * Get id
@@ -146,8 +178,6 @@ class Organizacion
     {
         return $this->descripcion;
     }
-    
-    
 
     /**
      * Set pais
@@ -444,17 +474,165 @@ class Organizacion
     }
     
     /**
-     * Constructor
+     * Set path
+     *
+     * @param string $path
+     * @return Organizacion
      */
-    public function __construct()
+    public function setPath($path)
     {
-        $this->aliases = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->contactos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->supervisores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->path = $path;
+    
+        return $this;
     }
 
-    public function __toString() 
+    /**
+     * Get path
+     *
+     * @return string 
+     */
+    public function getPath()
     {
-        return count($this->aliases)>0?$this->aliases[0]->getNombre():'sin nombre';
+        return $this->path;
+    }
+
+    /**
+     * Set isFileChanged
+     *
+     * @param boolean $isFileChanged
+     * @return Organizacion
+     */
+    public function setIsFileChanged($isFileChanged)
+    {
+        $this->isFileChanged = $isFileChanged;
+    
+        return $this;
+    }
+
+    /**
+     * Get isFileChanged
+     *
+     * @return boolean 
+     */
+    public function getIsFileChanged()
+    {
+        return $this->isFileChanged;
+    }
+    
+    /**
+     * Get absolute path
+     *
+     * @return string 
+     */
+    public function getAbsolutePath()
+    {
+        return null === $this->path ? $this->getImageRootDir().'/no-image.jpg' : $this->getUploadRootDir().'/'.$this->path;
+    }
+
+    /**
+     * Get web path
+     *
+     * @return string 
+     */
+    public function getWebPath()
+    {
+        return null === $this->path ? $this->getImageDir().'/no-image.jpg' : $this->getUploadDir().'/'.$this->path;
+    }
+
+    /**
+     * Get upload root dir
+     *
+     * @return string 
+     */
+    protected function getUploadRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    /**
+     * Get image root dir
+     *
+     * @return string 
+     */    
+    protected function getImageRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getImageDir();
+    }
+
+    /**
+     * Get image dir
+     *
+     * @return string 
+     */
+    protected function getImageDir()
+    {
+        // get rid of the __DIR__ so it doesn't screw when displaying uploaded doc/image in the view.
+        return 'img';
+    }
+    
+    protected function getUploadDir()
+    {
+        // get rid of the __DIR__ so it doesn't screw when displaying uploaded doc/image in the view.
+        return 'uploads/organizacion/pics';
+    }
+    
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        if (null !== $this->profilePic) {
+            // do whatever you want to generate a unique name
+            $this->path = uniqid().'.'.$this->profilePic->guessExtension();
+        }
+        $this->isFileChanged=false;
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->profilePic) {
+            return;
+        }
+
+        // if there is an error when moving the file, an exception will
+        // be automatically thrown by move(). This will properly prevent
+        // the entity from being persisted to the database on error
+        $this->profilePic->move($this->getUploadRootDir(), $this->path);
+
+        unset($this->profilePic);
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($profilePic = $this->getAbsolutePath()) {
+            unlink($profilePic);
+        }
+    }
+
+    /**
+     * Get profile pic
+     *
+     */
+    public function getProfilePic()
+    {
+        return $this->profilePic;
+    }
+    
+    /**
+     * Set profile pic
+     *
+     * @param File $file
+     */
+    public function setProfilePic($var)
+    {
+        $this->profilePic = $var;
     }
 }
