@@ -24,7 +24,7 @@ class Supervisor extends Persona
     private $practicantes;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Organizacion", inversedBy="supervisores")
+     * @ORM\ManyToMany(targetEntity="Organizacion", inversedBy="supervisores", cascade={"persist"})
      * @ORM\JoinTable(name="nb_persona_supervisores_organizaciones")
      */
     private $organizaciones;

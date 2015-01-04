@@ -13,8 +13,8 @@
     </div>
 {% endblock %}
 
-{% block header %}{{ entity.organizacionAlias.nombre }}{%endblock%}
-{% block lead %}{{ entity.tipo }}{%endblock%}
+{% block header %}{{ entity.nombre }}{%endblock%}
+{% block lead %}{{ entity.organizacionAlias.nombre }}{%endblock%}
 
 {% block sidebar %}
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
@@ -62,12 +62,14 @@
             {% for postulante in entity.postulantes %}
             <tr>
                 <td>Nombre</td>
-                <td>{{ postulante.alumno.nombreCompleto }}</td>
+                <td><a href="{{ path('persona_show_modal', { 'id': postulante.alumno.id }) }}" class="onmodal">{{ postulante.alumno.nombreCompleto }}</a></td>
+                {% if entity.estado != 'estado.finalizada' %}
                 <td>
-                    <a class="btn btn-success" href="{{ path('practicas_alumno_postulante_aceptar', {'id': postulante.id}) }}">
+                    <a class="btn btn-success onmodal" href="{{ path('practicas_alumno_postulante_aceptar', {'id': postulante.id}) }}">
                         <span class="glyphicon glyphicon-ok"></span>
                     </a>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
@@ -81,7 +83,7 @@
             {% for aceptado in entity.aceptados %}
             <tr>
                 <td>Nombre</td>
-                <td>{{ aceptado.alumno.nombreCompleto }}</td>
+                <td><a href="{{ path('persona_show_modal', { 'id': aceptado.alumno.id }) }}" class="onmodal">{{ aceptado.alumno.nombreCompleto }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -116,9 +118,6 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ entity.nombre }}</h3>
-    <p>{{ entity.descripcion }}</p>
-
     <h4>Detalles</h4>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -128,8 +127,12 @@
                     <td>{{ entity.tipo }}</td>
                 </tr>
                 <tr>
+                    <td>Descripción</td>
+                    <td>{{ entity.descripcion is empty ? 'Sin descripción' : entity.descripcion|nl2br }}</td>
+                </tr>
+                <tr>
                     <td>Habilidades necesarias</td>
-                    <td>{{ entity.manejoSoftware }}</td>
+                    <td>{{ entity.manejoSoftware is empty ? 'Sin requerimientos' : entity.manejoSoftware }}</td>
                 </tr>
                 <tr>
                     <td>Jornadas</td>
@@ -145,7 +148,7 @@
                 </tr>
                 <tr>
                     <td>Interés</td>
-                    <td>{{ entity.interes }}</td>
+                    <td>{{ entity.interes is empty ? 'Sin detalle' : entity.interes }}</td>
                 </tr>
                 <tr>
                     <td>Cupos</td>
@@ -153,15 +156,15 @@
                 </tr>
                 <tr>
                     <td>¿Entrevista / presentación de portafolio?</td>
-                    <td>{{ entity.entrevista }}</td>
+                    <td>{{ entity.entrevista is empty ? 'Sin entrevista/portafolio' : 'Se requiere entrevista/portafolio' }}</td>
                 </tr>
                 <tr>
                     <td>Remuneracion</td>
-                    <td>{{ entity.remuneraciones }}</td>
+                    <td>{{ entity.remuneraciones is empty ? 'Sin detalle' : entity.remuneraciones }}</td>
                 </tr>
                 <tr>
                     <td>Beneficios</td>
-                    <td>{{ entity.beneficios }}</td>
+                    <td>{{ entity.beneficios is empty ? 'Sin beneficios especificados' : entity.beneficios }}</td>
                 </tr>
             </tbody>
         </table>
@@ -173,7 +176,7 @@
             <tbody>
                 <tr>
                     <td width="35%">Nombre</td>
-                    <td></td>
+                    <td>{{ entity.organizacionAlias.nombre }}</td>
                 </tr>
                 <tr>
                     <td>Rubro</td>
@@ -237,4 +240,7 @@
         
 {% endblock %}
 
-
+{% block javascripts %}
+    {{ parent() }}
+    
+{% endblock %}

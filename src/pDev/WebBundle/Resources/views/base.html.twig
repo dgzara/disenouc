@@ -149,7 +149,9 @@
         <div id="footer">
             <div class="container">
                 <img style="float:left;" border="0" alt="uc" src="{{ asset('/img/UCcolor-invert.png') }}">
-                <p class="pull-right"><a href="#top">Volver arriba</a></p>
+                <p class="pull-right">
+                    {% block footer %}<a href="#top">Volver arriba</a>{% endblock %}
+                </p>
                 <address style="border-left:1px solid #888888;margin-left: 200px;padding-left: 30px;height: 100px;padding-top: 20px">
                     <strong>Escuela de Diseño UC</strong><br>
                     Los Navegantes 1941, Providencia, Chile (<a href="http://www.uc.cl/es/mapas">mapa</a>)<br>

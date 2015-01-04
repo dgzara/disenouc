@@ -49,13 +49,24 @@
         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
           <div class="panel-body">
             <form id="form2" class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
-                {{ form_widget(organizacionAlias_form) }}
-                {{ form_widget(organizacion_form) }}
-                <h3>Supervisor</h3>
-                {{ form_widget(supervisor_form) }}
-                <p>
-                    <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
-                </p>
+                <table style="width: 100%;">
+                    <tr>
+                        <td width="50%">
+                            <h3>Organización</h3>
+                            {{ form_widget(organizacionAlias_form) }}
+                            {{ form_widget(organizacion_form) }}
+                        </td>
+                        <td style="vertical-align: top;">
+                            <h3>Supervisor</h3>
+                            {{ form_widget(supervisor_form) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Datos práctica</button>
+                        </td>
+                    </tr>
+                </table>
             </form>
           </div>
         </div>

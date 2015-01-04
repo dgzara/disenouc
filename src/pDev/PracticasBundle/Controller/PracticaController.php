@@ -340,8 +340,10 @@ class PracticaController extends Controller
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $editForm->remove('organizacionAlias');
         
-        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false)
+        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
             $editForm->remove('tipo');
+            $editForm->remove('contacto');
+        }
 
         return array(
             'entity'      => $entity,
@@ -371,8 +373,10 @@ class PracticaController extends Controller
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $editForm->remove('organizacionAlias');
         
-        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false)
+        if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
             $editForm->remove('tipo');
+            $editForm->remove('contacto');
+        }
             
         $editForm->submit($request);
 
@@ -422,14 +426,30 @@ class PracticaController extends Controller
         {
             $editForm->submit($request);
 
-            if ($editForm->isValid()) {
+            if ($editForm->isValid()) 
+            {
+                // Comprobamos si es correcto el estado
+                if($entity->getEstado() == "estado.aprobada" && $entity->getTipo() == "")
+                {
+                    // Mensaje
+                    $request->getSession()->getFlashBag()->add(
+                        'error',
+                        'Debe seleccionar el tipo de práctica'
+                    );
+                
+                    return array(
+                        'entity'      => $entity,
+                        'edit_form'   => $editForm->createView(),
+                    );
+                }
+                
                 $em->persist($entity);
                 $em->flush();
                 
                 // Mensaje
                 $request->getSession()->getFlashBag()->add(
                     'notice',
-                    'La práctica ha cambiado al estado: '.$entity->getEstado()
+                    'La práctica ha sido '.$entity->getEstadoLabel()
                 );
                 
                 // Devolvemos la respuesta

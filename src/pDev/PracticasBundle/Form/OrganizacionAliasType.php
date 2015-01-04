@@ -16,7 +16,7 @@ class OrganizacionAliasType extends AbstractType
     {
         $builder
             ->add('nombre', null, array(
-                'label' => 'Organización'
+                'label' => 'Nombre'
             ));
     }
 

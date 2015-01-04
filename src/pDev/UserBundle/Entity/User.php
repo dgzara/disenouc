@@ -20,7 +20,7 @@ class User extends BaseUser
     protected $id;
     
     /**
-     * @ORM\OneToMany(targetEntity="Persona", mappedBy="usuario")
+     * @ORM\OneToMany(targetEntity="Persona", mappedBy="usuario", cascade={"persist"})
      */
     private $personas;
     
@@ -617,5 +617,14 @@ class User extends BaseUser
     public function recibeCorreo()
     {
         return $this->recibirCorreo;
+    }
+    
+    /**
+     * Get salt
+     *
+     */
+    public function setSalt($salt)
+    {
+        $this->salt=$salt;
     }
 }

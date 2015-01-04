@@ -31,7 +31,7 @@ class Persona
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="personas")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="personas", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      */
     private $usuario;

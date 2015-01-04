@@ -745,4 +745,20 @@ class Practica
         else
             return false;
     }
+    
+    public function getEstadoLabel()
+    {
+        if($this->estado === Practica::ESTADO_REVISION)
+            return "En revisión";
+        elseif($this->estado === Practica::ESTADO_PENDIENTE)
+            return "enviada a revisión";
+        elseif($this->estado === Practica::ESTADO_APROBADA)
+            return "aprobada";
+        elseif($this->estado === Practica::ESTADO_RECHAZADA)
+            return "rechazada";
+        elseif($this->estado === Practica::ESTADO_FINALIZADA)
+            return "asignada";
+        
+        return '';
+    }
 }

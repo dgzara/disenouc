@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class AlumnoPracticanteEstadoType extends AbstractType
+class SupervisorOrganizacionType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,15 +15,13 @@ class AlumnoPracticanteEstadoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('estado', 'choice', array(
-                'choices'   => array(
-                    'estado.pendiente' => 'Pendiente', 
-                    'estado.aprobada' => 'Aprobada', 
-                    'estado.rechazada' => 'Rechazada', 
-                ),
-                'required'  => true,
-            ))
-            ->add('estadoObservaciones',null,array('label'=>'Observaciones'));
+            ->add('rut',null,array('attr'=>array('autocomplete'=>'off')))
+            ->add('nombres')
+            ->add('apellidoPaterno')
+            ->add('apellidoMaterno')
+            ->add('email')            
+            ->add('cargo')
+            ->add('profesion');
     }
 
     /**
@@ -32,7 +30,7 @@ class AlumnoPracticanteEstadoType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'pDev\PracticasBundle\Entity\AlumnoPracticante'
+            'data_class' => 'pDev\PracticasBundle\Entity\Supervisor'
         ));
     }
 
@@ -41,6 +39,6 @@ class AlumnoPracticanteEstadoType extends AbstractType
      */
     public function getName()
     {
-        return 'pdev_practicasbundle_alumnopracticanteestadotype';
+        return 'pdev_practicasbundle_supervisortype';
     }
 }

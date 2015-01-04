@@ -991,6 +991,28 @@ class PersonaController extends Controller
     }
 
     /**
+     * Finds and displays a Persona entity.
+     *
+     * @Route("/show/{id}/modal", name="persona_show_modal")
+     * @Method("GET")
+     * @Template()
+     */
+    public function showModalAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('pDevUserBundle:Persona')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Persona entity.');
+        }        
+
+        return array(
+            'entity' => $entity,
+        );
+    }
+    
+    /**
      * Displays a form to edit an existing Persona entity.
      *
      * @Route("/{tipo}/{idPersona}/email", name="persona_email")

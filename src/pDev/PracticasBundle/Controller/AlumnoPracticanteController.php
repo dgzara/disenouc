@@ -22,11 +22,13 @@ use pDev\PracticasBundle\Entity\Criterio;
 use pDev\PracticasBundle\Entity\Desafio;
 use pDev\PracticasBundle\Entity\Proyecto;
 use pDev\PracticasBundle\Entity\Practica;
+use pDev\PracticasBundle\Entity\Contacto;
 
 use pDev\PracticasBundle\Form\AlumnoPracticanteType;
 use pDev\PracticasBundle\Form\AlumnoPracticanteProfesorType;
 use pDev\PracticasBundle\Form\AlumnoType;
 use pDev\PracticasBundle\Form\SupervisorType;
+use pDev\PracticasBundle\Form\SupervisorOrganizacionType;
 use pDev\PracticasBundle\Form\OrganizacionAliasType;
 use pDev\PracticasBundle\Form\OrganizacionType;
 use pDev\PracticasBundle\Form\ProyectoTaskType;
@@ -242,7 +244,7 @@ class AlumnoPracticanteController extends Controller
         
         $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
         $organizacion_form = $this->createForm(new OrganizacionType(), $organizacion);
-        $supervisor_form = $this->createForm(new SupervisorType(), $supervisor);
+        $supervisor_form = $this->createForm(new SupervisorOrganizacionType(), $supervisor);
         
         return array(
             'form' => $form->createView(),
@@ -286,7 +288,7 @@ class AlumnoPracticanteController extends Controller
         
         $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
         $organizacion_form = $this->createForm(new OrganizacionType(), $organizacion);
-        $supervisor_form = $this->createForm(new SupervisorType(), $supervisor);
+        $supervisor_form = $this->createForm(new SupervisorOrganizacionType(), $supervisor);
         
         if($request->isMethod('POST'))
         {
@@ -307,13 +309,54 @@ class AlumnoPracticanteController extends Controller
             }
             elseif($organizacion_form->isValid() and $organizacionAlias_form->isValid() and $supervisor_form->isValid())
             {
+                // Creamos el usuario
+                $userManager = $this->container->get('fos_user.user_manager');
+                $user = $userManager->createUser();
+                $user->setRut($supervisor->getRut());
+                $user->setEmail($supervisor->getEmail());
+                $user->setNombres($supervisor->getNombres());
+                $user->setApellidoPaterno($supervisor->getApellidoPaterno());
+                $user->setApellidoMaterno($supervisor->getApellidoMaterno());
+                $user->setUsername($user->getEmail());
+                $user->setExternal(true);
+                $user->setEnabled(true);
+                
+                // Guardamos los datos del supervisor y organizacion
                 $organizacionAlias->setOrganizacion($organizacion);
                 $supervisor->addOrganizacion($organizacion);
+                $supervisor->setUsuario($user);
                 
+                // Creamos el contacto
+                $contacto = new Contacto();
+                $contacto->setRut($supervisor->getRut());
+                $contacto->setNombres($supervisor->getNombres());
+                $contacto->setApellidoPaterno($supervisor->getApellidoPaterno());
+                $contacto->setApellidoMaterno($supervisor->getApellidoMaterno());
+                $contacto->setEmail($supervisor->getEmail());
+                $contacto->setUsuario($user);
+                
+                // Seteamos la contraseña
+                $password = $user->getPassword();
+                $user->setSalt(md5(time()));
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($user);
+                $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+                $user->setPassword($password);
+                $user->addRole("ROLE_USER");
+                
+                // Creamos el usuario y mandamos el mail
+                $tokenGenerator = $this->get('fos_user.util.token_generator');
+                $user->setConfirmationToken($tokenGenerator->generateToken());
+                $this->get('fos_user.mailer')->sendResettingEmailMessage($user);
+                $user->setPasswordRequestedAt(new \DateTime());
+                $this->get('fos_user.user_manager')->updateUser($user);
+                
+                // Guardamos
+                $em->persist($user);
+                $em->persist($contacto);
                 $em->persist($organizacion);
                 $em->persist($supervisor);
                 $em->persist($organizacionAlias);
-                
                 $em->flush();
                 
                 return $this->redirect ($this->generateUrl ('practicas_alumno_new_datos',array('idOrganizacionAlias' => $organizacionAlias->getId())));
@@ -1010,36 +1053,54 @@ class AlumnoPracticanteController extends Controller
         $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO") and $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'));
         $isAcademico = $pm->checkType("TYPE_ACADEMICO") and $entity->hasAcademico($user->getPersona('TYPE_ACADEMICO'));
         $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
-
-        $estado = $entity->getEstado();
         
-        if($isContacto and $estado === AlumnoPracticante::ESTADO_POSTULADO)
+        $confirmForm = $this->createConfirmForm($id);
+        
+        if($request->isMethod('POST'))
         {
-            $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
+            $confirmForm->submit($request);
+            if ($confirmForm->isValid()) 
+            {
+                $estado = $entity->getEstado();
+                
+                if($isContacto and $estado === AlumnoPracticante::ESTADO_POSTULADO)
+                {
+                    $estado = AlumnoPracticante::ESTADO_ACEPTADA_CONTACTO;
+                }
+                
+                // Descontamos los cupos
+                $practica = $entity->getPractica();
+                $cuposRestantes = $practica->getCupos() - 1;
+                $practica->setCupos($cuposRestantes);
+                
+                if($cuposRestantes == 0)
+                {
+                    $estadoPractica = Practica::ESTADO_FINALIZADA;
+                    $practica->setEstado($estadoPractica);
+                }
+                
+                $entity->setEstado($estado);
+                $em->persist($entity);
+                $em->persist($practica);
+                $em->flush();
+                
+                $request->getSession()->getFlashBag()->add(
+                    'notice',
+                    'Ha aceptado al postulante '.$entity->getAlumno()
+                );
+                
+                // Devuelve la ruta
+                $array = array('redirect' => $this->generateUrl('practicas_show', array('id' => $entity->getPractica()->getId()))); // data to return via JSON
+                $response = new Response(json_encode($array));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
         }
         
-        // Descontamos los cupos
-        $practica = $entity->getPractica();
-        $cuposRestantes = $practica->getCupos() - 1;
-        $practica->setCupos($cuposRestantes);
-        
-        if($cuposRestantes == 0)
-        {
-            $estadoPractica = Practica::ESTADO_FINALIZADA;
-            $practica->setEstado($estadoPractica);
-        }
-        
-        $entity->setEstado($estado);
-        $em->persist($entity);
-        $em->persist($practica);
-        $em->flush();
-        
-        $request->getSession()->getFlashBag()->add(
-            'notice',
-            'Ha aceptado al postulante '.$entity->getAlumno()
+        return array(
+            'entity' => $entity,
+            'form'   => $confirmForm->createView(),
         );
-        
-        return $this->redirect($this->generateUrl('practicas_show', array('id' => $entity->getPractica()->getId())));
     }
     
     /**
@@ -1222,6 +1283,7 @@ class AlumnoPracticanteController extends Controller
      * Asignar un profesor
      *
      * @Route("/{id}/asignar", name="practicas_alumno_asignar_profesor")
+     * @Method({"GET", "POST"})
      * @Template()
      */
     public function asignarProfesorAction(Request $request, $id)

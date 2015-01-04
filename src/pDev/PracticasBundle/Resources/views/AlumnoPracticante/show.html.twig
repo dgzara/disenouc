@@ -101,7 +101,7 @@
         </table>
     </div>
     <div class="btn-group">
-        {% if isCoordinacion and entity.estado != "estado.evaluada" %}
+        {% if isCoordinacion and (entity.estado == "estado.enviada" or entity.estado == "estado.aceptada.supervisor") %}
         <a href="{{ path('practicas_alumno_estado', { 'id': entity.id }) }}"  class="pull-left btn btn-primary onmodal">
             <span class="glyphicon glyphicon-adjust"></span> Cambiar estado
         </a>

@@ -212,6 +212,28 @@ class UserController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+    
+    /**
+     * Finds and displays a User entity.
+     *
+     * @Route("/{id}/modal", name="user_show_modal")
+     * @Method("GET")
+     * @Template()
+     */
+    public function showModalAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('pDevUserBundle:User')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        return array(
+            'entity'      => $entity,
+        );
+    }
 
     /**
      * Displays a form to edit an existing User entity.

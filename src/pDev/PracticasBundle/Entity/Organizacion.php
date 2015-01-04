@@ -83,7 +83,7 @@ class Organizacion
     private $contactos;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Supervisor", mappedBy="organizaciones")
+     * @ORM\ManyToMany(targetEntity="Supervisor", mappedBy="organizaciones", cascade={"persist"})
      */
     private $supervisores;
     

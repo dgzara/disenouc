@@ -441,7 +441,9 @@ function p_formModal(parenttag)
                 }
                 else {
                     // data.form contains the HTML for the replacement form
-                    $(parenttag).html(data);
+                    p_modal.Obj.empty();
+                    p_modal.Obj.append(data);
+                    p_initialize(parenttag);
                     p_formModal(parenttag);
                 }
             },

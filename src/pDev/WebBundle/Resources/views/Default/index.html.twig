@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-sm-3">
+<div class="col-sm-4">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Estudiantes</h3>
@@ -28,7 +28,7 @@
     </div><!--/panel-body-->			
 </div><!--/col-sm-4-->
 
-<div class="col-sm-3">
+<div class="col-sm-4">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Académicos</h3>
@@ -40,7 +40,7 @@
     </div><!--/panel-body-->
 </div><!--/col-sm-4-->
 
-<div class="col-sm-3">
+<div class="col-sm-4">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Empresas y fundaciones</h3>
@@ -51,16 +51,8 @@
         </div><!--/panel-body-->
     </div><!--/panel-->
 </div><!--/col-sm-4-->
-
-<div class="col-sm-3">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Coordinadores</h3>
-        </div>
-        <div class="panel-body">
-            <p></p>
-            <a class="btn btn-sm btn-primary onmodal" href="{{ path('fos_user_security_login') }}">Acceder &rarr;</a>
-        </div><!--/panel-body-->
-    </div><!--/panel-->
-</div><!--/col-sm-4-->
 {%endblock%}
+
+{% block footer %}
+    <a class="onmodal" href="{{ path('fos_user_security_login') }}">Acceso coordinadores &rarr;</a>
+{% endblock %}

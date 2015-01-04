@@ -12,8 +12,20 @@
 
 {% block content %}
     <form id="form_practica" class="well form-horizontal" action="{{ path('practicas_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-        <input type="hidden" name="_method" value="PUT" />
-        {{ form_widget(edit_form) }}
+        {{ form_row(edit_form.nombre) }}
+        {% if edit_form.tipo %}
+            {{ form_row(edit_form.tipo) }}
+        {% endif %}
+        {% if edit_form.contacto %}
+            {{ form_row(edit_form.contacto) }}
+        {% endif %}
+        {{ form_row(edit_form.descripcion) }}
+        {{ form_row(edit_form.jornadas) }}
+        {{ form_row(edit_form.fechaInicio) }}
+        {{ form_label(edit_form.duracionCantidad) }}<br>
+        {{ form_widget(edit_form.duracionCantidad) }}{{ form_widget(edit_form.duracionUnidad) }}
+        <div id="endDate"></div>
+        {{ form_rest(edit_form) }}
         <p class="pull-right">
             <button id="_submit" class="hide" type="submit">Guardar</button>
             <a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="btn btn-default">Volver</a>
@@ -21,4 +33,57 @@
         </p>
         <div class="clearfix"></div>
     </form>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var fechaIn = $('input#pdev_practicasbundle_practicatype_fechaInicio');
+        var duracionCantidad = $('input#pdev_practicasbundle_practicatype_duracionCantidad');    
+        var duracionUnidad = $('#pdev_practicasbundle_practicatype_duracionUnidad');    
+        
+        jQuery(document).ready(function() {
+            daysBetween();
+            $(".date").each(function( index ) {
+                $(this).datetimepicker({
+                  pickTime: false
+                }).on('dp.change', daysBetween);
+            });
+            $("#pdev_practicasbundle_practicatype_duracionCantidad").change(daysBetween);
+            $("#pdev_practicasbundle_practicatype_duracionUnidad").change(daysBetween);
+        });
+        
+        var daysBetween = function () 
+        {
+            var startDate = parseDate(fechaIn.val()); 
+            var dCantidad = duracionCantidad.val();
+            var dUnidad = duracionUnidad.val();
+            var days = [], current = startDate, endDate = startDate;
+            
+            if(dUnidad == "días")
+                endDate = new Date(startDate.getTime() + dCantidad * (24 * 60 * 60 * 1000));
+            else if(dUnidad == "semanas")
+                endDate = new Date(startDate.getTime() + 7 * dCantidad * (24 * 60 * 60 * 1000));
+            else if(dUnidad == "meses")
+                endDate = new Date(startDate.getTime() + 30 * dCantidad * (24 * 60 * 60 * 1000));
+            
+            while(current <= endDate) {
+                if(days[current.getDay()] == undefined)
+                    days[current.getDay()] = 1;
+                else
+                    days[current.getDay()]++;
+                current = new Date(current.getTime() + (24 * 60 * 60 * 1000));
+                
+            }
+            
+            if(isNaN(endDate.getTime()) === false)
+                $("#endDate").html("Fecha estimada de término: " + endDate.toLocaleDateString());
+        };
+        
+        var parseDate = function (datestr)//dd-mm-yyyy
+        {
+            var datearr = datestr.split('-');
+            return new Date(parseInt(datearr[2]), parseInt(datearr[1]-1), parseInt(datearr[0]));
+        };
+    </script>
 {% endblock %}
