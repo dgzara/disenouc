@@ -18,7 +18,6 @@
     {{ parent() }}
 {% endblock %}
 
-
 {% block header%}Plan de práctica{%endblock%}
 {% block lead%}2 de 3: Carta gantt{%endblock%}
 
@@ -27,7 +26,7 @@
     <div class="alert alert-default">
         <a class="close">×</a>
         <h4 class="alert-heading"><span style="color: #0F6DAF">Información</span></h4>
-        <p>Las modificaciones que realice en esta carta gantt, quedan inmediatamente guardadas. Una vez que finalice lo envía para aprobación.</p>
+        <p>Las modificaciones que realice en esta carta gantt, quedan inmediatamente guardadas.</p>
     </div>
 
     <div id="ganttChart" style="background-color: white;margin:auto;"></div>
@@ -35,8 +34,8 @@
     
     <div class="well">
         <p>
-            <a href="{{ path('practicas_alumno_new_datos_source', {'id': entity.id})}}" class="btn btn-primary">Anterior: Detalles de la práctica</a>        
-            <a href="{{ path('practicas_alumno_gantt_create', {'id': entity.id}) }}" class="btn btn-primary pull-right">Enviar para aprobación</a>        
+            <a href="{{ path('practicas_alumno_new_datos_source', {'id': entity.id})}}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Anterior: Detalles de la práctica</a>        
+            <a href="{{ path('practicas_alumno_gantt_create', {'id': entity.id}) }}" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Enviar para aprobación</a>        
         </p>
         <div class="clearfix"></div>
     </div>
@@ -55,16 +54,19 @@
                 slideWidth: dinwidth,
                 behavior: {
                     onClick: function (data) {
-                            var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                            //$("#eventMessage").text(msg);
+                        var msg = "You clicked on an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        //$("#eventMessage").text(msg);
                     },
                     onResize: function (data) {
-                            var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                            //$("#eventMessage").text(msg);
+                        var msg = "You resized an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        //$("#eventMessage").text(msg);
                     },
                     onDrag: function (data) {
-                            var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-                            //$("#eventMessage").text(msg);
+                        var msg = "You dragged an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        //$("#eventMessage").text(msg);
                     },
                     editable: true,
                     clickable: true,

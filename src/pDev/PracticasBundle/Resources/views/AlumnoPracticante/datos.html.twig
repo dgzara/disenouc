@@ -81,14 +81,14 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
-                    <th class="add"></th>
+                    <th class="add" width="30px"></th>
                 </tr>
             </thead>
             <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Proyecto:prototype.html.twig' with {'form': form.proyectos.vars.prototype} %}{% endfilter %}">
                 {% for proyecto in form.proyectos %}
                 <tr class="proyecto">
                     <td>{{ form_widget(proyecto.nombre) }}</td>
-                    <td>{{ form_rest(proyecto) }}</td>
+                    <td>{{ form_widget(proyecto.descripcion) }} {{ form_rest(proyecto) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -96,19 +96,19 @@
         <hr/>
         
         <h4>Desafíos personales que desea lograr el alumno 
-            <abbr title="5 desafíos." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
+        <abbr title="5 desafíos." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
         </h4>
         <table id="desafios" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Desafío</th>
-                    <th class="add"></th>
+                    <th class="add" width="30px"></th>
                 </tr>
             </thead>
             <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Desafio:prototype.html.twig' with {'form': form.desafios.vars.prototype} %}{% endfilter %}">
                 {% for desafio in form.desafios %}
                 <tr class="desafio">
-                    <td>{{ form_widget(desafio) }}</td>
+                    <td>{{ form_widget(desafio.descripcion) }} {{ form_rest(desafio) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -116,7 +116,7 @@
         
         {{ form_rest(form) }}
         <p>
-            <button class="btn btn-primary pull-right" type="submit"> Guardar y continuar: Carta gantt</button>
+            <button class="btn btn-primary pull-right" type="submit"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Guardar y continuar: Carta gantt</button>
         </p>
         <div class="clearfix"></div>
     </form>
@@ -153,8 +153,8 @@
         var $collectionHolder;
 
         // setup an "add a tag" link
-        var $addTagLink = $('<a class="btn btn-primary pull-right">Agregar proyecto</a>');
-        var $addTagLink2 = $('<a class="btn btn-primary pull-right">Agregar desafío</a>');
+        var $addTagLink = $('<a class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Agregar proyecto</a>');
+        var $addTagLink2 = $('<a class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Agregar desafío</a>');
         $('#proyectos .add').append($addTagLink);
         $('#desafios .add').append($addTagLink2);
         

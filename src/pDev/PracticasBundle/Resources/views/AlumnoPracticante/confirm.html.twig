@@ -7,6 +7,20 @@
 {% block header %}Plan de práctica{% endblock %}
 {% block lead %}3 de 3: Confirmar datos{% endblock %}
 
+{% block styles %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/jquery-ui.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/gantt/jquery.ganttView.css') }}" />
+{% endblock %}        
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>   
+    <script type="text/javascript" src="{{ asset('/js/vendor/jquery-ui-1.11.0.min.js') }}"></script>     
+    <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>        
+    <script type="text/javascript" src="{{ asset('/js/pdev.submit.js') }}"></script>      
+{% endblock %}
+
 {% block content %}
     <h4>Información de la práctica</h4>
     <table class="table">
@@ -69,6 +83,8 @@
         </tbody>
     </table>
     
+    <hr>
+    
     <h4>Proyectos y responsabilidades</h4>
     <table class="table table-bordered table-hover">
         <tbody>
@@ -84,10 +100,44 @@
         </tbody>
     </table>
     
-    <h4>¿Seguro que desea enviar este plan de práctica para su aprobación?</h4>
-    <form action="{{ path('practicas_alumno_confirm', {'id': entity.id}) }}" method="post" {{ form_enctype(form) }}>
-        {{ form_rest(form) }}
-        <a href="{{ path('practicas_alumno_gantt', {'id': entity.id})}}" class="btn btn-primary">Anterior: Carta Gantt</a>        
-        <button class="btn btn-primary pull-right" type="submit">Enviar a aprobación</button>
-    </form>
+    <hr>
+    
+    <h4>Carta Gantt</h4>
+    <div id="ganttChart" style="background-color: white;margin:auto;"></div>
+    
+    <hr>
+    
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h4>¿Seguro que desea enviar este plan de práctica para su aprobación?</h4>
+        <form action="{{ path('practicas_alumno_confirm', {'id': entity.id}) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_rest(form) }}
+            <a href="{{ path('practicas_alumno_gantt', {'id': entity.id})}}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Anterior: Carta Gantt</a>        
+            <button class="btn btn-success" type="submit"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Enviar a aprobación</button>
+        </form>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block javascriptload %}
+    {{ parent() }}
+    <script type="text/javascript">
+        function p_gantt_redraw()
+        {
+            var dinwidth = $('.container').innerWidth() - 310;
+            $("#ganttChart").empty();
+            $("#ganttChart").ganttView({
+                dataUrl: Routing.generate('practicas_alumno_gantt_json', { id: {{ entity.id }} }),
+                slideWidth: dinwidth,
+                behavior: {
+                    editable: false,
+                    clickable: false,
+	                draggable: false,
+	                resizable: false,
+                }
+            });
+        }
+        p_gantt_redraw();
+    </script>
 {% endblock %}

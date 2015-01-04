@@ -44,7 +44,7 @@
         {% for entity in pagination %}
             <tr>
                 <td>{{ entity.id }}</td>
-                <td>{{ entity.nombre }}</td>
+                <td><a href="{{ path('practicas_show', { 'id': entity.id }) }}">{{ entity.nombre }}</a></td>
                 <td>{{ entity.organizacionAlias.nombre }}</td>
                 <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
                 <td>{% if entity.duracionCantidad %}{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}{% endif %}</td>

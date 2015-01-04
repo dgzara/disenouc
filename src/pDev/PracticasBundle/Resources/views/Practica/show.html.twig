@@ -23,9 +23,18 @@
         <a href="{{ path('practicas_alumno_new_datos_practica', {'practicaId': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
     </div>
     {% elseif alumnoPractica %}
-    <div class="alert alert-info">
-        Práctica postulada. <a href="{{ path('practicas_alumno_show', {'id': alumnoPractica.id }) }}">Ver detalles</a>
-    </div>
+        {% if alumnoPractica.estado == 'estado.postulado' %}
+        <div class="alert alert-warning">
+            Práctica postulada. <a href="{{ path('practicas_alumno_show', {'id': alumnoPractica.id }) }}">Ver detalles</a>
+        </div>
+        {% elseif alumnoPractica.estado == 'estado.aceptada.contacto' %}
+        <div class="alert alert-warning">
+            Práctica aceptada.
+            <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span> Armar plan de practica
+            </a>
+        </div>
+        {% endif %}
     {% endif %}
     {% else %}
     <h3>Estado de la práctica</h3>

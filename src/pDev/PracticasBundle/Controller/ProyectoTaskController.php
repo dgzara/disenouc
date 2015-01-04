@@ -121,4 +121,40 @@ class ProyectoTaskController extends Controller
             'edit_form'     => $editForm->createView(),
         );
     }
+    
+    /**
+     * Actualiza una tarea
+     *
+     * @Route("/{id}/edit/json", name="practicas_alumno_tarea_edit_json", options={"expose"=true})
+     * @Method("POST")     
+     */
+    public function editJsonAction(Request $request, $id)
+    {   
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:ProyectoTask')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find ProyectoTask entity.');
+        }
+        
+        // Obtenemos los datos
+        $start = new \DateTime($request->get('start'));
+        $end = new \DateTime($request->get('end'));
+        
+        // Establecemos las fechas
+        $entity->setFechaInicio($start);
+        $entity->setFechaTermino($end);
+        
+        // Guardamos
+        $em->persist($entity);
+        $em->flush();
+            
+        $response = new Response(json_encode(array(
+            'status'=>'ok', 
+            'start' => $entity->getFechaInicio()->format('Y-m-d'), 
+            'end' => $entity->getFechaTermino()->format('Y-m-d')
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
 }
