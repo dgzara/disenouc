@@ -58,7 +58,6 @@ class PracticaController extends Controller
             {
                 $where .= ' or p.estado = :estado';
                 $entities = $entities->setParameter('estado',Practica::ESTADO_APROBADA);
-
             }
 
             if($isContacto)
@@ -327,15 +326,24 @@ class PracticaController extends Controller
      */
     public function editAction($id)
     {
+        // Permisos
         $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+                
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Practica entity.');
         }
 
+        // Revisamos que sea el coordinador o el contacto
+        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+            return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
+        }
+        
+        // Generamos el formulario
         $securityContext = $this->container->get('security.context');
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
         $editForm->remove('organizacionAlias');
@@ -360,13 +368,21 @@ class PracticaController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
+        // Permisos
         $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+                
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Practica entity.');
+        }
+        
+        // Revisamos que sea el coordinador o el contacto
+        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+            return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
         $securityContext = $this->container->get('security.context');
@@ -411,8 +427,16 @@ class PracticaController extends Controller
      */
     public function estadoAction($id)
     {
+        // Chequeamos que sea el coordinador
+        $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        if(!$isCoordinador){
+            return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
+        }
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
 
         if (!$entity) {
@@ -476,20 +500,19 @@ class PracticaController extends Controller
     public function deleteModalAction($id)
     {
         $pm = $this->get('permission.manager');
-        $user = $pm->getUser();
-        
-        $isExterno = $user->getExternal();
-        $isAlumno = $pm->checkType("TYPE_ALUMNO");
-        $isSupervisor = $pm->checkType("TYPE_PRACTICAS_SUPERVISOR");
-        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");
         $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:Practica')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Practica entity.');
+        }
+        
+        // Revisamos que sea el coordinador o el contacto
+        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+            return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -508,6 +531,10 @@ class PracticaController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
         $form = $this->createDeleteForm($id);
         $form->submit($request);
 
@@ -519,6 +546,11 @@ class PracticaController extends Controller
                 throw $this->createNotFoundException('Unable to find Practica entity.');
             }
             
+            // Revisamos que sea el coordinador o el contacto
+            if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+                return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
+            }
+        
             $em->remove($entity);
             $em->flush();
             

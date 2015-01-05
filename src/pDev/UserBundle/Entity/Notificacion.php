@@ -53,6 +53,11 @@ class Notificacion
     private $mensaje;
     
     /**
+    * @ORM\Column(type="text")
+    */
+    private $enlace;
+    
+    /**
      * @ORM\OneToMany(targetEntity="NotificacionLeida",mappedBy="notificacion")
      */
     private $leidos;
@@ -148,6 +153,29 @@ class Notificacion
     public function getMensaje()
     {
         return $this->mensaje;
+    }
+    
+    /**
+     * Set enlace
+     *
+     * @param string $enlace
+     * @return Notificacion
+     */
+    public function setEnlace($enlace)
+    {
+        $this->enlace = $enlace;
+    
+        return $this;
+    }
+
+    /**
+     * Get enlace
+     *
+     * @return string 
+     */
+    public function getEnlace()
+    {
+        return $this->enlace;
     }
     
     /**

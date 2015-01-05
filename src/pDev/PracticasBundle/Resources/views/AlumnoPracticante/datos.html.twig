@@ -8,7 +8,7 @@
 {%block lead%}2 de 4: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacionAlias': entity.organizacionAlias.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
+    <form id="form_alumno_practica" class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacionAlias': entity.organizacionAlias.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.practica.organizacionAlias }}</strong><br>
@@ -37,35 +37,46 @@
             {{ form_row(form.supervisor) }}
         {% endif %}
         
-        <div id="horario" class="control-group" style="display:none">
-            <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="margin-top:23px; text-align: left !important;">
-                Estimador de horas <br/>
-                <small>Requiere como mínimo 240 horas</small>
-                <abbr title="Mínimo: 2 veces a la semana. Máximo: 5 veces a la semana. Mínimo diario: 4 horas. Máximo diario: 8 horas." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
-            </label>
-            <div class="controls">
-                <table>
-                    <tr>
-                        <th>Lun</th>
-                        <th>Mar</th>
-                        <th>Mié</th>
-                        <th>Jue</th>
-                        <th>Vie</th>
-                        <th>Sáb</th>
-                        <th>Horas</th>
-                    </tr>
-                    <tr>
-                        <td>{{ form_widget(form.horasLunes) }}</td>
-                        <td>{{ form_widget(form.horasMartes) }}</td>
-                        <td>{{ form_widget(form.horasMiercoles) }}</td>
-                        <td>{{ form_widget(form.horasJueves) }}</td>
-                        <td>{{ form_widget(form.horasViernes) }}</td>
-                        <td>{{ form_widget(form.horasSabado) }}</td>
-                        <td id="totalHoras"></td>
-                    </tr>
-                </table>
+        <div id="horario" class="row" style="display:none; margin-top:23px; ">
+            <div class="col-md-4">
+                <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="text-align: left !important;">
+                    <h4>Estimador de horas </h4>
+                    <small>Requiere como mínimo 240 horas</small>
+                    <abbr title="Mínimo: 2 veces a la semana. Máximo: 5 veces a la semana. Mínimo diario: 4 horas. Máximo diario: 8 horas." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
+                </label>
+                <div class="controls">
+                    <table>
+                        <tr>
+                            <th>Lun</th>
+                            <th>Mar</th>
+                            <th>Mié</th>
+                            <th>Jue</th>
+                            <th>Vie</th>
+                            <th>Sáb</th>
+                            <th>Horas</th>
+                        </tr>
+                        <tr>
+                            <td>{{ form_widget(form.horasLunes) }}</td>
+                            <td>{{ form_widget(form.horasMartes) }}</td>
+                            <td>{{ form_widget(form.horasMiercoles) }}</td>
+                            <td>{{ form_widget(form.horasJueves) }}</td>
+                            <td>{{ form_widget(form.horasViernes) }}</td>
+                            <td>{{ form_widget(form.horasSabado) }}</td>
+                            <td id="totalHoras"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h4>Requisitos</h4>
+                <ul id="requisitos" class="list-unstyled">
+                    <li id="minimo">Hay dos días con 4 horas de trabajo</li>
+                    <li id="maximo">Ningún día supera las 8 horas</li>
+                    <li id="total">Son más de 240 horas</li>
+                </ul>
             </div>
         </div>
+        
         <hr/>
         
         <h4>Datos del alumno</h4>
@@ -123,11 +134,14 @@
     
 {% endblock %}
 
-{% block javascriptload%}
+{% block javascriptload %}
     <script type="text/javascript">
     
         var fields = [];
         var horas = [];
+        var cumple = false;
+        var divPosition = $("#endDate").offset();
+        
         horas[1] = $('#pdev_practicasbundle_alumnopracticantetype_horasLunes');
         fields.push(horas[1]);
         horas[2] = $('#pdev_practicasbundle_alumnopracticantetype_horasMartes');
@@ -271,11 +285,42 @@
             var darr = daysBetween(parseDate(fechaIn.val()), duracionCantidad.val(), duracionUnidad.val());
             {% endif %}
             
-            var total = 0;
+            var dias = [];
+            var total = 0, minimos = 0, maximos = 0;
+            
             for(var i=1;i<7;i++)
             {
-                total += parseInt(horas[i].val()) * parseInt('0'+darr[i]);
+                dias[i] = parseInt(horas[i].val()) * parseInt('0'+darr[i]);
+                total += dias[i];
+                
+                if(parseInt(horas[i].val()) >= 4)
+                    minimos++;
+                if(parseInt(horas[i].val()) > 8)
+                    maximos++;
             }
+            console.log(maximos);
+            
+            // Chequeamos restricciones
+            cumple = true;
+            $("#requisitos").find('span').remove();
+                        
+            // Revisa si hay al menos dos dias con 4 horas 
+            if(minimos >= 2)
+                $('#minimo').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+            else
+                cumple = false;
+            
+            // Revisa si todos los días son menores de 8 horas de trabajo
+            if(maximos == 0)
+                $('#maximo').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+            else
+                cumple = false;
+            
+            // Revisa si cumple el mínimo de horas
+            if(total >= 240)
+                $('#total').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+            else
+                cumple = false;
             
             $('#totalHoras').html('<strong> = '+total+'</strong>');
             
@@ -314,5 +359,14 @@
             return new Date(parseInt(datearr[2]), parseInt(datearr[1]-1), parseInt(datearr[0]));
         }
         
+        // Validador
+        $("#form_alumno_practica").submit(function(event) {
+            if(cumple === true) {
+                return;
+            }
+            $("#requisitos").focus();
+            $('html, body').animate({scrollTop: divPosition.top}, "slow");
+            event.preventDefault();
+        });
     </script>
 {% endblock %}

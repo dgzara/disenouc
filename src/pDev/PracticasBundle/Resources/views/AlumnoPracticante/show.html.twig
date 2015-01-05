@@ -133,12 +133,11 @@
             </tr>
             <tr>
                 <th>Teléfono</th>
-                <td>{{ entity.alumno.numeroTelefono }}</td>
+                <td>{{ entity.alumno.numeroTelefono is empty ? '-' : entity.alumno.numeroTelefono }}</td>
             </tr><tr>
                 <th>Correo electrónico</th>
-                <td>{{ entity.alumno.email }}</td>
-            </tr>
-            
+                <td>{{ entity.alumno.email is empty ? '-' : entity.alumno.email }}</td>
+            </tr> 
         </tbody>
     </table>
     <h4>Información de la organización</h4>

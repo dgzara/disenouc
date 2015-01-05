@@ -42,9 +42,8 @@
     <div class="alert alert-default">
         <a class="close onbackground" href="{{ path('notificaciones_leido_ajax', { 'id': notificacion.id }) }}">&times;</a>
         <div style="float:right">
-        {{ notificacion.created|date('g:i A d-m-Y') }}
+            {{ notificacion.created|date('g:i A d-m-Y') }}
         </div>
-    
     {% if notificacion.llave == "broadcast.notice" %}
         <span class="glyphicon glyphicon-margin-right glyphicon-bullhorn" style="float:left;"></span>
     {% elseif notificacion.llave == "user.notice" %}    
@@ -53,7 +52,7 @@
         <span class="glyphicon glyphicon-margin-right glyphicon-info-sign" style="float:left;"></span>    
     {% endif %}
         <div style="margin-left: 25px;width: 560px;">
-        <strong>{{ notificacion.mensaje|raw }}</strong>  
+            <a href="{{ notificacion.enlace }}"><strong>{{ notificacion.titulo }}</strong></a>: {{ notificacion.mensaje|raw }}
         </div>
     </div>
 {% endfor %}

@@ -33,8 +33,8 @@
                 <div style="float:right;margin-right: 10px">
                     {{ notificacion.created|date('g:i A d-m-Y') }}
                 </div>
-                <div style="margin-left:27px;width:590px">
-                    <strong>{{ notificacion.titulo }}</strong>: {{ notificacion.mensaje }}
+                <div style="margin-left:27px; width:590px;">
+                    <a href="{{ notificacion.enlace }}"><strong>{{ notificacion.titulo }}</strong></a>: {{ notificacion.mensaje }}
                 </div>    
             </td>
         </tr>

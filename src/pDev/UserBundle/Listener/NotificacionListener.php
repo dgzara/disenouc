@@ -254,7 +254,8 @@ class NotificacionListener
         $notificacion->setTitulo($titulo);
         $notificacion->setUser($user);
         $notificacion->setMensaje($mensaje);
-        $notificacion->setLlave($key);     
+        $notificacion->setLlave($key);  
+        $notificacion->setEnlace($enlace);   
         $this->em->persist($notificacion);
         
         if($user->recibeCorreo())

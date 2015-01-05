@@ -21,7 +21,7 @@
                 {{ notificacion.created|date('g:i A d-m-Y') }}
             </div>
             <div style="margin-left:27px;width:590px">
-                {{ notificacion.mensaje }}
+                <a href="{{ notificacion.enlace }}"><strong>{{ notificacion.titulo }}</strong></a>: {{ notificacion.mensaje }}
             </div>    
         </td>
     </tr>

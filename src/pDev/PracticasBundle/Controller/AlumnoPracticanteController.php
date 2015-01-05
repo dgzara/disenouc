@@ -385,6 +385,7 @@ class AlumnoPracticanteController extends Controller
         $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
         $user = $pm->getUser();
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         $alumno = $user->getPersona('TYPE_ALUMNO');
         
         if(!$alumno) {
@@ -429,6 +430,11 @@ class AlumnoPracticanteController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+            }
+            
+            // Revisamos que el usuario pueda editarlo
+            if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
             }
         }
         elseif($idOrganizacionAlias)
@@ -502,6 +508,7 @@ class AlumnoPracticanteController extends Controller
         $user = $pm->getUser();
         $em = $this->getDoctrine()->getManager();
         $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
         if(!$alumno) {
             throw $this->createNotFoundException('Unable to find Alumno entity.');
@@ -514,6 +521,11 @@ class AlumnoPracticanteController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+            }
+            
+            // Revisamos que el usuario pueda editarlo
+            if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
             }
         }
         elseif($idOrganizacionAlias)
@@ -612,13 +624,25 @@ class AlumnoPracticanteController extends Controller
      */
     public function ganttAction($id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
-
+        
+        // Revisamos que el usuario pueda editarlo
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+        }
+        
         return array(
             'entity' => $entity,
         );
@@ -633,13 +657,26 @@ class AlumnoPracticanteController extends Controller
      */
     public function ganttCreateAction($id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
         
+        // Revisamos que el usuario pueda editarlo
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+        }
+        
+        // Creamos el formulario
         $confirmForm = $this->createConfirmForm($id);
 
         return array(
@@ -657,14 +694,26 @@ class AlumnoPracticanteController extends Controller
      */
     public function confirmAction(Request $request, $id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
-
+        
+        // Revisamos que el usuario pueda editarlo
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+        }
+        
+        // Creamos el formulario y aceptamos la respuesta
         $confirmForm = $this->createConfirmForm($id);
         $confirmForm->submit($request);
 
@@ -890,8 +939,16 @@ class AlumnoPracticanteController extends Controller
      */
     public function estadoAction($id)
     {
+        // Chequeamos que sea el coordinador
+        $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        if(!$isCoordinador){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+        }
+        
+        // Cargamos        
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
 
         if (!$entity) {
@@ -1164,11 +1221,23 @@ class AlumnoPracticanteController extends Controller
      */
     public function editAction($id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+        
+        // Revisamos que el usuario pueda editarlo
+        if($entity->hasAlumno($alumno) or $isCoordinacion){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
         }
 
         $editForm = $this->createForm(new AlumnoPracticanteType(), $entity);
@@ -1188,11 +1257,23 @@ class AlumnoPracticanteController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+        
+        // Revisamos que el usuario pueda editarlo
+        if($entity->hasAlumno($alumno) or $isCoordinacion){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
         }
 
         $editForm = $this->createForm(new AlumnoPracticanteType(), $entity);
@@ -1224,6 +1305,12 @@ class AlumnoPracticanteController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $user = $this->getUser();
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
         $form = $this->createDeleteForm($id);
         $form->submit($request);
 
@@ -1235,6 +1322,11 @@ class AlumnoPracticanteController extends Controller
                 throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
             }
 
+            // Revisamos que el usuario pueda editarlo
+            if($entity->hasAlumno($alumno) or $isCoordinacion){
+                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+            }
+        
             $em->remove($entity);
             $em->flush();
             
@@ -1288,13 +1380,23 @@ class AlumnoPracticanteController extends Controller
      */
     public function asignarProfesorAction(Request $request, $id)
     {
+        // Permisos
+        $pm = $this->get('permission.manager');
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        
+        // Revisamos que sean coordinadores
+        if($isCoordinacion){
+            return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
+        }
+        
+        // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
         }
-
+        
         $editForm = $this->createForm(new AlumnoPracticanteProfesorType(), $entity);
         
         if($request->isMethod('POST'))
