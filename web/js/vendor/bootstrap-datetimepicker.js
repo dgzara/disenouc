@@ -65,7 +65,7 @@ THE SOFTWARE.
             maxDate: new pMoment().add(100, "y"),
             showToday: true,
             collapse: true,
-            language: "en",
+            language: "es",
             defaultDate: "",
             disabledDates: false,
             enabledDates: false,

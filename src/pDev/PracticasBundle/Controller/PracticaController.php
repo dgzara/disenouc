@@ -335,7 +335,7 @@ class PracticaController extends Controller
         }
 
         // Revisamos que sea el coordinador o el contacto
-        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+        if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
         
@@ -507,7 +507,7 @@ class PracticaController extends Controller
         }
         
         // Revisamos que sea el coordinador o el contacto
-        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+        if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
@@ -543,7 +543,7 @@ class PracticaController extends Controller
             }
             
             // Revisamos que sea el coordinador o el contacto
-            if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+            if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
                 return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
             }
         
@@ -554,6 +554,12 @@ class PracticaController extends Controller
                 'notice',
                 'La práctica ha sido eliminada'
             );
+            
+            // Devolvemos la respuesta
+            $array = array('redirect' => $this->generateUrl('practicas')); // data to return via JSON
+            $response = new Response( json_encode($array));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
         }
 
         return $this->redirect($this->generateUrl('practicas'));

@@ -10,14 +10,16 @@
 {%block lead%}{%endblock%}
 
 {%block content %}
-<div class="well no-margin">
-    <a class="btn btn-primary" href="{{ path('practicas_evaluacion_criterios_edit', { 'id': entity.id }) }}">
+    {% if is_granted('ROLE_ADMIN') %} 
+    <div class="well no-margin">
+        <a class="btn btn-primary" href="{{ path('practicas_evaluacion_criterios_edit', { 'id': entity.id }) }}">
             Modificar
         </a>
         <a class="btn btn-primary submitform" href="#form_delete">
             Eliminar
         </a>
-</div>
+    </div>
+    {% endif %}
     <table class="table table-bordered">
         <tbody>
             

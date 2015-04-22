@@ -1,0 +1,16 @@
+{% extends 'pDevWebBundle:Default:basemodal.html.twig' %}
+
+{% block title %}Borrar práctica{% endblock %}
+{% block body %}
+    ¿Está seguro en borrar la práctica {{ entity }}
+    <form id="form_borrar" class="form-horizontal form-modal" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post" {{ form_enctype(delete_form) }}>
+        <input type="hidden" name="_method" value="DELETE" />
+        {{ form_widget(delete_form) }}
+        <button type="submit" id="_submit" class="hide"></button>
+    </form>
+{% endblock %}
+
+{% block footer %}
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+    <a href="#form_borrar" class="btn btn-danger submitform">Borrar</a>
+{% endblock %}

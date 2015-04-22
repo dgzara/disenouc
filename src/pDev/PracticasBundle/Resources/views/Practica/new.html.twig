@@ -39,10 +39,18 @@
         {% endif %}
         {{ form_row(form.descripcion) }}
         {{ form_row(form.jornadas) }}
-        {{ form_row(form.fechaInicio) }}
-        {{ form_label(form.duracionCantidad) }}<br>
-        {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
-        <div id="endDate"></div>
+        <div id="remote" class="control-group">
+            <div class="controls">
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; margin-top: 0; float:right;">
+                    <h4>Duración de la práctica</h4>
+                    <p>Fecha estimada de término debe calcular 240 horas, dependiendo de la jornada y de si trabaja por dia semanas o meses</p>
+                </div> 
+                {{ form_row(form.fechaInicio) }}
+                {{ form_label(form.duracionCantidad) }}<br>
+                {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+            </div>
+            <div id="endDate"></div>
+        </div>
         {{ form_rest(form) }}
         <p class="pull-right">            
             <button id="_submit" class="hide" type="submit"></button>         

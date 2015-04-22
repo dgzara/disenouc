@@ -207,6 +207,12 @@ class OrganizacionController extends Controller
             $em->persist($entity);
             $em->flush();
             
+            // Damos el mensaje de la organización creada
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'Organización registrada, ahora publique su oferta en el siguiente formulario.'
+            );
+                
             // Redirect
             $array = array('redirect' => $this->generateUrl('practicas_new_organizacion', array('id' => $entity->getId()))); // data to return via JSON
             $response = new Response( json_encode( $array ) );
