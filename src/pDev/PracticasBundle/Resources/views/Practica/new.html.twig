@@ -15,7 +15,7 @@
 {% endblock %}
         
 {% block header %}
-    Solicitar practicante {% if entity.organizacionAlias %}para "{{ entity.organizacionAlias.organizacion }}"{% endif %}
+    Solicitar practicante {% if entity.organizacion %}para "{{ entity.organizacion }}"{% endif %}
 {% endblock %}
 
 {% block lead %}Detalles de la práctica{%endblock%}
@@ -23,10 +23,10 @@
 {% block content %}
     <form id="form_practica" class="form-well form-horizontal" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
         {{ form_row(form.nombre) }}
-        {% if form.organizacionAlias is defined %}
-        {{ form_row(form.organizacionAlias) }}
+        {% if form.organizacion is defined %}
+        {{ form_row(form.organizacion) }}
         <div id="remote" class="control-group">
-            {{ form_label(form.organizacionAlias) }}
+            {{ form_label(form.organizacion) }}
             <div class="controls">
                 <input class="typeahead" type="text">
                 <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; margin-top: 0; float:right;">
@@ -66,8 +66,8 @@
         var duracionCantidad = $('input#pdev_practicasbundle_practicatype_duracionCantidad');    
         var duracionUnidad = $('#pdev_practicasbundle_practicatype_duracionUnidad');    
         
-        {% if form.organizacionAlias is defined %}
-        var organizacionId = $("#pdev_practicasbundle_practicatype_organizacionAlias");
+        {% if form.organizacion is defined %}
+        var organizacionId = $("#pdev_practicasbundle_practicatype_organizacion");
         var divPosition = organizacionId.offset();
         
         $('.typeahead').typeahead('destroy');

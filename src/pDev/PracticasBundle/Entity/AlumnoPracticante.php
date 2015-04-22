@@ -69,10 +69,10 @@ class AlumnoPracticante
     private $practica;
     
     /**
-     * @ORM\ManyToOne(targetEntity="pDev\PracticasBundle\Entity\OrganizacionAlias")
-     * @ORM\JoinColumn(name="organizacionalias_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="pDev\PracticasBundle\Entity\Organizacion")
+     * @ORM\JoinColumn(name="organizacion_id", referencedColumnName="id", nullable=false)
      */
-    private $organizacionAlias;
+    private $organizacion;
 
     /**
      * @var string
@@ -743,26 +743,26 @@ class AlumnoPracticante
     }
     
     /**
-     * Set organizacionAlias
+     * Set organizacion
      *
-     * @param \pDev\PracticasBundle\Entity\OrganizacionAlias $organizacion
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
      * @return AlumnoPracticante
      */
-    public function setOrganizacionAlias(\pDev\PracticasBundle\Entity\OrganizacionAlias $organizacion)
+    public function setOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
     {
-        $this->organizacionAlias = $organizacion;
+        $this->organizacion = $organizacion;
     
         return $this;
     }
 
     /**
-     * Get organizacionAlias
+     * Get organizacion
      *
-     * @return \pDev\PracticasBundle\Entity\OrganizacionAlias
+     * @return \pDev\PracticasBundle\Entity\Organizacion
      */
-    public function getOrganizacionAlias()
+    public function getOrganizacion()
     {
-        return $this->organizacionAlias;
+        return $this->organizacion;
     }
 
     /**
@@ -873,7 +873,7 @@ class AlumnoPracticante
      */
     public function hasContacto(\pDev\PracticasBundle\Entity\Contacto $contactoBuscado)
     {
-        return $this->organizacionAlias->getOrganizacion()->hasContacto($contactoBuscado);
+        return $this->organizacion->hasContacto($contactoBuscado);
     }
     
     /**
@@ -883,17 +883,7 @@ class AlumnoPracticante
      */
     public function getContactos()
     {
-        return $this->organizacionAlias->getOrganizacion()->getContactos();
-    }
-    
-    /**
-     * Get desafios
-     *
-     * @return \pDev\PracticasBundle\Entity\Organizacion
-     */
-    public function getOrganizacion()
-    {
-        return $this->organizacionAlias->getOrganizacion();
+        return $this->organizacion->getContactos();
     }
     
     /**

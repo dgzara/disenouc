@@ -14,7 +14,6 @@
 
 {% block content %}
     <form id="form_organizacion" class="form-well form-horizontal" action="{{ path('practicas_new',{'step':2}) }}" method="post" {{ form_enctype(organizacion_form) }}>
-        {{ form_rest(organizacionAlias_form) }}
         {{ form_rest(organizacion_form) }}
         <p class="pull-right">            
             <button id="_submit" class="hide" type="submit"></button>         
@@ -27,10 +26,10 @@
 
 {% block javascriptload%}
     <script type="text/javascript">
-        var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
+        var input_name = $('input#pdev_practicasbundle_organizacionnametype_nombre');
         var source_url = '{{path('practicas_organizacion_find')}}';
         var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
         
-        p_setTypeahead(input_alias,source_url,fillable_base);
+        p_setTypeahead(input_name, source_url, fillable_base);
     </script>
 {% endblock %}

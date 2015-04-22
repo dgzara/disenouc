@@ -15,6 +15,7 @@ class OrganizacionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('nombre', null, array('label' => 'Nombre'))
             ->add('rut',null,array('label'=>'RUT de la organización'))
             ->add('rubro')
             ->add('descripcion',null,array('label'=>'Descripción general'))

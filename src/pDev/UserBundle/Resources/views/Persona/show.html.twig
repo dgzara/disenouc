@@ -87,7 +87,7 @@ Planes de práctica donde es supervisor evaluador
             <tr>
                 <td>{{ practicante.alumno.nombreCompleto }}</td>
                 <td>{{ practicante.tipo }}</td>
-                <td>{{ practicante.organizacionAlias.nombre }}</td>
+                <td>{{ practicante.organizacion.nombre }}</td>
                 <td>{% if practicante.fechaInicio %}{{ practicante.fechaInicio|date('d-m-Y') }}{% endif %} / {% if practicante.fechaTermino %}{{ practicante.fechaTermino|date('d-m-Y') }}{% endif %}</td>
                 
                 <td>

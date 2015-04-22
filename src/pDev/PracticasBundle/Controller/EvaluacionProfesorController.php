@@ -42,7 +42,7 @@ class EvaluacionProfesorController extends Controller
                     ->leftJoin('p.alumno','a')
                     ->leftJoin('a.periodos','periodo')
                     ->leftJoin('p.supervisor','s')
-                    ->leftJoin('p.organizacionAlias','oa')                                        
+                    ->leftJoin('p.organizacion','o')                                        
                     ->leftJoin('p.profesor','prof')
                     ->leftJoin('p.profesorEvaluacion','evaluacion');
       

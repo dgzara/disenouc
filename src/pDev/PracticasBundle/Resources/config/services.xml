@@ -10,7 +10,7 @@
     </parameters>
     -->
     <services>
-        <service id="p_dev_practicas.type.organizacion_selector" class="pDev\PracticasBundle\Form\Type\OrganizacionAliasSelectorType">
+        <service id="p_dev_practicas.type.organizacion_selector" class="pDev\PracticasBundle\Form\Type\OrganizacionSelectorType">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <tag name="form.type" alias="organizacion_selector" />
         </service>

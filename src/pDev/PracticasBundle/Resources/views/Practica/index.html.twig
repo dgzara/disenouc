@@ -28,7 +28,7 @@
             <tr>
                 <th {% if pagination.isSorted('p.codigo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Código', 'p.id') }}</th>
                 <th {% if pagination.isSorted('p.nombre') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Asunto', 'p.nombre') }}</th> 
-                <th {% if pagination.isSorted('p.organizacionAlias') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Organización', 'p.organizacionAlias') }}</th>
+                <th {% if pagination.isSorted('p.organizacion') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Organización', 'p.organizacion') }}</th>
                 <th {% if pagination.isSorted('p.fechaInicio') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Fecha de inicio', 'p.fechaInicio') }}</th>
                 <th {% if pagination.isSorted('p.duracionCantidad') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Duración', 'p.duracionCantidad') }}</th>
                 <th {% if pagination.isSorted('p.tipo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Tipo', 'p.tipo') }}</th>
@@ -45,7 +45,7 @@
             <tr>
                 <td>{{ entity.id }}</td>
                 <td><a href="{{ path('practicas_show', { 'id': entity.id }) }}">{{ entity.nombre }}</a></td>
-                <td>{{ entity.organizacionAlias.nombre }}</td>
+                <td>{{ entity.organizacion.nombre }}</td>
                 <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
                 <td>{% if entity.duracionCantidad %}{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}{% endif %}</td>
                 <td>{{ entity.tipo is empty ? 'Por definir' : entity.tipo }}</td>

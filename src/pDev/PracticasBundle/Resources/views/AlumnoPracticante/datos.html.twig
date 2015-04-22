@@ -8,17 +8,17 @@
 {%block lead%}2 de 4: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form id="form_alumno_practica" class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacionAlias': entity.organizacionAlias.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
+    <form id="form_alumno_practica" class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacion': entity.organizacion.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
-            Postulando a <strong>{{ entity.practica.organizacionAlias }}</strong><br>
+            Postulando a <strong>{{ entity.practica.organizacion }}</strong><br>
             Fecha de inicio: {{ entity.practica.fechaInicio|date('d-m-Y') }}<br>
             Duración: {{ entity.duracionCantidad }} {{ entity.duracionUnidad }}<br>
             Tipo de práctica: {{ entity.tipo }}<br>
            </div>
-        {% elseif entity.organizacionAlias %}
+        {% elseif entity.organizacion %}
             <div class="alert alert-info" role="alert">
-            Postulando a <strong>{{ entity.organizacionAlias }}</strong><br>
+            Postulando a <strong>{{ entity.organizacion }}</strong><br>
             Supervisor: {{ entity.supervisor }}
            </div>
            {% if form.tipo is defined %}
@@ -33,7 +33,7 @@
             {% if form.tipo is defined %}
             {{ form_row(form.tipo) }}
             {% endif %}
-            {{ form_row(form.organizacionAlias) }}
+            {{ form_row(form.organizacion) }}
             {{ form_row(form.supervisor) }}
         {% endif %}
         
@@ -72,7 +72,7 @@
                 <ul id="requisitos" class="list-unstyled">
                     <li id="minimo">Hay dos días con 4 horas de trabajo</li>
                     <li id="maximo">Ningún día supera las 8 horas</li>
-                    <li id="total">Son más de 240 horas</li>
+                    <li id="total">Cumple con 240 horas</li>
                 </ul>
             </div>
         </div>

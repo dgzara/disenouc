@@ -34,7 +34,7 @@ class LoadPracticaData extends AbstractFixture implements FixtureInterface, Orde
 		    $practica->setContacto($this->getReference('persona-contacto'));
 		    $practica->setCreador($this->getReference('user-contacto'));
 		    $practica->setSupervisor($this->getReference('persona-supervisor'));
-		    $practica->setOrganizacionAlias($this->getReference('organizacion-alias'));
+		    $practica->setOrganizacion($this->getReference('organizacion'));
 		    $practica->setJornadas("Full-time");
 		    $practica->setFechaInicio(new \DateTime('2014-05-01'));
 		    $practica->setDuracionCantidad(2);
@@ -50,7 +50,7 @@ class LoadPracticaData extends AbstractFixture implements FixtureInterface, Orde
 		    $practica->setCreador($this->getReference('user-contacto'));
 		    $practica->setTipo("Oficina");
 		    $practica->setSupervisor($this->getReference('persona-supervisor'));
-		    $practica->setOrganizacionAlias($this->getReference('organizacion-alias'));
+		    $practica->setOrganizacion($this->getReference('organizacion'));
 		    $practica->setJornadas("Full-time");
 		    $practica->setFechaInicio(new \DateTime('2014-05-01'));
 		    $practica->setDuracionCantidad(2);

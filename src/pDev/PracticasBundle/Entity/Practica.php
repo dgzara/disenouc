@@ -43,10 +43,10 @@ class Practica
     private $tipo;
 
     /**
-     * @ORM\ManyToOne(targetEntity="OrganizacionAlias", inversedBy="practicas")
-     * @ORM\JoinColumn(name="organizacionalias_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Organizacion", inversedBy="practicas")
+     * @ORM\JoinColumn(name="organizacion_id", referencedColumnName="id", nullable=false)
      */
-    private $organizacionAlias;
+    private $organizacion;
     
     /**
      * @ORM\ManyToOne(targetEntity="Contacto", inversedBy="practicas")
@@ -185,7 +185,7 @@ class Practica
      */
     public function __toString()
     {
-        return "".$this->organizacionAlias." - ".$this->tipo;
+        return "".$this->organizacion." - ".$this->tipo;
     }
     
     /**
@@ -569,24 +569,24 @@ class Practica
     /**
      * Set organizacion
      *
-     * @param \pDev\PracticasBundle\Entity\OrganizacionAlias $organizacionAlias
+     * @param \pDev\PracticasBundle\Entity\Organizacion $organizacion
      * @return Practica
      */
-    public function setOrganizacionAlias(\pDev\PracticasBundle\Entity\OrganizacionAlias $organizacionAlias)
+    public function setOrganizacion(\pDev\PracticasBundle\Entity\Organizacion $organizacion)
     {
-        $this->organizacionAlias = $organizacionAlias;
+        $this->organizacion = $organizacion;
     
         return $this;
     }
 
     /**
-     * Get organizacionAlias
+     * Get organizacion
      *
-     * @return \pDev\PracticasBundle\Entity\OrganizacionAlias
+     * @return \pDev\PracticasBundle\Entity\Organizacion
      */
-    public function getOrganizacionAlias()
+    public function getOrganizacion()
     {
-        return $this->organizacionAlias;
+        return $this->organizacion;
     }
     
     /**

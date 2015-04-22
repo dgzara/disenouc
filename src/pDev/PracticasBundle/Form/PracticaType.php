@@ -28,7 +28,7 @@ class PracticaType extends AbstractType
             ->add('nombre', null, array(
                 'label' => 'Asunto'
             ))
-            ->add('organizacionAlias', 'organizacion_selector', array(
+            ->add('organizacion', 'organizacion_selector', array(
                 'label' => 'Organización',
                 'required' => true
             ))

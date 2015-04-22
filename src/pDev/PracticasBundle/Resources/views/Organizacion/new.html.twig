@@ -11,8 +11,6 @@
 
 {%block content %}
     <form class="form-well form-horizontal" action="{{ path('practicas_organizacion_create') }}" method="post" {{ form_enctype(form) }}>
-        
-        {{ form_rest(organizacionAlias_form) }}
         {{ form_rest(form) }}
         <p class="pull-right">
             <button class="btn btn-primary" type="submit">Registrar</button>
@@ -24,11 +22,11 @@
 {% block javascriptload%}
 <script type="text/javascript">
     
-    var input_alias = $('input#pdev_practicasbundle_organizacionaliastype_nombre');
-    var source_url = '{{path('practicas_organizacion_find')}}';
+    var input_name = $('input#pdev_practicasbundle_organizaciontype_nombre');
+    var source_url = '{{ path('practicas_organizacion_find') }}';
     var fillable_base = 'pdev_practicasbundle_organizaciontype_';   
     
-    p_setTypeahead(input_alias,source_url,fillable_base);
+    p_setTypeahead(input_name,source_url,fillable_base);
     
     </script>
 {% endblock %}

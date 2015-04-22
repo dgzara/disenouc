@@ -26,6 +26,13 @@ class Organizacion
     /**
      * @var string
      *
+     * @ORM\Column(name="nombre", type="string", length=255)
+     */
+    private $nombre;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="rubro", type="string", length=255)
      */
     private $rubro;
@@ -43,11 +50,6 @@ class Organizacion
      * @ORM\Column(name="rut", type="string", length=255, nullable=true)
      */
     private $rut;
-
-    /**
-     * @ORM\OneToMany(targetEntity="OrganizacionAlias", mappedBy="organizacion")
-     */
-    private $aliases;
 
     /**
      * @var string
@@ -76,7 +78,12 @@ class Organizacion
      * @ORM\Column(name="antiguedad", type="integer", nullable=true)     
      */
     private $antiguedad;
-
+    
+    /**
+     * @ORM\OneToMany(targetEntity="pDev\PracticasBundle\Entity\Practica", mappedBy="organizacion")     
+     */
+    private $practicas;
+    
     /**
      * @ORM\ManyToMany(targetEntity="Contacto", mappedBy="organizaciones")
      */
@@ -113,16 +120,11 @@ class Organizacion
      */
     public function __construct()
     {
-        $this->aliases = new \Doctrine\Common\Collections\ArrayCollection();
         $this->contactos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->supervisores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->practicas = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public function __toString() 
-    {
-        return count($this->aliases)>0?$this->aliases[0]->getNombre():'sin nombre';
-    }
-    
     /**
      * Get id
      *
@@ -131,6 +133,39 @@ class Organizacion
     public function getId()
     {
         return $this->id;
+    }
+    
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function __toString()
+    {
+        return "".$this->nombre;
+    }
+    
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Organizacion
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
     }
     
     /**
@@ -318,39 +353,6 @@ class Organizacion
     }
 
     /**
-     * Add aliases
-     *
-     * @param \pDev\PracticasBundle\Entity\OrganizacionAlias $aliases
-     * @return Organizacion
-     */
-    public function addAliase(\pDev\PracticasBundle\Entity\OrganizacionAlias $aliases)
-    {
-        $this->aliases[] = $aliases;
-    
-        return $this;
-    }
-
-    /**
-     * Remove aliases
-     *
-     * @param \pDev\PracticasBundle\Entity\OrganizacionAlias $aliases
-     */
-    public function removeAliase(\pDev\PracticasBundle\Entity\OrganizacionAlias $aliases)
-    {
-        $this->aliases->removeElement($aliases);
-    }
-
-    /**
-     * Get aliases
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAliases()
-    {
-        return $this->aliases;
-    }
-    
-    /**
      * Set creador
      *
      * @param \pDev\UserBundle\Entity\Creador $creador
@@ -371,6 +373,39 @@ class Organizacion
     public function getCreador()
     {
         return $this->creador;
+    }
+    
+    /**
+     * Add practicas
+     *
+     * @param \pDev\PracticasBundle\Entity\Practica $practicas
+     * @return Contacto
+     */
+    public function addPractica(\pDev\PracticasBundle\Entity\Practica $practicas)
+    {
+        $this->practicas[] = $practicas;
+    
+        return $this;
+    }
+
+    /**
+     * Remove practicas
+     *
+     * @param \pDev\PracticasBundle\Entity\Practica $practicas
+     */
+    public function removePractica(\pDev\PracticasBundle\Entity\Practica $practicas)
+    {
+        $this->practicas->removeElement($practicas);
+    }
+
+    /**
+     * Get practicas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPracticas()
+    {
+        return $this->practicas;
     }
     
     /**

@@ -20,7 +20,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th {% if pagination.isSorted('a.nombre') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nombres', 'a.nombre') }}</th>
+                <th {% if pagination.isSorted('o.nombre') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nombres', 'o.nombre') }}</th>
                 <th {% if pagination.isSorted('o.rut') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'RUT', 'o.rut') }}</th>
                 <th {% if pagination.isSorted('o.rubro') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Rubro', 'o.rubro') }}</th>                
                 <th></th>
@@ -29,7 +29,7 @@
         <tbody>
         {% for entity in pagination %}
             <tr>
-                <td>{% for alias in entity.aliases %}{{ alias.nombre }}<br/>{% endfor %}</td>
+                <td>{{ entity.nombre }}</td>
                 <td>{{ entity.rut }}</td>
                 <td>{{ entity.rubro }}</td>
                 <td>

@@ -52,16 +52,17 @@
                 <td>{% if practicante.profesorEvaluacion %}{{ practicante.profesorEvaluacion.notaFinal }}{% else %}Sin evaluar{% endif %}</td>
                 <td>
                     <ul>
+                        {% if isAcademico %}
+                        <li>
+                            <a href="{{ path('practicas_evaluacion_profesor_new', { 'idPracticante': practicante.id }) }}">Evaluar</a>
+                        </li>
+                        {% else %}
                         <li>
                             {% if practicante.profesorEvaluacion %}
                             <a href="{{ path('practicas_evaluacion_profesor_show', { 'id': practicante.profesorEvaluacion.id }) }}">Evaluación profesor</a>
                             {% else %}
                             Evaluación del profesor aún no disponible
                             {% endif %}
-                        </li>
-                        {% if isAcademico and practicante.profesorEvaluacion %}
-                        <li>
-                            <a href="{{ path('practicas_evaluacion_profesor_new', { 'idPracticante': practicante.id }) }}">Evaluar</a>
                         </li>
                         {% endif %}
                         <li>

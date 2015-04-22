@@ -5,7 +5,7 @@ namespace pDev\PracticasBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
-use pDev\PracticasBundle\Entity\OrganizacionAlias;
+use pDev\PracticasBundle\Entity\Organizacion;
 
 class OrganizacionToNumberTransformer implements DataTransformerInterface
 {
@@ -23,28 +23,28 @@ class OrganizacionToNumberTransformer implements DataTransformerInterface
     }
 
     /**
-     * Transforms an object (organizacionAlias) to a string (number).
+     * Transforms an object (organizacion) to a string (number).
      *
-     * @param  OrganizacionAlias|null $organizacionAlias
+     * @param  Organizacion|null $organizacion
      * @return string
      */
-    public function transform($organizacionAlias)
+    public function transform($organizacion)
     {
-        if (null === $organizacionAlias) {
+        if (null === $organizacion) {
             return "";
         }
 
-        return $organizacionAlias->getId();
+        return $organizacion->getId();
     }
 
     /**
-     * Transforms a string (number) to an object (organizacionAlias).
+     * Transforms a string (number) to an object (organizacion).
      *
      * @param  string $number
      *
-     * @return OrganizacionAlias|null
+     * @return Organizacion|null
      *
-     * @throws TransformationFailedException if object (organizacionAlias) is not found.
+     * @throws TransformationFailedException if object (organizacion) is not found.
      */
     public function reverseTransform($number)
     {
@@ -52,18 +52,18 @@ class OrganizacionToNumberTransformer implements DataTransformerInterface
             return null;
         }
 
-        $organizacionAlias = $this->om
-            ->getRepository('pDevPracticasBundle:OrganizacionAlias')
+        $organizacion = $this->om
+            ->getRepository('pDevPracticasBundle:Organizacion')
             ->findOneBy(array('id' => $number))
         ;
 
-        if (null === $organizacionAlias) {
+        if (null === $organizacion) {
             throw new TransformationFailedException(sprintf(
-                'An organizacionAlias with number "%s" does not exist!',
+                'An organizacion with number "%s" does not exist!',
                 $number
             ));
         }
 
-        return $organizacionAlias;
+        return $organizacion;
     }
 }

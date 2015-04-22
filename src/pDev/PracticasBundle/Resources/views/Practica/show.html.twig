@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block header %}{{ entity.nombre }}{%endblock%}
-{% block lead %}{{ entity.organizacionAlias.nombre }}{%endblock%}
+{% block lead %}{{ entity.organizacion }}{%endblock%}
 
 {% block sidebar %}
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
@@ -185,31 +185,31 @@
             <tbody>
                 <tr>
                     <td width="35%">Nombre</td>
-                    <td>{{ entity.organizacionAlias.nombre }}</td>
+                    <td>{{ entity.organizacion.nombre }}</td>
                 </tr>
                 <tr>
                     <td>Rubro</td>
-                    <td>{{ entity.organizacionAlias.organizacion.rubro }}</td>
+                    <td>{{ entity.organizacion.rubro }}</td>
                 </tr>
                 <tr>
                     <td>Descripción</td>
-                    <td>{{ entity.organizacionAlias.organizacion.descripcion }}</td>
+                    <td>{{ entity.organizacion.descripcion }}</td>
                 </tr>
                 <tr>
                     <td>País</td>
-                    <td>{{ entity.organizacionAlias.organizacion.pais }}</td>
+                    <td>{{ entity.organizacion.pais }}</td>
                 </tr>
                 <tr>
                     <td>Web</td>
-                    <td>{{ entity.organizacionAlias.organizacion.web }}</td>
+                    <td>{{ entity.organizacion.web }}</td>
                 </tr>
                 <tr>
                     <td>Número de personas que trabajan en la organización</td>
-                    <td>{{ entity.organizacionAlias.organizacion.personasTotal }}</td>
+                    <td>{{ entity.organizacion.personasTotal }}</td>
                 </tr>
                 <tr>
                     <td>Antiguedad</td>
-                    <td>{{ entity.organizacionAlias.organizacion.antiguedad }}</td>
+                    <td>{{ entity.organizacion.antiguedad }}</td>
                 </tr>
             </tbody>
         </table>

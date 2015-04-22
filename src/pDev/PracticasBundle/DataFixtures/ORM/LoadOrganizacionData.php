@@ -11,7 +11,6 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use pDev\PracticasBundle\Entity\Organizacion;
-use pDev\PracticasBundle\Entity\OrganizacionAlias;
 
 class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, OrderedFixtureInterface, ContainerAwareInterface
 {
@@ -35,6 +34,7 @@ class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, 
             
 		    // Organizacion 
 		    $organizacion = new Organizacion();
+		    $organizacion->setNombre("DesignCorp");
 		    $organizacion->setRubro("Diseño industrial");
 		    $organizacion->setDescripcion("Oficina que ofrece nuevos enfoques");
 		    $organizacion->setRut("814340419");
@@ -50,14 +50,6 @@ class LoadOrganizacionData extends AbstractFixture implements FixtureInterface, 
             $manager->persist($organizacion);
             $manager->flush();
 		    $this->addReference('organizacion', $organizacion);
-		    
-		    // OrganizacionAlias
-		    $organizacionAlias = new OrganizacionAlias();
-		    $organizacionAlias->setNombre("DesignCorp");
-		    $organizacionAlias->setOrganizacion($this->getReference('organizacion'));
-		    
-		    $manager->persist($organizacionAlias);
-		    $this->addReference('organizacion-alias', $organizacionAlias);
 		    $manager->flush();
 		}
     }

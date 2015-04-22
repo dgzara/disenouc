@@ -16,7 +16,7 @@ class AlumnoPracticanteType extends AbstractType
     {
         $width = '40px';
         $builder
-            ->add('organizacionAlias')
+            ->add('organizacion')
             ->add('supervisor')
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),

@@ -31,7 +31,7 @@ class LoadAlumnoPracticanteData extends AbstractFixture implements FixtureInterf
 		    $practicante = new AlumnoPracticante();
 		    $practicante->setAlumno($this->getReference('persona-alumno'));
 		    $practicante->setSupervisor($this->getReference('persona-supervisor'));
-		    $practicante->setOrganizacionAlias($this->getReference('organizacion-alias'));
+		    $practicante->setOrganizacion($this->getReference('organizacion'));
 		    $practicante->setTipo("Oficina");
 		    $practicante->setFechaInicio(new \DateTime('2014-05-01'));
 		    $practicante->setDuracionCantidad(2);

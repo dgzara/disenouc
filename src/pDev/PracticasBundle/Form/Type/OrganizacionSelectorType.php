@@ -8,7 +8,7 @@ use pDev\PracticasBundle\Form\DataTransformer\OrganizacionToNumberTransformer;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class OrganizacionAliasSelectorType extends AbstractType
+class OrganizacionSelectorType extends AbstractType
 {
     /**
      * @var ObjectManager

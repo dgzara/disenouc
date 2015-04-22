@@ -53,7 +53,6 @@
                     <tr>
                         <td width="50%">
                             <h3>Organización</h3>
-                            {{ form_widget(organizacionAlias_form) }}
                             {{ form_widget(organizacion_form) }}
                         </td>
                         <td style="vertical-align: top;">
@@ -112,13 +111,13 @@
         }); 
         
         var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
-            $("#form_organizacionAlias").val(suggestionObject.id);
+            $("#form_organizacion").val(suggestionObject.id);
         };
 
         $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
         $('#remote .typeahead').on('typeahead:opened', function(){
             $(this).val("");
-            $('#form_organizacionAlias').val("");
+            $('#form_organizacion').val("");
             $(".error1").hide();
         });
         $('#remote .typeahead').on('typeahead:closed', function(){
@@ -128,15 +127,15 @@
         });
         $('#remote .typeahead').on('keyup', function () {
             if($('.tt-suggestion').length === 0){
-                $('#form_organizacionAlias').val("");
+                $('#form_organizacion').val("");
             }
         });
         
         $("#form1").submit(function( event ) {
             if($('#remote .typeahead').typeahead('val') == "")
-                $("#form_organizacionAlias").val("");    
+                $("#form_organizacion").val("");    
         
-            if($("#form_organizacionAlias").val() != "" ) {
+            if($("#form_organizacion").val() != "" ) {
                 return;
             }
             $(".error1").text("Ingrese una organización").show();

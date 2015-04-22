@@ -9,9 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use pDev\PracticasBundle\Entity\Organizacion;
-use pDev\PracticasBundle\Entity\OrganizacionAlias;
 use pDev\PracticasBundle\Form\OrganizacionType;
-use pDev\PracticasBundle\Form\OrganizacionAliasType;
 
 /**
  * Organizacion controller.
@@ -35,8 +33,7 @@ class OrganizacionController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $dql   = "SELECT o 
-                  FROM pDevPracticasBundle:Organizacion o
-                  LEFT JOIN o.aliases a ";
+                  FROM pDevPracticasBundle:Organizacion o ";
         
         if($pm->checkType("TYPE_PRACTICAS_CONTACTO") or $pm->checkType("TYPE_PRACTICAS_SUPERVISOR")){         
             $dql .= "LEFT JOIN o.contactos c
@@ -44,7 +41,7 @@ class OrganizacionController extends Controller
                  WHERE u.id = ".$this->getUser()->getId()." ";
         }  
         
-        $dql .= "ORDER BY a.nombre";
+        $dql .= "ORDER BY o.nombre";
         $query = $em->createQuery($dql);
 
         $paginator  = $this->get('knp_paginator');
@@ -104,12 +101,7 @@ class OrganizacionController extends Controller
         $ec = 0;    
         foreach($entities as $entity)
         {
-            $nombres = '';
-            foreach($entity->getAliases() as $alias)
-            {
-                $nombres .= $alias->getNombre().', ';
-            }
-            
+            $nombres = $entity->getNombre();
             $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$nombres);
             $ec++;
             $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec,$ef,$entity->getRut());
@@ -157,11 +149,7 @@ class OrganizacionController extends Controller
         $form = $this->createForm(new OrganizacionType(), $entity);
         $form->submit($request);
         
-        $organizacionAlias = new OrganizacionAlias();
-        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-        $organizacionAlias_form->submit($request);
-
-        if ($form->isValid() and $organizacionAlias_form->isValid()) 
+        if($form->isValid()) 
         {
             $em = $this->getDoctrine()->getManager();
             
@@ -175,19 +163,6 @@ class OrganizacionController extends Controller
                 $entity->addContacto($contacto);
             }                        
                         
-            $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
-            
-            if($organizacionAlias_tmp)
-            {
-                $organizacionAlias_tmp->setOrganizacion ($entity);  
-                $organizacionAlias = $organizacionAlias_tmp;
-            }
-            else
-            {
-                $organizacionAlias->setOrganizacion($entity);
-                $em->persist($organizacionAlias);
-            }
-
             $em->persist($entity);
             $em->flush();
 
@@ -215,11 +190,7 @@ class OrganizacionController extends Controller
         $form = $this->createForm(new OrganizacionType(), $entity);
         $form->submit($request);
         
-        $organizacionAlias = new OrganizacionAlias();
-        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-        $organizacionAlias_form->submit($request);
-
-        if ($form->isValid() and $organizacionAlias_form->isValid()) 
+        if($form->isValid()) 
         {
             $em = $this->getDoctrine()->getManager();
             
@@ -233,19 +204,6 @@ class OrganizacionController extends Controller
                 $entity->addContacto($contacto);
             }                        
                         
-            $organizacionAlias_tmp = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findOneByNombre($organizacionAlias->getNombre());
-            
-            if($organizacionAlias_tmp)
-            {
-                $organizacionAlias_tmp->setOrganizacion ($entity);  
-                $organizacionAlias = $organizacionAlias_tmp;
-            }
-            else
-            {
-                $organizacionAlias->setOrganizacion($entity);
-                $em->persist($organizacionAlias);
-            }
-
             $em->persist($entity);
             $em->flush();
             
@@ -274,13 +232,9 @@ class OrganizacionController extends Controller
         $entity = new Organizacion();
         $form   = $this->createForm(new OrganizacionType(), $entity);
         
-        $organizacionAlias = new OrganizacionAlias();
-        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
-            'organizacionAlias_form' => $organizacionAlias_form->createView()
         );
     }
     
@@ -296,13 +250,9 @@ class OrganizacionController extends Controller
         $entity = new Organizacion();
         $form   = $this->createForm(new OrganizacionType(), $entity);
         
-        $organizacionAlias = new OrganizacionAlias();
-        $organizacionAlias_form = $this->createForm(new OrganizacionAliasType(), $organizacionAlias);
-
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
-            'organizacionAlias_form' => $organizacionAlias_form->createView()
         );
     }
     
@@ -440,7 +390,7 @@ class OrganizacionController extends Controller
         $em = $this->getDoctrine()->getManager();
 
 
-        $qb = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->createQueryBuilder('p');
+        $qb = $em->getRepository('pDevPracticasBundle:Organizacion')->createQueryBuilder('p');
         $entities = $qb
                         ->where('p.nombre like :nombre')
                         ->setParameter('nombre','%'.$data.'%')
@@ -453,13 +403,13 @@ class OrganizacionController extends Controller
             $return[] = array(
                 'label'=> $entity->getNombre(),
                 'value'=>$entity->getNombre(),
-                'rut'=>$entity->getOrganizacion()->getRut(),
-                'rubro'=>$entity->getOrganizacion()->getRubro(),
-                'descripcion'=>$entity->getOrganizacion()->getDescripcion(),
-                'pais'=>$entity->getOrganizacion()->getPais(),
-                'web'=>$entity->getOrganizacion()->getWeb(),
-                'personasTotal'=>$entity->getOrganizacion()->getPersonasTotal(),
-                'antiguedad'=>$entity->getOrganizacion()->getAntiguedad(),
+                'rut'=>$entity->getRut(),
+                'rubro'=>$entity->getRubro(),
+                'descripcion'=>$entity->getDescripcion(),
+                'pais'=>$entity->getPais(),
+                'web'=>$entity->getWeb(),
+                'personasTotal'=>$entity->getPersonasTotal(),
+                'antiguedad'=>$entity->getAntiguedad(),
                 );
         }
                  
@@ -479,18 +429,18 @@ class OrganizacionController extends Controller
         $return = array();
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('pDevPracticasBundle:OrganizacionAlias')->findAll();
+        $entities = $em->getRepository('pDevPracticasBundle:Organizacion')->findAll();
 
         foreach ($entities as $entity)
         {
             $return[] = array(
                 'id' => $entity->getId(),
                 'value' => $entity->getNombre(),
-                'rut' => $entity->getOrganizacion()->getRut(),
-                'rubro'=> $entity->getOrganizacion()->getRubro(),
-                'descripcion' => $entity->getOrganizacion()->getDescripcion(),
-                'pais' => $entity->getOrganizacion()->getPais(),
-                'web' => $entity->getOrganizacion()->getWeb(),
+                'rut' => $entity->getRut(),
+                'rubro'=> $entity->getRubro(),
+                'descripcion' => $entity->getDescripcion(),
+                'pais' => $entity->getPais(),
+                'web' => $entity->getWeb(),
             );
         }
                  

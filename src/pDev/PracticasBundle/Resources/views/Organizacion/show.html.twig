@@ -10,7 +10,7 @@
     <link href="{{ asset('/css/typeahead.css') }}" rel="stylesheet">
 {% endblock %}
 
-{%block header%}Organización "{{ entity.aliases|first }}" {%endblock%}
+{%block header%}Organización "{{ entity.nombre }}" {%endblock%}
 {%block lead%}{%endblock%}
 
 {% block sidebar %}
@@ -31,12 +31,8 @@
     <table class="table table-bordered">
         <tbody>
             <tr>
-                <th width="30%">Nombres asociados</th>
-                <td>
-                    {% for alias in entity.aliases %}
-                        {{ alias.nombre }}<br>
-                    {% endfor%}
-                </td>
+                <th width="30%">Nombre</th>
+                <td>{{ entity.nombre }}</td>
             </tr>
             <tr>
                 <th>RUT organización</th>

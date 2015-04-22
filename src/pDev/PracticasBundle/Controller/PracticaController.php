@@ -10,11 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use pDev\PracticasBundle\Entity\Practica;
 use pDev\PracticasBundle\Entity\Organizacion;
-use pDev\PracticasBundle\Entity\OrganizacionAlias;
 use pDev\PracticasBundle\Entity\Contacto;
 use pDev\PracticasBundle\Form\PracticaType;
 use pDev\PracticasBundle\Form\OrganizacionType;
-use pDev\PracticasBundle\Form\OrganizacionAliasType;
 use pDev\PracticasBundle\Form\ContactoType;
 use pDev\PracticasBundle\Form\PracticaEstadoType;
 
@@ -47,7 +45,7 @@ class PracticaController extends Controller
         $qb = $em->getRepository('pDevPracticasBundle:Practica')->createQueryBuilder('p');
         $entities = $qb->leftJoin('p.creador','cr')
                     ->leftJoin('p.contacto','co')
-                    ->leftJoin('p.organizacionAlias','oa');
+                    ->leftJoin('p.organizacion','o');
         
         if(!$isCoordinacion)
         {
@@ -126,7 +124,7 @@ class PracticaController extends Controller
             $ec++;
             $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getTipo());
             $ec++;
-            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacionAlias()->getNombre());
+            $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef, $entity->getOrganizacion()->getNombre());
             $ec++;
             $excelService->excelObj->getActiveSheet()->setCellValueByColumnAndRow($ec, $ef,date_format($entity->getFechaInicio(),'d-m-Y'));
             $ec++;
@@ -191,9 +189,8 @@ class PracticaController extends Controller
             if (!$organizacion) {
                 throw $this->createNotFoundException('Unable to find Organizacion entity.');
             }
-            $organizacionAlias = $organizacion->getAliases()->last();
-            $entity->setOrganizacionAlias($organizacionAlias);
-            $form->remove('organizacionAlias');
+            $entity->setOrganizacion($organizacion);
+            $form->remove('organizacion');
             $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
         }
         
@@ -261,9 +258,8 @@ class PracticaController extends Controller
             if (!$organizacion) {
                 throw $this->createNotFoundException('Unable to find Organizacion entity.');
             }
-            $organizacionAlias = $organizacion->getAliases()->last();
-            $entity->setOrganizacionAlias($organizacionAlias);
-            $form->remove('organizacionAlias');
+            $entity->setOrganizacion($organizacion);
+            $form->remove('organizacion');
             $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
         }
         
@@ -346,7 +342,7 @@ class PracticaController extends Controller
         // Generamos el formulario
         $securityContext = $this->container->get('security.context');
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
-        $editForm->remove('organizacionAlias');
+        $editForm->remove('organizacion');
         
         if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
             $editForm->remove('tipo');
@@ -387,7 +383,7 @@ class PracticaController extends Controller
 
         $securityContext = $this->container->get('security.context');
         $editForm = $this->createForm(new PracticaType($securityContext), $entity);
-        $editForm->remove('organizacionAlias');
+        $editForm->remove('organizacion');
         
         if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
             $editForm->remove('tipo');

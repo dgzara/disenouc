@@ -38,7 +38,7 @@ class NotificacionListener
         {
             $enlace = $this->container->get('router')->generate('practicas_show',array('id'=>$entity->getId()), true);
             $this->armarNotificacion("Oferta de práctica enviada a revisión", "Los datos han sido enviados y serán revisados para su publicación", $user, $enlace);
-            $mensaje = "La empresa ".$entity->getOrganizacionAlias()." ha enviado la oferta ".$entity->getNombre();
+            $mensaje = "La empresa ".$entity->getOrganizacion()." ha enviado la oferta ".$entity->getNombre();
             
             foreach($funcionarios as $funcionario)
                 $this->armarNotificacion("Nueva oferta de práctica", $mensaje, $funcionario->getUsuario(), $enlace);

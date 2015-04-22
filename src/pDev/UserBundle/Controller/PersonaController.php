@@ -921,8 +921,8 @@ class PersonaController extends Controller
             $organizaciones = array();
             foreach($practicantes as $practicante)
             {
-                if(!in_array($practicante->getOrganizacionAlias()->getOrganizacion(),$organizaciones))
-                    $organizaciones[] = $practicante->getOrganizacionAlias()->getOrganizacion();
+                if(!in_array($practicante->getOrganizacion(),$organizaciones))
+                    $organizaciones[] = $practicante->getOrganizacion();
             }
             
             
@@ -933,9 +933,8 @@ class PersonaController extends Controller
             // de las organizaciones
             
             $practicantes_repo = $repo->createQueryBuilder('p')
-                    ->leftJoin('p.organizacionAlias','oa')
-                    //->leftJoin('oa.organizacion','o')
-                    ->leftJoin('oa.practicas','pr')
+                    ->leftJoin('p.organizacion','o')
+                    ->leftJoin('o.practicas','pr')
                     ->leftJoin('pr.contacto','c')
                     ->where('c.id = :id')
                     ->setParameter('id',$persona->getId())
@@ -946,8 +945,8 @@ class PersonaController extends Controller
             
             
             $qb = $em->getRepository('pDevPracticasBundle:Practica')->createQueryBuilder('p');
-            $practicas = $qb->leftJoin('p.organizacionAlias','oa')
-                    ->leftJoin('oa.practicas','pr')
+            $practicas = $qb->leftJoin('p.organizacion','o')
+                    ->leftJoin('o.practicas','pr')
                     ->leftJoin('pr.contacto','c')
                     ->where('c.id = :id')
                     ->setParameter('id',$persona->getId())
@@ -957,15 +956,14 @@ class PersonaController extends Controller
             $organizaciones = array();
             foreach($practicas as $practica)
             {
-                if(!in_array($practica->getOrganizacionAlias()->getOrganizacion(),$organizaciones))
-                    $organizaciones[] = $practica->getOrganizacionAlias()->getOrganizacion();
+                if(!in_array($practica->getOrganizacion(),$organizaciones))
+                    $organizaciones[] = $practica->getOrganizacion();
             }
             
         }
         elseif($isAcademico)
         {
             // evaluador
-            
             $practicantes_repo = $repo->createQueryBuilder('p')
                     ->leftJoin('p.profesor','s')
                     ->where('s.id = :id')
@@ -973,13 +971,8 @@ class PersonaController extends Controller
                     ->getQuery()
                     ->getResult();
             $practicantes = $practicantes_repo;
-            
-            
         }
         
-        
-        
-
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
