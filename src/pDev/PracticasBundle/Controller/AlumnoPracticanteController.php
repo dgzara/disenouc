@@ -1371,9 +1371,9 @@ class AlumnoPracticanteController extends Controller
         $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
         // Revisamos que sean coordinadores
-        /*if($isCoordinacion){
+        if($isCoordinacion){
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-        }*/
+        }
         
         // Cargamos la entidad
         $em = $this->getDoctrine()->getManager();

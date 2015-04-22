@@ -150,8 +150,8 @@ class NotificacionListener
                     }
                     else if($changeSet['estado'][1] == "estado.aceptada.contacto")
                     {
-                        $titulo = "Postulación aceptada por la empresa";
-                        $mensaje = "";
+                        $titulo = "Postulación aceptada por la organización";
+                        $mensaje = "La postulación del alumno ".$entity->getAlumno()." ha sido aceptada por la organización ".$entity->getOrganizacion();
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($entity->getContactos() as $contacto)
@@ -162,7 +162,7 @@ class NotificacionListener
                     elseif($changeSet['estado'][1] == "estado.pendiente")
                     {
                         $titulo = "Plan de práctica pendiente";
-                        $mensaje = "";
+                        $mensaje = "El plan del alumno ".$entity->getAlumno()." se encuentra en proceso de revisión";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($entity->getContactos() as $contacto)
@@ -184,7 +184,7 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.rechazada")
                     {
                         $titulo = "Plan de práctica rechazada";
-                        $mensaje = "";
+                        $mensaje = "El plan del alumno ".$entity->getAlumno()."en la organización ".$entity->getOrganizacion()." ha sido rechazada";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($entity->getContactos() as $contacto)
@@ -204,7 +204,7 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.iniciada")
                     {
                         $titulo = "Plan de práctica iniciado";
-                        $mensaje = "";
+                        $mensaje = "El alumno ".$entity->getAlumno()."ha iniciado su práctica en la organización ".$entity->getOrganizacion();
                         $cambio = true;
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
@@ -212,7 +212,7 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.terminada")
                     {
                         $titulo = "Plan de práctica finalizado";
-                        $mensaje = "";
+                        $mensaje = "El alumno ".$entity->getAlumno()." ha finalizado su prácica en la organización ".$entity->getOrganizacion();
                         $cambio = true;
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
@@ -220,15 +220,15 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.informe")
                     {
                         $titulo = "Informe de Plan de práctica realizado";
-                        $mensaje = "";
+                        $mensaje = "El alumno ".$entity->getAlumno()." ha realizado su informe de práctica en la organización ".$entity->getOrganizacion();
                         $cambio = true;
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
                     else if($changeSet['estado'][1] == "estado.evaluada")
                     {
-                        $titulo = "Evaluación de Plan de práctica";
-                        $mensaje = "";
+                        $titulo = "Evaluada el plan de práctica";
+                        $mensaje = "El informe de práctica del alumno ".$entity->getAlumno()." ha sido evaluada";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                     }
@@ -237,6 +237,19 @@ class NotificacionListener
                         foreach($usuarios as $usuario)
                             $this->armarNotificacion($titulo, $mensaje, $usuario, $enlace);
                     }
+                }
+                
+                if(array_key_exists('profesor', $changeSet))
+                {
+                    $titulo = "Asignado profesor para evaluación";
+                    $mensaje = "El profesor ".$entity->getProfesor()." ha sido asignado para evaluar la práctica del alumno ".$entity->getAlumno();
+                    
+                    // Agregamos a los usuarios notificados
+                    $usuarios->add($entity->getAlumno()->getUsuario());
+                    $usuarios->add($entity->getProfesor()->getUsuario());
+                    
+                    foreach($usuarios as $usuario)
+                        $this->armarNotificacion($titulo, $mensaje, $usuario, $enlace);
                 }
             }
         }
