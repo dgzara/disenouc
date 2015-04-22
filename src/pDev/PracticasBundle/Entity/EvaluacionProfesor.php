@@ -19,13 +19,6 @@ class EvaluacionProfesor extends Evaluacion
     private $practica;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="tituloInforme", type="string", length=255,nullable =true)
-     */
-    private $tituloInforme;
-    
-    /**
      * @var integer
      *
      * @ORM\Column(name="year", type="integer", nullable=true)     
@@ -69,29 +62,6 @@ class EvaluacionProfesor extends Evaluacion
         $this->descuento = 0;
     }
     
-    /**
-     * Set tituloInforme
-     *
-     * @param string $tituloInforme
-     * @return EvaluacionProfesor
-     */
-    public function setTituloInforme($tituloInforme)
-    {
-        $this->tituloInforme = $tituloInforme;
-    
-        return $this;
-    }
-
-    /**
-     * Get tituloInforme
-     *
-     * @return string 
-     */
-    public function getTituloInforme()
-    {
-        return $this->tituloInforme;
-    }
-
     /**
      * Set year
      *

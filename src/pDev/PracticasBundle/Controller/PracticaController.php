@@ -425,7 +425,7 @@ class PracticaController extends Controller
     {
         // Chequeamos que sea el coordinador
         $pm = $this->get('permission.manager');
-        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        $isCoordinador = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
         if(!$isCoordinador){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));

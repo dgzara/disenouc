@@ -15,9 +15,6 @@ class EvaluacionProfesorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tituloInforme', null, array(
-                'required' => true
-            ))
             ->add('criterios', 'collection', array('label'=>' ','type' => new CriterioType()))
             ->add('observaciones', null, array(
                 'required' => true

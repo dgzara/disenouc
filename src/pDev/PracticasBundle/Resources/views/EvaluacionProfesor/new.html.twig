@@ -9,7 +9,6 @@
 
 {% block content %}
     <form class="well form-horizontal" action="{{ path('practicas_evaluacion_profesor_create', {'idPracticante': entity.practica.id}) }}" method="post" {{ form_enctype(form) }}>
-        {{ form_row(form.tituloInforme) }}
         
         <h3>Criterios</h3>
         <table class="table">
