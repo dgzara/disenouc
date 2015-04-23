@@ -227,10 +227,19 @@ class NotificacionListener
                     }
                     else if($changeSet['estado'][1] == "estado.evaluada")
                     {
-                        $titulo = "Evaluada el plan de práctica";
-                        $mensaje = "El informe de práctica del alumno ".$entity->getAlumno()." ha sido evaluada";
+                        $titulo = "Finalizado el plan de práctica";
+                        $mensaje = "El informe de práctica del alumno ".$entity->getAlumno()." ha sido evaluado y aprobado";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
+                        $usuarios->add($entity->getSupervisor()->getUsuario());
+                    }
+                    else if($changeSet['estado'][1] == "estado.reprobada")
+                    {
+                        $titulo = "Reprobado el plan de práctica";
+                        $mensaje = "El plan de práctica del alumno ".$entity->getAlumno()." ha sido evaluado y reprobado";
+                        $cambio = true;
+                        $usuarios->add($entity->getAlumno()->getUsuario());
+                        $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
                     
                     if($cambio){

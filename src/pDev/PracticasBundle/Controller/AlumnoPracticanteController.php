@@ -792,14 +792,14 @@ class AlumnoPracticanteController extends Controller
         
         if($user->hasPersona('TYPE_ACADEMICO'))
         {
-            if($practicante->getProfesor()->getProfesor()->getId()==$user->getPersona('TYPE_ACADEMICO')->getId())
-                return $this->redirect ($this->generateUrl ('practicas_alumno_evaluar_profesor',array('id'=>$id)));
+            if($practicante->getProfesor()->getId()==$user->getPersona('TYPE_ACADEMICO')->getId())
+                return $this->redirect ($this->generateUrl ('practicas_evaluacion_profesor_new',array('idPracticante'=>$id)));
         }
         
         if($user->hasPersona('TYPE_PRACTICAS_SUPERVISOR'))
         {
             if($practicante->getSupervisor()->getId()==$user->getPersona('TYPE_PRACTICAS_SUPERVISOR')->getId())
-                return $this->redirect ($this->generateUrl ('practicas_alumno_evaluar_supervisor',array('id'=>$id)));
+                return $this->redirect ($this->generateUrl ('practicas_evaluacion_supervisor_new',array('idPracticante'=>$id)));
         }
         
         $pm->throwForbidden();
@@ -1360,8 +1360,7 @@ class AlumnoPracticanteController extends Controller
     /**
      * Asignar un profesor
      *
-     * @Route("/{id}/asignar", name="practicas_alumno_asignar_profesor")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/asignar/profesor", name="practicas_alumno_asignar_profesor")
      * @Template()
      */
     public function asignarProfesorAction(Request $request, $id)
@@ -1371,7 +1370,7 @@ class AlumnoPracticanteController extends Controller
         $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
         // Revisamos que sean coordinadores
-        if($isCoordinacion){
+        if(!$isCoordinacion){
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
         }
         

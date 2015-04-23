@@ -24,6 +24,7 @@ class AlumnoPracticante
     const ESTADO_TERMINADA = "estado.terminada";
     const ESTADO_INFORME = "estado.informe";
     const ESTADO_EVALUADA = "estado.evaluada";
+    const ESTADO_REPROBADA = "estado.reprobada";
     
     /**
      * @var integer
@@ -894,6 +895,6 @@ class AlumnoPracticante
      */
     public function hasAcademico(\pDev\UserBundle\Entity\Profesor $profesorBuscado)
     {
-        return $this->profesor->getProfesor() === $profesorBuscado;
+        return $this->profesor === $profesorBuscado;
     }
 }
