@@ -287,7 +287,7 @@ class EvaluacionProfesorController extends Controller
     /**
      * Deletes a Evaluacion entity.
      *
-     * @Route("/{id}", name="practicas_evaluacion_profesor_delete")
+     * @Route("/{id}/delete", name="practicas_evaluacion_profesor_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)

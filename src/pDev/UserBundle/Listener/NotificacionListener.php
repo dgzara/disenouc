@@ -66,6 +66,28 @@ class NotificacionListener
             
             $this->em->flush();
         }
+        elseif ($entity instanceof \pDev\PracticasBundle\Entity\EvaluacionProfesor)
+        {
+            $enlace = $this->container->get('router')->generate('practicas_evaluacion_profesor_show',array('id'=>$entity->getId()), true);
+            $this->armarNotificacion("Evaluación realizada ", "Los datos han sido enviados y serán revisados por la coordinación", $user, $enlace);
+            $mensaje = "El profesor ".$entity->getProfesor()." ha realizado la evaluación del plan de práctica del alumno ".$entity->getAlumno();
+            
+            foreach($funcionarios as $funcionario)
+                $this->armarNotificacion("Evaluación realizada por el profesor", $mensaje, $funcionario->getUsuario(), $enlace);
+            
+            $this->em->flush();
+        }
+        elseif ($entity instanceof \pDev\PracticasBundle\Entity\EvaluacionSupervisor)
+        {
+            $enlace = $this->container->get('router')->generate('practicas_evaluacion_supervisor_show',array('id'=>$entity->getId()), true);
+            $this->armarNotificacion("Evaluación realizada ", "Los datos han sido enviados y serán revisados por la coordinación", $user, $enlace);
+            $mensaje = "El supervisor ".$entity->getSupervisor()." ha realizado la evaluación del plan de práctica del alumno ".$entity->getAlumno();
+            
+            foreach($funcionarios as $funcionario)
+                $this->armarNotificacion("Evaluación realizada por el supervisor", $mensaje, $funcionario->getUsuario(), $enlace);
+            
+            $this->em->flush();
+        }
     }
     
     public function onFlush(OnFlushEventArgs $eventArgs)
@@ -184,7 +206,7 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.rechazada")
                     {
                         $titulo = "Plan de práctica rechazada";
-                        $mensaje = "El plan del alumno ".$entity->getAlumno()."en la organización ".$entity->getOrganizacion()." ha sido rechazada";
+                        $mensaje = "El plan del alumno ".$entity->getAlumno()." en la organización ".$entity->getOrganizacion()." ha sido rechazada";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($entity->getContactos() as $contacto)
@@ -195,7 +217,7 @@ class NotificacionListener
                     else if($changeSet['estado'][1] == "estado.aceptada.supervisor")
                     {
                         $titulo = "Plan de práctica aceptada por el supervisor";
-                        $mensaje = "";
+                        $mensaje = "El plan de práctica del alumno ".$entity->getAlumno()." fue aceptada por el supervisor";
                         $cambio = true;
                         $usuarios->add($entity->getAlumno()->getUsuario());
                         foreach($funcionarios as $funcionario)

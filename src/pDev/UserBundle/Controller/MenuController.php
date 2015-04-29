@@ -78,8 +78,10 @@ class MenuController extends Controller
                 $admin_items[] = $this->createItem('Permisos',$this->generateUrl('user'));
             
             $ajustes_granted = $pm->isGranted("ROLE_SUPER_USER","SITE_AJUSTES");            
-            if($ajustes_granted)
+            if($ajustes_granted){
+                $admin_items[] = $this->createItem('Preguntas frecuentes',$this->generateUrl('preguntafrecuente'));
                 $admin_items[] = $this->createItem('Ajustes generales',$this->generateUrl('configuracion'));
+            }
             // merge menu
             
             if(count($admin_items)>0)
@@ -88,9 +90,6 @@ class MenuController extends Controller
                 $admin['children'] = $admin_items;
                 $items[] = $admin;
             }
-            
-            
-       
         }
         
         return array('items' => $items);

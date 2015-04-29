@@ -45,7 +45,7 @@
                 {% if entity.profesorEvaluacion %}
                 <tr>
                     <th>Evaluación del profesor</th>
-                    <td><a href="{{ path('practicas_evaluacion_profesor_show', {'id': entity.profesorEvaluacion.id}) }}">{{ entity.profesorEvaluacion.notaFinal is empty ? '-' : entity.profesorEvaluacion.notaFinal }}</a></td>
+                    <td><a href="{{ path('practicas_evaluacion_profesor_show', {'id': entity.profesorEvaluacion.id}) }}">{{ entity.profesorEvaluacion.calculaNotaFinal is empty ? '-' : entity.profesorEvaluacion.calculaNotaFinal }}</a></td>
                 </tr>
                 {% endif %}
                 {% if entity.supervisorEvaluacion %}

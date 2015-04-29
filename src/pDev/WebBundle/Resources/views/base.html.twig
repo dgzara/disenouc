@@ -24,8 +24,8 @@
         {% endblock %}
         
         <!--[if lt IE 9]>
-        <script src="{{ asset('/js/html5shiv.js') }}"></script>
-        <script src="{{ asset('/js/respond.min.js') }}"></script>
+        <script src="{{ asset('externals/html5shiv.js') }}"></script>
+        <script src="{{ asset('externals/respond.min.js') }}"></script>
         <![endif]-->
     </head>
     <body>
@@ -180,14 +180,14 @@
         </div>
         
         {% block javascripts %}
-        <script src="{{ asset('/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
-        <script src="{{ asset('/js/vendor/jquery-1.11.1.min.js') }}"></script>
-        <script src="{{ asset('/js/vendor/bootstrap.min.js') }}"></script>
-        <script src="{{ asset('/js/vendor/moment.js') }}"></script>
-        <script src="{{ asset('/js/vendor/bootstrap-datetimepicker.js') }}"></script>
+        <script src="{{ asset('externals/vendor/modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
+        <script src="{{ asset('externals/vendor/jquery-1.11.1.min.js') }}"></script>
+        <script src="{{ asset('externals/vendor/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('externals/vendor/moment.js') }}"></script>
+        <script src="{{ asset('externals/vendor/bootstrap-datetimepicker.js') }}"></script>
         <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
         <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
-        <script src="{{ asset('/js/self/main.js') }}"></script>
+        <script src="{{ asset('externals/self/main.js') }}"></script>
         {% endblock %}
         
         {% block javascriptload %}

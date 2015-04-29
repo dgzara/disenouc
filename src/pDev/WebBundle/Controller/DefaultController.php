@@ -36,7 +36,10 @@ class DefaultController extends Controller
      */
     public function preguntasFrecuentesAction()
     {
-        return array();
+        $em = $this->getDoctrine()->getManager();
+        $preguntas = $em->getRepository('pDevUserBundle:PreguntaFrecuente')->findAll();
+        
+        return array('preguntas' => $preguntas);
     }
     
     /**

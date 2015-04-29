@@ -8,31 +8,8 @@
 {% block lead %}Informaciones para los estudiantes y empresas{% endblock %}
 
 {% block content %}
-<h3>¿Cómo me consigo la práctica?</h3>
-<p>El estudiante podrá acceder a ofertas de prácticas ingresando a la plataforma web. Además, el estudiante puede conseguir prácticas por contactos propios. Para la práctica de Oficina, el lugar debe tener como mínimo 5 años de antigüedad y estar conformado por un equipo de al menos 5 personas.</p>
-
-<p>¿Cuándo puedo hacer mis prácticas?</p>
-<ul>
-<li>OFICINA· Una vez completado el 5to semestre de la carrera.</li>
-<li>SERVICIO · Una vez completado el 7mo semestre de la carrera.</li>
-</ul>
-<p>OJO: Cuando llegues a título, tienes que tener ambas prácticas cursadas e informes entregados</p>
-
-<h3>¿Cuál es la duración de la práctica?</h3>
-<p>La duración es de 240 horas en jornadas de un mínimo de 4 y no mayor de 8 horas presenciales y un mínimo de 2 días a la semana.</p>
-
-<h3>¿Cuál es la diferencia entre práctica de oficina y servicio?</h3>
-<ul>
-<li>OFICINA · Trabajo de diseño que permite poner en práctica en la realidad, los conocimientos adquiridos, asumir responsabilidades, aprender y aportar en el proceso de diseño.</li>
-<li>SERVICIO · Desempeño en diseño que permite hacer un aporte social concreto.</li>
-</ul>
-
-<h3>¿Cuándo se inscribe el ramo?</h3>
-<p>El ramo se inscribe una vez completada la experiencia (240 horas)</p>
-<p>Se hace la práctica completa y al semestre siguiente se inscribe el ramo para alcanzar a entregar el informe. Cada práctica es un ramo distinto, Práctica de oficina: DNO0422 y Practica de Servicio: DNO0512.</p>
-
-<h3>¿Cuándo se entrega el informe?</h3>
-<p>El informe se entrega a más tardar 1 semestre a partir de la fecha de término de la práctica.</p>
-<p>Para los que ya realizaron la práctica e inscribieron el ramo la fecha de entrega es a mediados de abril (I semestre) y a mediados de septiembre (II semestre).</p>
-
+    {% for pregunta in preguntas %}
+        <h3>{{ pregunta.pregunta }}</h3>
+        <p>{{ pregunta.texto|raw }}</p>
+    {% endfor %}
 {% endblock %}

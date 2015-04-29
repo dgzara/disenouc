@@ -1,0 +1,51 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Preguntas frecuentes{%endblock%}
+
+{% block content -%}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>N°</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ entity.orden }}</td>
+            </tr>
+            <tr>
+                <th>Pregunta</th>
+                <td>{{ entity.pregunta }}</td>
+            </tr>
+            <tr>
+                <th>Texto</th>
+                <td>{{ entity.texto|nl2br }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul class="record_actions">
+        <li>
+            <a class="btn" href="{{ path('preguntafrecuente') }}">
+                Volver
+            </a>
+        </li>
+        <li>
+            <a class="btn" href="{{ path('preguntafrecuente_edit', { 'id': entity.id }) }}">
+                Editar
+            </a>
+        </li>
+        <li>
+            <a class="btn btn-danger onmodal" href="{{ path('preguntafrecuente_delete_modal', { 'id': entity.id }) }}">
+                Borrar
+            </a>
+        </li>
+    </ul>
+{% endblock %}

@@ -51,7 +51,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
         $userAdmin->setEnabled(true);
         $userAdmin->addPersona($userPersona);
         $userAdmin->setNombres("María Rosa");
-        $userAdmin->setApellidoPaterno("Dumper");
+        $userAdmin->setApellidoPaterno("Domper");
         $userAdmin->setApellidoMaterno("");
         $userAdmin->setRut("166284740");
         $userPersona->setUsuario($userAdmin);

@@ -25,7 +25,10 @@
             <tbody>
             {% for criterio in form.criterios %}
                 <tr>
-                    <td>{{ criterio.vars.value.criterioTipo.nombre }}</td>
+                    <td>
+                        <strong>{{criterio.vars.value.criterioTipo.nombre}}</strong><br>
+                        {{ criterio.vars.value.criterioTipo.explicacion }}
+                    </td>
                     <td>{{ form_widget(criterio) }}</td>
                 </tr>
             {% endfor %}

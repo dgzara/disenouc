@@ -192,7 +192,7 @@ class EvaluacionProfesor extends Evaluacion
      *
      * @return float 
      */
-    public function calculaNotaFinal()
+    public function getCalculaNotaFinal()
     {
         return $this->getNota() - $this->getDescuento();
     }

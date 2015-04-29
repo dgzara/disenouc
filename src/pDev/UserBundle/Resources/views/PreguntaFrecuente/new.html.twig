@@ -1,0 +1,22 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Preguntas frecuentes{%endblock%}
+{% block lead%}Crear nueva pregunta frecuente{% endblock %}
+
+{% block content -%}
+    {{ form(form) }}
+    <ul class="record_actions">
+        <li>
+            <a class="btn" href="{{ path('preguntafrecuente') }}">
+                Volver
+            </a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Preguntas frecuentes{%endblock%}
+{% block lead%}{{ pagination.getTotalItemCount }} preguntas publicadas en el sitio{% endblock %}
+
+{% block content %}
+    {% if isCoordinacion %}  
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        <a href="{{ path('preguntafrecuente_new') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Crear pregunta frecuente</a>        
+    </div>
+    {% endif %}
+    
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Pregunta</th>
+                <th>Texto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in pagination %}
+            <tr>
+                <td><a href="{{ path('preguntafrecuente_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.pregunta }}</td>
+                <td>{{ entity.texto|raw }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a class="btn" href="{{ path('preguntafrecuente_edit', { 'id': entity.id }) }}">editar</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-danger onmodal" href="{{ path('preguntafrecuente_delete_modal', { 'id': entity.id }) }}">b    orrar</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}
