@@ -36,22 +36,39 @@
                     <th>Observaciones</th>
                     <td>{% if entity.estadoObservaciones %} {{ entity.estadoObservaciones }}{% else %}Sin observaciones{% endif %}</td>
                 </tr> 
+                {% if (entity.estado == 'estado.terminada' or entity.estado == 'estado.informe') %}
                 {% if entity.profesor %}
                 <tr>
                     <th>Profesor evaluador</th>
-                    <td>{{ entity.profesor }}</td>
+                    <td>
+                    {% if entity.profesor %}
+                        {{ entity.profesor }}
+                    {% else %}
+                        Pendiente
+                    {% endif %}
+                    </td>
                 </tr>
                 {% endif %}
-                {% if entity.profesorEvaluacion %}
+                
                 <tr>
                     <th>Evaluación del profesor</th>
-                    <td><a href="{{ path('practicas_evaluacion_profesor_show', {'id': entity.profesorEvaluacion.id}) }}">{{ entity.profesorEvaluacion.calculaNotaFinal is empty ? '-' : entity.profesorEvaluacion.calculaNotaFinal }}</a></td>
+                    <td>
+                    {% if entity.profesorEvaluacion %}
+                        <a href="{{ path('practicas_evaluacion_profesor_show', {'id': entity.profesorEvaluacion.id}) }}">{{ entity.profesorEvaluacion.calculaNotaFinal is empty ? '-' : entity.profesorEvaluacion.calculaNotaFinal }}</a>
+                    {% else %}
+                        Pendiente
+                    {% endif %}
+                    </td>
                 </tr>
-                {% endif %}
-                {% if entity.supervisorEvaluacion %}
                 <tr>
                     <th>Evaluación del supervisor</th>
-                    <td><a href="{{ path('practicas_evaluacion_supervisor_show', {'id': entity.supervisorEvaluacion.id}) }}">Ver evaluación</a></td>
+                    <td>
+                    {% if entity.supervisorEvaluacion %}
+                        <a href="{{ path('practicas_evaluacion_supervisor_show', {'id': entity.supervisorEvaluacion.id}) }}">Ver evaluación</a>
+                    {% else %}
+                        Pendiente
+                    {% endif %}
+                    </td>
                 </tr>
                 {% endif %}
                 <tr>

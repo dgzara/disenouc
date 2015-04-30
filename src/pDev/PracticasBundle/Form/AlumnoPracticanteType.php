@@ -66,12 +66,12 @@ class AlumnoPracticanteType extends AbstractType
                     'semanas' => 'semanas',
                     'meses' => 'meses'),
             ))
-            ->add('horasLunes',null,array('attr'=>array('placeholder'=>'Lunes','style'=>'width:'.$width)))
-            ->add('horasMartes',null,array('attr'=>array('placeholder'=>'Martes','style'=>'width:'.$width)))
-            ->add('horasMiercoles',null,array('attr'=>array('placeholder'=>'Miércoles','style'=>'width:'.$width)))
-            ->add('horasJueves',null,array('attr'=>array('placeholder'=>'Jueves','style'=>'width:'.$width)))
-            ->add('horasViernes',null,array('attr'=>array('placeholder'=>'Viernes','style'=>'width:'.$width)))
-            ->add('horasSabado',null,array('attr'=>array('placeholder'=>'Sábado','style'=>'width:'.$width)))
+            ->add('horasLunes',null,array('attr'=>array('placeholder'=>'Lunes','min' => 0,'style'=>'width:'.$width)))
+            ->add('horasMartes',null,array('attr'=>array('placeholder'=>'Martes','min' => 0,'style'=>'width:'.$width)))
+            ->add('horasMiercoles',null,array('attr'=>array('placeholder'=>'Miércoles','min' => 0,'style'=>'width:'.$width)))
+            ->add('horasJueves',null,array('attr'=>array('placeholder'=>'Jueves','min' => 0,'style'=>'width:'.$width)))
+            ->add('horasViernes',null,array('attr'=>array('placeholder'=>'Viernes','min' => 0,'style'=>'width:'.$width)))
+            ->add('horasSabado',null,array('attr'=>array('placeholder'=>'Sábado','min' => 0,'style'=>'width:'.$width)))
             ->add('proyectos', 'collection', array('label'=>' ','type' => new ProyectoType(),'allow_add'=> true,'allow_delete' => true))
             ->add('desafios', 'collection', array('label'=>' ','type' => new DesafioType(),'allow_add'=> true,'allow_delete' => true))
         ;

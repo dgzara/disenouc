@@ -11,13 +11,8 @@
 {% block content %}
 <h2>Reglamento de Prácticas</h2>
 <ul>
-    <li><a href="{{ asset('recursos/perfil.pdf') }}" target="_blank">Perfil de Prácticas</a></li>
-    <li><a href="{{ asset('recursos/pauta_informe.pdf') }}" target="_blank">Pauta de Informe</a></li>
-    <li><a href="{{ asset('recursos/bitacora.pdf') }}" target="_blank">Bitácora</a></li>
-    <li><a href="{{ asset('recursos/carta_estudiante.pdf') }}" target="_blank">Carta de Compromiso estudiante</a></li>
-    <li><a href="{{ asset('recursos/carta_supervisor.pdf') }}" target="_blank">Carta de Compromiso supervisor</a></li>
-    <li><a href="{{ asset('recursos/seguro.pdf') }}" target="_blank">Certificado Seguro Escolar</a></li>
-    <li><a href="{{ asset('recursos/disenouc.zip') }}" target="_blank">Logos Diseño</a></li>
-    <li><a href="{{ asset('recursos/uc.zip') }}" target="_blank">Logos UC</a></li>
+    {% for documento in documentos %}
+    <li><a href="{{ asset(documento.webPath) }}" target="_blank">{{ documento.nombre }}</a></li>
+    {% endfor %}
 </ul>
 {% endblock %}

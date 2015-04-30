@@ -12,6 +12,7 @@
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.practica.organizacion }}</strong><br>
+            Supervisor: {{ entity.supervisor }}<br>
             Fecha de inicio: {{ entity.practica.fechaInicio|date('d-m-Y') }}<br>
             Duración: {{ entity.duracionCantidad }} {{ entity.duracionUnidad }}<br>
             Tipo de práctica: {{ entity.tipo }}<br>
@@ -307,20 +308,26 @@
             // Revisa si hay al menos dos dias con 4 horas 
             if(minimos >= 2)
                 $('#minimo').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
-            else
+            else{
+                $('#minimo').prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
                 cumple = false;
+            }
             
             // Revisa si todos los días son menores de 8 horas de trabajo
             if(maximos == 0)
                 $('#maximo').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
-            else
+            else{
+                $('#maximo').prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
                 cumple = false;
+            }
             
             // Revisa si cumple el mínimo de horas
             if(total >= 240)
                 $('#total').prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
-            else
+            else{
+                $('#total').prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
                 cumple = false;
+            }
             
             $('#totalHoras').html('<strong> = '+total+'</strong>');
             

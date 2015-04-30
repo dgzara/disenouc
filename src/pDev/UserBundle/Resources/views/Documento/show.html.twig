@@ -1,0 +1,43 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Documentos{%endblock%}
+
+{% block content -%}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>N°</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td><a href="{{ asset(entity.webPath) }}">{{ entity.nombre }}</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul class="record_actions">
+        <li>
+            <a class="btn" href="{{ path('documento') }}">
+                Volver
+            </a>
+        </li>
+        <li>
+            <a class="btn" href="{{ path('documento_edit', { 'id': entity.id }) }}">
+                Editar
+            </a>
+        </li>
+        <li>
+            <a class="btn btn-danger onmodal" href="{{ path('documento_delete_modal', { 'id': entity.id }) }}">
+                Borrar
+            </a>
+        </li>
+    </ul>
+{% endblock %}

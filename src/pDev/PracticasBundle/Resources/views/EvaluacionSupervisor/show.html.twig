@@ -26,10 +26,11 @@
                 <th>Horario</th>
                 <td>{{ entity.horario }}</td>
             </tr>
+            {#
             <tr>
                 <th>Nota</th>
-                <td>{{ entity.nota is empty ? '-' : entity.nota }}</td>
-            </tr>
+                <td>{{ entity.calculaNotaFinal is empty ? '-' : entity.calculaNotaFinal }}</td>
+            </tr>#}
             <tr>
                 <th>Observaciones</th>
                 <td>{% if entity.observaciones %}{{ entity.observaciones }}{% else %}Sin observaciones{% endif %}</td>

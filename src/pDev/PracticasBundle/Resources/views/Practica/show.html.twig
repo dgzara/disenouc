@@ -25,7 +25,7 @@
     {% elseif alumnoPractica %}
         {% if alumnoPractica.estado == 'estado.postulado' %}
         <div class="alert alert-warning">
-            Práctica postulada. <a href="{{ path('practicas_alumno_show', {'id': alumnoPractica.id }) }}">Ver detalles</a>
+            Práctica postulada.
         </div>
         {% elseif alumnoPractica.estado == 'estado.aceptada.contacto' %}
         <div class="alert alert-warning">

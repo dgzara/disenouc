@@ -27,7 +27,10 @@ class DefaultController extends Controller
      */
     public function aboutAction()
     {
-        return array();
+        $em = $this->getDoctrine()->getManager();
+        $documentos = $em->getRepository('pDevUserBundle:Documento')->findAll();
+        
+        return array('documentos' => $documentos);
     }
     
     /**

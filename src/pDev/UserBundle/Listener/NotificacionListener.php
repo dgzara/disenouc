@@ -51,6 +51,7 @@ class NotificacionListener
             
             if($entity->getPractica())
             {
+                $enlace = $this->container->get('router')->generate('practicas_show', array('id'=>$entity->getPractica()->getId()), true);
                 $this->armarNotificacion("Postulación realizada ", "Los datos han sido enviados y serán revisados para su aprobación", $user, $enlace);
                 $mensaje = "El alumno ".$entity->getAlumno()." ha postulado a la practica ".$entity->getPractica()->getNombre();
                 $this->armarNotificacion("Nueva postulación", $mensaje, $entity->getPractica()->getCreador(), $enlace);      
@@ -167,6 +168,8 @@ class NotificacionListener
                         $cambio = true;
                         if($entity->getSupervisor())
                             $usuarios->add($entity->getSupervisor()->getUsuario());
+                        if($entity->getContacto())
+                            $usuarios->add($entity->getContacto()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -228,6 +231,10 @@ class NotificacionListener
                         $titulo = "Plan de práctica iniciado";
                         $mensaje = "El alumno ".$entity->getAlumno()."ha iniciado su práctica en la organización ".$entity->getOrganizacion();
                         $cambio = true;
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -236,6 +243,10 @@ class NotificacionListener
                         $titulo = "Plan de práctica finalizado";
                         $mensaje = "El alumno ".$entity->getAlumno()." ha finalizado su prácica en la organización ".$entity->getOrganizacion();
                         $cambio = true;
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }
@@ -246,6 +257,10 @@ class NotificacionListener
                         $cambio = true;
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
+                        if($entity->getSupervisor())
+                            $usuarios->add($entity->getSupervisor()->getUsuario());
                     }
                     else if($changeSet['estado'][1] == "estado.evaluada")
                     {

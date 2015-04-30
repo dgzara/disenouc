@@ -188,13 +188,13 @@ class EvaluacionProfesor extends Evaluacion
     }
     
     /**
-     * Get descuento
+     * Get CalculaNotaFinal
      *
      * @return float 
      */
     public function getCalculaNotaFinal()
     {
-        return $this->getNota() - $this->getDescuento();
+        return $this->calculaNota() - $this->getDescuento();
     }
     
     /**
@@ -218,5 +218,15 @@ class EvaluacionProfesor extends Evaluacion
     public function getNotaFinal()
     {
         return $this->notaFinal;
+    }
+    
+    /**
+     * Get alumno
+     *
+     * @return \pDev\UserBundle\Entity\Alumno 
+     */
+    public function getAlumno()
+    {
+        return $this->practica->getAlumno();
     }
 }

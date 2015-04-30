@@ -1,0 +1,50 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Documentos{%endblock%}
+{% block lead%}{{ pagination.getTotalItemCount }} documentos publicados en el sitio{% endblock %}
+
+{% block content %}
+    {% if isCoordinacion %}  
+    <div id="form_ordenar" class="well clearfix" style="margin:0">
+        <a href="{{ path('documento_new') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Subir documento</a>        
+    </div>
+    {% endif %}
+    
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Pregunta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in pagination %}
+            <tr>
+                <td><a href="{{ path('documento_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td><a href="{{ asset(entity.webPath) }}">{{ entity.nombre }}</a></td>
+                <td>
+                <ul>
+                    <li>
+                        <a class="btn" href="{{ path('documento_edit', { 'id': entity.id }) }}">editar</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-danger onmodal" href="{{ path('documento_delete_modal', { 'id': entity.id }) }}">borrar</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

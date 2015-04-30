@@ -210,6 +210,10 @@ class EvaluacionProfesorController extends Controller
      */
     public function showAction($id)
     {
+        $pm = $this->get('permission.manager');
+        $user = $pm->getUser();        
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS"); 
+        
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('pDevPracticasBundle:Evaluacion')->find($id);
@@ -220,6 +224,7 @@ class EvaluacionProfesorController extends Controller
         
         return array(
             'entity' => $entity,
+            'isCoordinacion' => $isCoordinacion
         );
     }
 

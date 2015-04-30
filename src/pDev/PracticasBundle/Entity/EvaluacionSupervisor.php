@@ -178,4 +178,24 @@ class EvaluacionSupervisor extends Evaluacion
     {
         return $this->practica;
     }
+    
+    /**
+     * Get alumno
+     *
+     * @return \pDev\UserBundle\Entity\Alumno 
+     */
+    public function getAlumno()
+    {
+        return $this->practica->getAlumno();
+    }
+    
+    /**
+     * Get CalculaNotaFinal
+     *
+     * @return float 
+     */
+    public function getCalculaNotaFinal()
+    {
+        return $this->calculaNota();
+    }
 }

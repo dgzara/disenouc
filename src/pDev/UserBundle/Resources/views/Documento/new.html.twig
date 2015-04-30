@@ -1,0 +1,22 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block header%}Documentos{%endblock%}
+{% block lead%}Crear nuevo documento{% endblock %}
+
+{% block content -%}
+    {{ form(form) }}
+    <ul class="record_actions">
+        <li>
+            <a class="btn" href="{{ path('documento') }}">
+                Volver
+            </a>
+        </li>
+    </ul>
+{% endblock %}

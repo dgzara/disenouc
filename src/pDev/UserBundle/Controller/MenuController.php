@@ -80,6 +80,7 @@ class MenuController extends Controller
             $ajustes_granted = $pm->isGranted("ROLE_SUPER_USER","SITE_AJUSTES");            
             if($ajustes_granted){
                 $admin_items[] = $this->createItem('Preguntas frecuentes',$this->generateUrl('preguntafrecuente'));
+                $admin_items[] = $this->createItem('Documentos',$this->generateUrl('documento'));
                 $admin_items[] = $this->createItem('Ajustes generales',$this->generateUrl('configuracion'));
             }
             // merge menu

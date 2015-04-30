@@ -86,8 +86,9 @@ class AlumnoPracticanteController extends Controller
             {
                 //planes de practica de alumno
                 $alumno = $user->getPersona('TYPE_ALUMNO');
-                $where = 'a.id = :idAlumno';
-                $consulta = $consulta->setParameter('idAlumno', $alumno->getId());
+                $where = 'a.id = :idAlumno AND p.estado != :estado';
+                $consulta = $consulta->setParameter('idAlumno', $alumno->getId())
+                                     ->setParameter('estado', 'estado.postulado');
             }
             if($isSupervisor)
             {

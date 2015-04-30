@@ -19,15 +19,19 @@
                 <td>{{ entity.nota is empty ? '-' : entity.nota }}</td>
             </tr>
             <tr>
-                <th>Descuento</th>
-                <td>{{ entity.descuento}} <a class="onmodal" href="{{ path('practicas_evaluacion_profesor_descuento', { 'id': entity.id }) }}" >
-                    <span class="glyphicon glyphicon-pencil"></span> 
-                    </a>
-                </td>
+                <th>Nota final</th>
+                <td>{{ entity.calculaNotaFinal is empty ? '-' : entity.calculaNotaFinal }}</td>
             </tr>
             <tr>
-                <th>Nota final</th>
-                <td>{{ entity.notaFinal is empty ? '-' : entity.notaFinal }}</td>
+                <th>Descuento</th>
+                <td>
+                    {{ entity.descuento}} 
+                    {% if isCoordinacion %}
+                    <a class="onmodal" href="{{ path('practicas_evaluacion_profesor_descuento', { 'id': entity.id }) }}" >
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                    </a>
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Observaciones</th>

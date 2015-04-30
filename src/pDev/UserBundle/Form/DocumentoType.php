@@ -5,8 +5,9 @@ namespace pDev\UserBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use pDev\UserBundle\Form\ArchivoType;
 
-class ArchivoType extends AbstractType
+class DocumentoType extends ArchivoType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -14,8 +15,9 @@ class ArchivoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
         $builder
-            ->add('file');
+            ->add('nombre');
     }
 
     /**
@@ -24,7 +26,7 @@ class ArchivoType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'pDev\UserBundle\Entity\Archivo'
+            'data_class' => 'pDev\UserBundle\Entity\Documento'
         ));
     }
 
@@ -33,6 +35,6 @@ class ArchivoType extends AbstractType
      */
     public function getName()
     {
-        return 'pdev_userbundle_archivotype';
+        return 'pdev_userbundle_documentotype';
     }
 }
