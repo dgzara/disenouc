@@ -26,7 +26,7 @@ class PracticaType extends AbstractType
         $user = $this->securityContext->getToken()->getUser();
         $builder
             ->add('nombre', null, array(
-                'label' => 'Asunto'
+                'label' => 'Nombre de la práctica'
             ))
             ->add('organizacion', 'organizacion_selector', array(
                 'label' => 'Organización',
@@ -59,6 +59,7 @@ class PracticaType extends AbstractType
             ))
             ->add('duracionCantidad', null, array(
                 'label' => 'Duración',
+                'attr' => array('min' => 0)
             ))
             ->add('duracionUnidad', 'choice', array(
                 'choices'   => array(
@@ -68,7 +69,9 @@ class PracticaType extends AbstractType
             ))
             ->add('manejoSoftware',null,array('label' => 'Manejo de software','label_attr' => array('data-help' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
             ->add('interes',null,array('label' => 'Interés','label_attr' => array('data-help' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
-            ->add('cupos')
+            ->add('cupos', null, array(
+                'attr' => array('min' => 0)
+            ))
             ->add('entrevista',null,array(
                 'label' => '¿Requiere entrevista o presentación de un portafolio?',
                 'label_attr' => array(

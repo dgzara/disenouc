@@ -335,7 +335,7 @@ class PracticaController extends Controller
         }
 
         // Revisamos que sea el coordinador o el contacto
-        if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+        if(!$isCoordinacion && !$entity->hasContacto($this->getUser()->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
         
