@@ -8,10 +8,10 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('/js/gantt/lib/date.js') }}"></script>   
-    <script type="text/javascript" src="{{ asset('/js/vendor/jquery-ui-1.11.0.min.js') }}"></script>     
-    <script type="text/javascript" src="{{ asset('/js/gantt/jquery.ganttView.js') }}"></script>        
-    <script type="text/javascript" src="{{ asset('/js/pdev.submit.js') }}"></script>      
+    <script type="text/javascript" src="{{ asset('/externals/gantt/lib/date.js') }}"></script>   
+    <script type="text/javascript" src="{{ asset('/externals/vendor/jquery-ui-1.11.0.min.js') }}"></script>     
+    <script type="text/javascript" src="{{ asset('/externals/gantt/jquery.ganttView.js') }}"></script>        
+    <script type="text/javascript" src="{{ asset('/externals/self/pdev.submit.js') }}"></script>      
 {% endblock %}
         
 {%block breadcrumb%}
