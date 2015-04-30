@@ -95,7 +95,7 @@ class PracticaController extends Controller
                 ->getResult();
         $excelService = $this->get('xls.service_xls2007');
 
-        $excelService->excelObj->getProperties()->setCreator($user->getNombrecompleto())
+        $excelService->excelObj->getProperties()->setCreator($this->getUser()->getNombrecompleto())
                             ->setTitle('Practicas')
                             ->setSubject('');
 
@@ -377,7 +377,7 @@ class PracticaController extends Controller
         }
         
         // Revisamos que sea el coordinador o el contacto
-        if($isCoordinacion or $entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+        if(!$isCoordinacion and !$entity->hasContacto($this->getUser()->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
@@ -405,10 +405,10 @@ class PracticaController extends Controller
                 'notice',
                 'La práctica ha sido actualizada'
             );
-
+    
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
-
+        
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -507,7 +507,7 @@ class PracticaController extends Controller
         }
         
         // Revisamos que sea el coordinador o el contacto
-        if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+        if(!$isCoordinacion && !$entity->hasContacto($this->getUser()->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
 
@@ -543,7 +543,7 @@ class PracticaController extends Controller
             }
             
             // Revisamos que sea el coordinador o el contacto
-            if(!$isCoordinacion && !$entity->hasContacto($user->getPersona('TYPE_PRACTICAS_CONTACTO'))){
+            if(!$isCoordinacion && !$entity->hasContacto($this->getUser()->getPersona('TYPE_PRACTICAS_CONTACTO'))){
                 return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
             }
         

@@ -280,7 +280,7 @@ class EvaluacionProfesorController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('practicas_evaluacion_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('practicas_evaluacion_show', array('id' => $id)));
         }
 
         return array(
