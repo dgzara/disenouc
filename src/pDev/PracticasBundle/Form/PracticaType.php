@@ -26,11 +26,13 @@ class PracticaType extends AbstractType
         $user = $this->securityContext->getToken()->getUser();
         $builder
             ->add('nombre', null, array(
-                'label' => 'Nombre de la práctica'
+                'label' => 'Nombre de la práctica',
+                'attr' => array('placeholder' => 'jaja')
             ))
             ->add('organizacion', 'organizacion_selector', array(
                 'label' => 'Organización',
-                'required' => true
+                'required' => true,
+                'attr' => array('placeholder' => 'Ingrese el nombre de la organización')
             ))
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
@@ -67,19 +69,19 @@ class PracticaType extends AbstractType
                     'semanas' => 'semanas',
                     'meses' => 'meses'),
             ))
-            ->add('manejoSoftware',null,array('label' => 'Manejo de software','label_attr' => array('data-help' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
-            ->add('interes',null,array('label' => 'Interés','label_attr' => array('data-help' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
+            ->add('manejoSoftware',null,array('label' => 'Manejo de software','attr' => array('placeholder' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
+            ->add('interes',null,array('label' => 'Interés','attr' => array('placeholder' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
             ->add('cupos', null, array(
                 'attr' => array('min' => 0)
             ))
             ->add('entrevista',null,array(
                 'label' => '¿Requiere entrevista o presentación de un portafolio?',
-                'label_attr' => array(
-                    'data-help' => 'ej. presentación portafolio en entrevista predefinida por contacto'
+                'attr' => array(
+                    'placeholder' => 'ej. presentación portafolio en entrevista predefinida por contacto'
                 )
             ))
-            ->add('remuneraciones',null,array('label' => 'Remuneración','label_attr' => array('data-help' => 'monto líquido, si es que hay')))
-            ->add('beneficios',null,array('label' => 'Beneficios','label_attr' => array('data-help' => 'locomoción,etc')))
+            ->add('remuneraciones',null,array('label' => 'Remuneración','attr' => array('placeholder' => 'monto líquido, si es que hay')))
+            ->add('beneficios',null,array('label' => 'Beneficios','attr' => array('placeholder' => 'locomoción,etc')))
         ;
     }
 

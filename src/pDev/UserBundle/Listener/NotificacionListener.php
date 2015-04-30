@@ -168,8 +168,8 @@ class NotificacionListener
                         $cambio = true;
                         if($entity->getSupervisor())
                             $usuarios->add($entity->getSupervisor()->getUsuario());
-                        if($entity->getContacto())
-                            $usuarios->add($entity->getContacto()->getUsuario());
+                        foreach($entity->getContactos() as $contacto)
+                            $usuarios->add($contacto->getUsuario());
                         foreach($funcionarios as $funcionario)
                             $usuarios->add($funcionario->getUsuario());
                     }

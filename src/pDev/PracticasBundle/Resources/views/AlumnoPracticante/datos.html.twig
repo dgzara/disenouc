@@ -20,7 +20,6 @@
         {% elseif entity.organizacion %}
             <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.organizacion }}</strong><br>
-            Supervisor: {{ entity.supervisor }}
            </div>
            {% if form.tipo is defined %}
             {{ form_row(form.tipo) }}
@@ -35,7 +34,6 @@
             {{ form_row(form.tipo) }}
             {% endif %}
             {{ form_row(form.organizacion) }}
-            {{ form_row(form.supervisor) }}
         {% endif %}
         
         <div id="horario" class="row" style="display:none; margin-top:23px; ">
@@ -84,6 +82,12 @@
         {{ form_row(form.ultimoTaller) }}
         {{ form_row(form.ultimoTallerProfesor) }}
         <hr/>
+        
+        {% if form.supervisor is defined %}
+        <h4>Datos del supervisor</h4>
+        {{ form_row(form.supervisor) }}
+        <hr/>
+        {% endif %}
         
         <h4>Proyectos y responsabilidades (en acuerdo con el empleador)
             <abbr title="Mínimo: 3. Máximo: 5" class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>

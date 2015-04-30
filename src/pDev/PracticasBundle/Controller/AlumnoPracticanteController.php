@@ -434,15 +434,10 @@ class AlumnoPracticanteController extends Controller
                 throw $this->createNotFoundException('Unable to find organizacion entity.');
             }
             
-            // Buscamos al supervisor
-            $supervisor = $organizacion->getSupervisores()->last();
-            
+            // Seteamos los datos
             $entity = new AlumnoPracticante();
             $entity->setAlumno($alumno);
             $entity->setOrganizacion($organizacion);
-            
-            if($supervisor)
-                $entity->setSupervisor($supervisor);
         }
         
         // Generamos los datos defecto
@@ -464,7 +459,6 @@ class AlumnoPracticanteController extends Controller
         // Eliminamos los datos
         $form->remove('organizacion');
         $form->remove('contacto');
-        $form->remove('supervisor');
             
         // Si esta asociada a una practica, borramos los campos de organizacion y contacto
         if($entity->getPractica()){
@@ -524,15 +518,9 @@ class AlumnoPracticanteController extends Controller
                 throw $this->createNotFoundException('Unable to find organizacion entity.');
             }
             
-            // Buscamos al supervisor
-            $supervisor = $organizacion->getSupervisores()->last();
-            
             $entity = new AlumnoPracticante();
             $entity->setAlumno($alumno);
             $entity->setOrganizacion($organizacion);
-            
-            if($supervisor)
-                $entity->setSupervisor($supervisor);
         }
         
         // Generamos los datos defecto
@@ -554,7 +542,6 @@ class AlumnoPracticanteController extends Controller
         // Eliminamos los datos
         $form->remove('organizacion');
         $form->remove('contacto');
-        $form->remove('supervisor');
             
         // Si esta asociada a una practica, borramos los campos de organizacion y contacto
         if($entity->getPractica()){
@@ -573,6 +560,13 @@ class AlumnoPracticanteController extends Controller
             // Generamos las fechas
             $tomorrow = new \DateTime();
             $tomorrow->modify('+1 day');
+            
+            // Guardamos el supervisor
+            if($entity->getPractica() === null){
+                $supervisor = $entity->getSupervisor();
+                $supervisor->addOrganizacion($entity->getOrganizacion());
+                $em->persist($supervisor);
+            }
             
             // Creamos las tareas si no las posee
             foreach($entity->getProyectos() as $proyecto)

@@ -165,7 +165,12 @@ class OrganizacionController extends Controller
                         
             $em->persist($entity);
             $em->flush();
-
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'La organización ha sido creada'
+            );
+            
             return $this->redirect($this->generateUrl('practicas_organizacion_show', array('id' => $entity->getId())));
         }
 
@@ -227,6 +232,47 @@ class OrganizacionController extends Controller
     }
     
     /**
+     * Creates a new Organizacion entity.
+     *
+     * @Route("/create/practica", name="practicas_organizacion_create_practica")
+     * @Method("POST")
+     * @Template("pDevPracticasBundle:Organizacion:new.html.twig")
+     */
+    public function createPracticaAction(Request $request)
+    {
+        $pm = $this->get("permission.manager");
+        
+        $entity  = new Organizacion();
+        $form = $this->createForm(new OrganizacionType(), $entity);
+        $form->submit($request);
+        
+        if($form->isValid()) 
+        {
+            $em = $this->getDoctrine()->getManager();
+            
+            // Lo agregamos como creador
+            $entity->setCreador($this->getUser());
+            
+            // Agregamos a la persona como creador
+            if($pm->checkType("TYPE_PRACTICAS_CONTACTO"))
+            {
+                $contacto = $this->getUser()->getPersona("TYPE_PRACTICAS_CONTACTO");
+                $entity->addContacto($contacto);
+            }                        
+                        
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('practicas_new_organizacion', array('id' => $entity->getId())));
+        }
+
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+        );
+    }
+    
+    /**
      * Displays a form to create a new Organizacion entity.
      *
      * @Route("/new", name="practicas_organizacion_new")
@@ -234,6 +280,24 @@ class OrganizacionController extends Controller
      * @Template()
      */
     public function newAction()
+    {
+        $entity = new Organizacion();
+        $form   = $this->createForm(new OrganizacionType(), $entity);
+        
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+        );
+    }
+    
+    /**
+     * Crea una organización desde una oferta
+     *
+     * @Route("/new/practica", name="practicas_organizacion_new_practica")
+     * @Method("GET")
+     * @Template("pDevPracticasBundle:Organizacion:new.html.twig")
+     */
+    public function newPracticaAction()
     {
         $entity = new Organizacion();
         $form   = $this->createForm(new OrganizacionType(), $entity);
@@ -344,7 +408,12 @@ class OrganizacionController extends Controller
         if ($editForm->isValid()) {
             $em->persist($entity);
             $em->flush();
-
+            
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'La organización ha sido actualizada'
+            );
+            
             return $this->redirect($this->generateUrl('practicas_organizacion_show', array('id' => $id)));
         }
 

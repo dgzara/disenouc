@@ -21,8 +21,8 @@ class OrganizacionType extends AbstractType
             ->add('descripcion',null,array('label'=>'Descripción general'))
             ->add('pais',null,array('label'=>'País'))
             ->add('web',null,array('label'=>'Dirección web'))            
-            ->add('personasTotal',null,array('label'=>'N° personas','label_attr' => array('data-help' => 'Número de personas que trabajan en la organización. Debe ser mayor a 5 personas')))
-            ->add('antiguedad',null,array('label'=>'Años de antiguedad'))
+            ->add('personasTotal',null,array('attr' => array('min' => 0), 'label'=>'N° personas','label_attr' => array('data-help' => 'Número de personas que trabajan en la organización. Debe ser mayor a 5 personas')))
+            ->add('antiguedad',null,array('label'=>'Años de antiguedad', 'attr' => array('min' => 0)))
             ->add('profilePic',null,array('label'=>'Logotipo', 'required'=>false))
             ->add('isFileChanged','hidden')
         ;

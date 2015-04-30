@@ -1,0 +1,20 @@
+{% extends 'pDevPracticasBundle::layout.html.twig' %}
+
+{%block breadcrumb%}
+{{ parent()}}
+    <li><a href="{{ path('practicas_organizacion_new_practica') }}">Registrar organización</a></li>
+{%endblock%}
+
+
+{%block header%}Registrar organización{%endblock%}
+{%block lead%}Por favor complete la información de la nueva organización{%endblock%}
+
+{%block content %}
+    <form class="form-well form-horizontal" action="{{ path('practicas_organizacion_create_practica') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_rest(form) }}
+        <p class="pull-right">
+            <button class="btn btn-primary" type="submit">Registrar</button>
+        </p>
+        <div class="clearfix"></div>
+    </form>
+{% endblock %}

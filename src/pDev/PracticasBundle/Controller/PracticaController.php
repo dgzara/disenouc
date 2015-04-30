@@ -235,20 +235,20 @@ class PracticaController extends Controller
         
         $entity = new Practica();
         
-        // Si es un contacto, lo agrega
-        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");  
-        if($isContacto){
-            $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
-            $entity->setContacto($contacto);
-        }
-        
         $securityContext = $this->container->get('security.context');
         $form = $this->createForm(new PracticaType($securityContext), $entity);
         $ruta = $this->generateUrl('practicas_create');
-                    
-        if($isContacto){
+             
+        // Si es un contacto, lo agrega
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");         
+        if($isContacto)
+        {   
+            // Removemos los campos especificos
             $form->remove('contacto');
             $form->remove('tipo');
+            
+            $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
+            $entity->setContacto($contacto);
         }
         
         // Comprobamos si fue realizada desde una organizacion
