@@ -8,7 +8,7 @@
 {%block lead%}2 de 4: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form id="form_alumno_practica" class="form-well form-horizontal" action="{% if entity.practica %}{{ path('practicas_alumno_create_datos_source', {'id': entity.id}) }}{% else %}{{ path('practicas_alumno_create_datos', {'idOrganizacion': entity.organizacion.id}) }}{% endif %}" method="post" {{ form_enctype(form) }}>
+    <form id="form_alumno_practica" class="form-well form-horizontal" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.practica.organizacion }}</strong><br>
@@ -20,6 +20,7 @@
         {% elseif entity.organizacion %}
             <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.organizacion }}</strong><br>
+            Supervisor: {{ entity.supervisor }}<br>
            </div>
            {% if form.tipo is defined %}
             {{ form_row(form.tipo) }}

@@ -297,7 +297,7 @@ class AlumnoPracticanteController extends Controller
                 if(!$organizacion)
                     throw $this->createNotFoundException('Unable to find Organizacion entity.');                   
                     
-                return $this->redirect ($this->generateUrl ('practicas_alumno_new_datos',array('idOrganizacion' => $organizacion->getId())));
+                return $this->redirect($this->generateUrl('practicas_alumno_new_datos', array('idOrganizacion' => $organizacion->getId())));
             }
             elseif($organizacion_form->isValid() and $supervisor_form->isValid())
             {
@@ -349,7 +349,7 @@ class AlumnoPracticanteController extends Controller
                 $em->persist($supervisor);
                 $em->flush();
                 
-                return $this->redirect ($this->generateUrl ('practicas_alumno_new_datos', array('idOrganizacion' => $organizacion->getId())));
+                return $this->redirect($this->generateUrl('practicas_alumno_new_datos_supervisor', array('idOrganizacion' => $organizacion->getId(), 'idSupervisor' => $supervisor->getId())));
             }
         }
           
@@ -362,14 +362,12 @@ class AlumnoPracticanteController extends Controller
     }
     
     /**
-     * Displays a form to create a new AlumnoPracticante entity.
+     * Postula a una practica
      *
-     * @Route("/new/datos/organizacion/{idOrganizacion}", name="practicas_alumno_new_datos")
-     * @Route("/new/datos/practica/{practicaId}", name="practicas_alumno_new_datos_practica")
-     * @Route("/new/datos/{id}", name="practicas_alumno_new_datos_source")
+     * @Route("/postular/practica/{practicaId}", name="practicas_alumno_postular_practica")
      * @Template()
      */
-    public function datosAction(Request $request, $id = null, $idOrganizacion = null, $practicaId = null)
+    public function postularAction(Request $request, $practicaId)
     {
         $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
@@ -381,63 +379,82 @@ class AlumnoPracticanteController extends Controller
             throw $this->createNotFoundException('Unable to find Alumno entity.');
         }
         
-        // Si hay una practica asociada, la adjuntamos
-        if($practicaId)
-        {
-            $practica = $em->getRepository('pDevPracticasBundle:Practica')->find($practicaId);
-
-            if (!$practica) {
-                throw $this->createNotFoundException('Unable to find Practica entity.');
-            }
-            
-            // Creamos la práctica
-            $entity = new AlumnoPracticante();
-            $entity->setAlumno($alumno);
-            $entity->setPractica($practica);
-            $entity->setOrganizacion($practica->getOrganizacion());
-            $entity->setSupervisor($practica->getSupervisor());
-            $entity->setComoContacto("Ofertas publicadas en este sitio");
-            $entity->setFechaInicio($practica->getFechaInicio());
-            $entity->setDuracionCantidad($practica->getDuracionCantidad());
-            $entity->setDuracionUnidad($practica->getDuracionUnidad());
-            $entity->setTipo($practica->getTipo());
-            $entity->setEstado(AlumnoPracticante::ESTADO_POSTULADO);
-            
-            $em->persist($entity);
-            $em->flush();
-            
-            $request->getSession()->getFlashBag()->add(
-                'notice',
-                'Practica postulada'
-            );
-            
-            return $this->redirect($this->generateUrl('practicas_show', array('id' => $practica->getId())));
+        // Obtenemos la practica
+        $practica = $em->getRepository('pDevPracticasBundle:Practica')->find($practicaId);
+        if (!$practica) {
+            throw $this->createNotFoundException('Unable to find Practica entity.');
         }
-        elseif($id)
-        {
-            $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
-            }
-            
-            // Revisamos que el usuario pueda editarlo
-            /*if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
-                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-            }*/
+        
+        // Creamos la práctica
+        $entity = new AlumnoPracticante();
+        $entity->setAlumno($alumno);
+        $entity->setPractica($practica);
+        $entity->setOrganizacion($practica->getOrganizacion());
+        $entity->setSupervisor($practica->getSupervisor());
+        $entity->setComoContacto("Ofertas publicadas en este sitio");
+        $entity->setFechaInicio($practica->getFechaInicio());
+        $entity->setDuracionCantidad($practica->getDuracionCantidad());
+        $entity->setDuracionUnidad($practica->getDuracionUnidad());
+        $entity->setTipo($practica->getTipo());
+        $entity->setEstado(AlumnoPracticante::ESTADO_POSTULADO);
+        
+        // Guardamos
+        $em->persist($entity);
+        $em->flush();
+        
+        $request->getSession()->getFlashBag()->add(
+            'notice',
+            'Practica postulada'
+        );
+        
+        return $this->redirect($this->generateUrl('practicas_show', array('id' => $practica->getId())));
+    }
+    
+    /**
+     * Displays a form to create a new AlumnoPracticante entity.
+     *
+     * @Route("/new/datos/organizacion/{idOrganizacion}", name="practicas_alumno_new_datos")
+     * @Route("/new/datos/organizacion/{idOrganizacion}/supervisor/{idSupervisor}", name="practicas_alumno_new_datos_supervisor")
+     * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
+     */
+    public function datosNewAction(Request $request, $idOrganizacion, $idSupervisor = null)
+    {
+        $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
+        $user = $pm->getUser();
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        
+        if(!$alumno) {
+            throw $this->createNotFoundException('Unable to find Alumno entity.');
         }
-        elseif($idOrganizacion)
+        
+        // Revisamos si surgió de una oferta
+        $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($idOrganizacion);
+            
+        if (!$organizacion) {
+            throw $this->createNotFoundException('Unable to find organizacion entity.');
+        }
+        
+        // Establecemos la ruta
+        $ruta = $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion));
+        
+        // Seteamos los datos
+        $entity = new AlumnoPracticante();
+        $entity->setAlumno($alumno);
+        $entity->setOrganizacion($organizacion);
+        
+        // Buscamos al supervisor
+        if($idSupervisor)
         {
-            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($idOrganizacion);
-            
-            if (!$organizacion) {
-                throw $this->createNotFoundException('Unable to find organizacion entity.');
+            $supervisor = $em->getRepository('pDevPracticasBundle:Supervisor')->find($idSupervisor);
+            if (!$supervisor) {
+                throw $this->createNotFoundException('Unable to find Supervisor entity.');
             }
+            $entity->setSupervisor($supervisor);
             
-            // Seteamos los datos
-            $entity = new AlumnoPracticante();
-            $entity->setAlumno($alumno);
-            $entity->setOrganizacion($organizacion);
+            // Generamos la nueva ruta
+            $ruta = $this->generateUrl('practicas_alumno_create_datos_supervisor', array('idOrganizacion' => $idOrganizacion, 'idSupervisor' => $idSupervisor));
         }
         
         // Generamos los datos defecto
@@ -462,6 +479,7 @@ class AlumnoPracticanteController extends Controller
             
         // Si esta asociada a una practica, borramos los campos de organizacion y contacto
         if($entity->getPractica()){
+            $form->remove('supervisor');
             $form->remove('comoContacto');
             $form->remove('fechaInicio');
             $form->remove('fechaTermino');
@@ -472,19 +490,20 @@ class AlumnoPracticanteController extends Controller
           
         return array(
             'entity' => $entity,
+            'ruta'   => $ruta,
             'form' => $form->createView(),
         );
     }
-        
+    
     /**
      * Creates a new AlumnoPracticante entity.
      *
-     * @Route("/datos/create/organizacion/{idOrganizacion}", name="practicas_alumno_create_datos")
-     * @Route("/datos/create/{id}", name="practicas_alumno_create_datos_source")
+     * @Route("/create/datos/organizacion/{idOrganizacion}", name="practicas_alumno_create_datos")
+     * @Route("/create/datos/organizacion/{idOrganizacion}/supervisor/{idSupervisor}", name="practicas_alumno_create_datos_supervisor")
      * @Method("POST")
      * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
      */
-    public function datosCreateAction(Request $request, $id = null, $idOrganizacion = null)
+    public function datosCreateAction(Request $request, $idOrganizacion, $idSupervisor = null)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
@@ -496,31 +515,32 @@ class AlumnoPracticanteController extends Controller
             throw $this->createNotFoundException('Unable to find Alumno entity.');
         }
         
-        // Buscamos el AlumnoPracticante asociado
-        if($id)
-        {
-            $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
-            }
-            
-            // Revisamos que el usuario pueda editarlo
-            /*if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
-                return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-            }*/
+        // Buscamos la organizacion
+        $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($idOrganizacion);
+        
+        if (!$organizacion) {
+            throw $this->createNotFoundException('Unable to find organizacion entity.');
         }
-        elseif($idOrganizacion)
+        
+        // Establecemos la ruta
+        $ruta = $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion));
+        
+        // Seteamos los datos
+        $entity = new AlumnoPracticante();
+        $entity->setAlumno($alumno);
+        $entity->setOrganizacion($organizacion);
+        
+        // Buscamos al supervisor
+        if($idSupervisor)
         {
-            $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($idOrganizacion);
-            
-            if (!$organizacion) {
-                throw $this->createNotFoundException('Unable to find organizacion entity.');
+            $supervisor = $em->getRepository('pDevPracticasBundle:Supervisor')->find($idSupervisor);
+            if (!$supervisor) {
+                throw $this->createNotFoundException('Unable to find Supervisor entity.');
             }
+            $entity->setSupervisor($supervisor);
             
-            $entity = new AlumnoPracticante();
-            $entity->setAlumno($alumno);
-            $entity->setOrganizacion($organizacion);
+            // Generamos la nueva ruta
+            $ruta = $this->generateUrl('practicas_alumno_create_datos_supervisor', array('idOrganizacion' => $idOrganizacion, 'idSupervisor' => $idSupervisor));
         }
         
         // Generamos los datos defecto
@@ -542,9 +562,10 @@ class AlumnoPracticanteController extends Controller
         // Eliminamos los datos
         $form->remove('organizacion');
         $form->remove('contacto');
-            
+        
         // Si esta asociada a una practica, borramos los campos de organizacion y contacto
         if($entity->getPractica()){
+            $form->remove('supervisor');
             $form->remove('comoContacto');
             $form->remove('fechaInicio');
             $form->remove('fechaTermino');
@@ -560,13 +581,6 @@ class AlumnoPracticanteController extends Controller
             // Generamos las fechas
             $tomorrow = new \DateTime();
             $tomorrow->modify('+1 day');
-            
-            // Guardamos el supervisor
-            if($entity->getPractica() === null){
-                $supervisor = $entity->getSupervisor();
-                $supervisor->addOrganizacion($entity->getOrganizacion());
-                $em->persist($supervisor);
-            }
             
             // Creamos las tareas si no las posee
             foreach($entity->getProyectos() as $proyecto)
@@ -592,10 +606,219 @@ class AlumnoPracticanteController extends Controller
 
         return array(
             'entity' => $entity,
+            'ruta'   => $ruta,
             'form'   => $form->createView(),
         );
     }
 
+    /**
+     * Arma un plan de practica a partir de una oferta
+     *
+     * @Route("/new/armar/practica/{practicaId}", name="practicas_alumno_armar_practica")
+     * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
+     */
+    public function armarAction(Request $request, $practicaId)
+    {
+        $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
+        $user = $pm->getUser();
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        
+        if(!$alumno) {
+            throw $this->createNotFoundException('Unable to find Alumno entity.');
+        }
+
+        // Revisamos si surgió de una oferta
+        $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->findOneBy(array('practica' => $practicaId, 'alumno' => $alumno->getId()));
+        
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+        
+        // Generamos los datos defecto
+        if($entity->getDesafios()->count() == 0){
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+            $entity->addDesafio(new Desafio());
+        }
+        if($entity->getProyectos()->count() == 0){
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+            $entity->addProyecto(new Proyecto());
+        }
+        
+        $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+        
+        // Eliminamos los datos
+        $form->remove('organizacion');
+        $form->remove('contacto');
+            
+        // Si esta asociada a una practica, borramos los campos de organizacion y contacto
+        if($entity->getPractica()){
+            $form->remove('comoContacto');
+            $form->remove('fechaInicio');
+            $form->remove('fechaTermino');
+            $form->remove('duracionCantidad');
+            $form->remove('duracionUnidad');
+            $form->remove('tipo');
+        }
+          
+        return array(
+            'entity' => $entity,
+            'ruta' => $this->generateUrl('practicas_alumno_update_datos', array('id' => $entity->getId())),
+            'form' => $form->createView(),
+        );
+    }
+        
+    /**
+     * Displays a form to create a new AlumnoPracticante entity.
+     *
+     * @Route("/datos/edit/{id}", name="practicas_alumno_edit_datos")
+     * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
+     */
+    public function datosEditAction(Request $request, $id)
+    {
+        $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
+        $user = $pm->getUser();
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        
+        if(!$alumno) {
+            throw $this->createNotFoundException('Unable to find Alumno entity.');
+        }
+        
+        $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+        
+        $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+        
+        // Eliminamos los datos
+        $form->remove('organizacion');
+        $form->remove('contacto');
+            
+        // Si esta asociada a una practica, borramos los campos de organizacion y contacto
+        if($entity->getPractica()){
+            $form->remove('supervisor');
+            $form->remove('comoContacto');
+            $form->remove('fechaInicio');
+            $form->remove('fechaTermino');
+            $form->remove('duracionCantidad');
+            $form->remove('duracionUnidad');
+            $form->remove('tipo');
+        }
+          
+        return array(
+            'entity' => $entity,
+            'ruta' => $this->generateUrl('practicas_alumno_update_datos', array('id' => $entity->getId())),
+            'form' => $form->createView(),
+        );
+    }
+    
+    /**
+     * Creates a new AlumnoPracticante entity.
+     *
+     * @Route("/datos/update/{id}", name="practicas_alumno_update_datos")
+     * @Method("POST")
+     * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
+     */
+    public function datosUpdateAction(Request $request, $id)
+    {
+        $pm = $this->get('permission.manager');
+        $em = $this->getDoctrine()->getManager();
+        $user = $pm->getUser();
+        $isCoordinacion = $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
+        $alumno = $user->getPersona('TYPE_ALUMNO');
+        
+        if(!$alumno) {
+            throw $this->createNotFoundException('Unable to find Alumno entity.');
+        }
+        
+        $entity = $em->getRepository('pDevPracticasBundle:AlumnoPracticante')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find AlumnoPracticante entity.');
+        }
+        
+        $form = $this->createForm(new AlumnoPracticanteType(), $entity);
+        
+        // Eliminamos los datos
+        $form->remove('organizacion');
+        $form->remove('contacto');
+        
+        // Si esta asociada a una practica, borramos los campos de organizacion y contacto
+        if($entity->getPractica()){
+            $form->remove('supervisor');
+            $form->remove('comoContacto');
+            $form->remove('fechaInicio');
+            $form->remove('fechaTermino');
+            $form->remove('duracionCantidad');
+            $form->remove('duracionUnidad');
+            $form->remove('tipo');
+        }
+        
+        // Obtenemos los datos originales
+        $originalProyectos = clone $entity->getProyectos();
+        
+        $form->submit($request);
+
+        if ($form->isValid()) 
+        {
+            // Generamos las fechas
+            $tomorrow = new \DateTime();
+            $tomorrow->modify('+1 day');
+            
+            // Creamos las tareas si no las posee
+            foreach($entity->getProyectos() as $proyecto)
+            {
+                if($originalProyectos->contains($proyecto))
+                {
+                    $originalProyectos->removeElement($proyecto);
+                }
+                else
+                {
+                    $proyecto->setPracticante($entity);
+                    
+                    $tarea = new ProyectoTask();
+                    $tarea->setFechaInicio(new \DateTime());
+                    $tarea->setFechaTermino($tomorrow);
+                    $tarea->setNombre('Tarea 1');
+                    $tarea->setProyecto($proyecto);
+                    $proyecto->addTarea($tarea);
+                    
+                    // Guardamos
+                    $em->persist($tarea);
+                    $em->persist($proyecto);
+                }
+            }
+            
+            // Removemos los que no fueron considerados
+            foreach($originalProyectos as $proyecto)
+            {
+                $entity->removeProyecto($proyecto);
+                $em->remove($proyecto);
+            }
+            
+            // Guardamos
+            $em->persist($entity);
+            $em->flush();
+            
+            return $this->redirect($this->generateUrl('practicas_alumno_gantt', array('id' => $entity->getId())));
+        }
+
+        return array(
+            'entity' => $entity,
+            'ruta' => $this->generateUrl('practicas_alumno_update_datos', array('id' => $entity->getId())),
+            'form'   => $form->createView(),
+        );
+    }
+    
     /**
      * Creates a new AlumnoPracticante entity.
      *
@@ -603,7 +826,7 @@ class AlumnoPracticanteController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function ganttAction($id)
+    public function ganttAction(Request $request, $id)
     {
         // Permisos
         $pm = $this->get('permission.manager');
@@ -620,9 +843,15 @@ class AlumnoPracticanteController extends Controller
         }
         
         // Revisamos que el usuario pueda editarlo
-        /*if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && !($entity->hasAlumno($alumno) or $isCoordinacion))
+        {
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'No posee los permisos'
+            );
+            
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-        }*/
+        }
         
         return array(
             'entity' => $entity,
@@ -653,9 +882,15 @@ class AlumnoPracticanteController extends Controller
         }
         
         // Revisamos que el usuario pueda editarlo
-        /*if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && !($entity->hasAlumno($alumno) or $isCoordinacion))
+        {
+            $request->getSession()->getFlashBag()->add(
+                'notice',
+                'No posee los permisos'
+            );
+            
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-        }*/
+        }
         
         // Creamos el formulario
         $confirmForm = $this->createConfirmForm($id);

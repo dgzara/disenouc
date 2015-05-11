@@ -20,7 +20,7 @@
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
     {% if alumnoPractica == false and entity.estado == 'estado.aprobada' %}
     <div class="alert alert-info">
-        <a href="{{ path('practicas_alumno_new_datos_practica', {'practicaId': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
+        <a href="{{ path('practicas_alumno_postular_practica', {'practicaId': entity.id}) }}">Postula a esta práctica <span class="glyphicon glyphicon-share-alt pull-right"></span></a>
     </div>
     {% elseif alumnoPractica %}
         {% if alumnoPractica.estado == 'estado.postulado' %}
@@ -30,7 +30,7 @@
         {% elseif alumnoPractica.estado == 'estado.aceptada.contacto' %}
         <div class="alert alert-warning">
             Práctica aceptada.
-            <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+            <a href="{{ path('practicas_alumno_armar_practica', { 'practicaId': entity.id }) }}" class="pull-right btn btn-primary">
                 <span class="glyphicon glyphicon-ok"></span> Armar plan de practica
             </a>
         </div>

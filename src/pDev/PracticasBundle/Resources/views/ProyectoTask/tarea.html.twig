@@ -2,42 +2,35 @@
 
 {% block title %}{% if idTarea == 'new' %}Nueva{% else %}Modificar{% endif %} tarea{% endblock %}
 {% block body %}
-
     <form id="form_tarea" class="form-horizontal form-modal" action="{{ path('practicas_alumno_tarea',{'idProyecto':idProyecto,'idTarea':idTarea}) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_widget(edit_form) }}
         <button type="submit" id="_submit" class="hide"></button>
     </form>
-<script type="text/javascript">
-    
-    var tasksubmit = new p_submitTask();
-    
-    tasksubmit.pushForm('form_tarea','Guardando tarea');
-    tasksubmit.onComplete= function(){
-        var refresh_url = '{{path('practicas_alumno_gantt_json',{'id':idPracticante})}}';
-        $.ajax({
-            url: refresh_url,
-            success: function(data){
+        <script type="text/javascript">
+            var tasksubmit = new p_submitTask();
+            tasksubmit.pushForm('form_tarea','Guardando tarea');
+            tasksubmit.onComplete= function(){
+                var refresh_url = '{{path('practicas_alumno_gantt_json',{'id':idPracticante})}}';
+                $.ajax({
+                    url: refresh_url,
+                    success: function(data){
                         ganttData = data;
+                        console.log('jaja');
                         p_gantt_redraw();
                         p_destroyModal();
                         $("#eventMessage").text('Guardado.');
                     }
-        });
-        
-        
-    };
-    
-    function taskBegin(obj)
-    {
-        $("#eventMessage").text('Guardando');
-        jQuery(obj).replaceWith('<a class="btn">Guardando...</a>');
-        tasksubmit.begin();
-    }
-    
-</script>
+                });
+            };
+            function taskBegin(obj)
+            {
+                $("#eventMessage").text('Guardando');
+                jQuery(obj).replaceWith('<a class="btn">Guardando...</a>');
+                tasksubmit.begin();
+            }
+        </script>
 {% endblock %}
 {% block footer %}
-<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-<a onclick="taskBegin(this);" class="btn btn-primary">Guardar</a>
-
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+    <a onclick="taskBegin(this);" class="btn btn-primary">Guardar</a>
 {% endblock %}

@@ -37,7 +37,7 @@ class ProyectoTaskController extends Controller
             throw $this->createNotFoundException('Unable to find Proyecto entity.');
         }
         
-        if($idTarea==='new')
+        if($idTarea === 'new')
             $tarea = new ProyectoTask();
         else
             $tarea = $em->getRepository('pDevPracticasBundle:ProyectoTask')->find($idTarea);

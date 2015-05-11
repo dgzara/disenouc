@@ -34,7 +34,7 @@
     
     <div class="well">
         <p>
-            <a href="{{ path('practicas_alumno_new_datos_source', {'id': entity.id})}}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Anterior: Detalles de la práctica</a>        
+            <a href="{{ path('practicas_alumno_edit_datos', {'id': entity.id})}}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Anterior: Detalles de la práctica</a>        
             <a href="{{ path('practicas_alumno_gantt_create', {'id': entity.id}) }}" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Enviar para aprobación</a>        
         </p>
         <div class="clearfix"></div>
@@ -55,17 +55,17 @@
                 behavior: {
                     onClick: function (data) {
                         var msg = "You clicked on an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
-                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), {start: data.start.toString("d-M-yyyy"), end: data.end.toString("d-M-yyyy")} );
                         //$("#eventMessage").text(msg);
                     },
                     onResize: function (data) {
                         var msg = "You resized an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
-                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), {start: data.start.toString("d-M-yyyy"), end: data.end.toString("d-M-yyyy")} );
                         //$("#eventMessage").text(msg);
                     },
                     onDrag: function (data) {
                         var msg = "You dragged an event: { start: " + data.start.toString("d-M-yyyy") + ", end: " + data.end.toString("d-M-yyyy") + " }";
-                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), data );
+                        $.post(Routing.generate('practicas_alumno_tarea_edit_json', { id: data.idTarea }), {start: data.start.toString("d-M-yyyy"), end: data.end.toString("d-M-yyyy")} );
                         //$("#eventMessage").text(msg);
                     },
                     editable: true,

@@ -77,13 +77,13 @@
                         <a href="{{ path('practicas_alumno_postulante_aceptar', {'id': entity.id}) }}" class="pull-right btn btn-primary">
                             <span class="glyphicon glyphicon-ok"></span> Aceptar postulante
                         </a>
-                    {% elseif isAlumno and entity.estado == 'estado.aceptada.contacto' %}
-                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
-                            <span class="glyphicon glyphicon-ok"></span> Armar plan de practica
+                    {% elseif isAlumno and entity.estado == 'estado.aceptada.contacto' and entity.practica != null %}
+                        <a href="{{ path('practicas_alumno_armar_practica', { 'practicaId': entity.practica.id }) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Armar plan de práctica
                         </a>
                     {% elseif isAlumno and entity.estado == 'estado.pendiente' %}
-                        <a href="{{ path('practicas_alumno_new_datos_source', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
-                            <span class="glyphicon glyphicon-ok"></span> Modificar practica
+                        <a href="{{ path('practicas_alumno_edit_datos', { 'id': entity.id }) }}" class="pull-right btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span> Modificar plan de práctica
                         </a>
                     {% elseif (isCoordinacion and entity.estado == 'estado.aceptada.supervisor') or ((isSupervisor or isContacto) and entity.estado == 'estado.enviada') %}
                         <a href="{{ path('practicas_alumno_aceptar', { 'id': entity.id }) }}" class="pull-right btn btn-primary onmodal">
