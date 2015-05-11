@@ -339,6 +339,42 @@ class SupervisorController extends Controller
     }
     
     /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/rut/{rut}", name="practicas_supervisor_rut", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function buscarRutAction(Request $request, $rut)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Supervisor')->findOneByRut($rut);
+
+        if($entity)
+        {
+            $return = array(
+                'status' => 200,
+                'id' => $entity->getId(),
+                'value' => $entity->__toString(),
+                'nombres' => $entity->getNombres(),
+                'apellidoPaterno' => $entity->getApellidoPaterno(),
+                'apellidoMaterno' => $entity->getApellidoMaterno(),
+                'cargo' => $entity->getCargo(),
+                'email' => $entity->getEmail(),
+                'profesion' => $entity->getProfesion(),
+            );
+        }
+        else{
+            $return = array(
+                'status' => 400
+            );
+        }
+                 
+        $response = new Response(json_encode($return));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
      * Creates a form to delete a Supervisor entity by id.
      *
      * @param mixed $id The entity id

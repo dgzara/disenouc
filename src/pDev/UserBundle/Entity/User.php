@@ -541,6 +541,16 @@ class User extends BaseUser
     }
     
     /**
+     * Get rut sin formato
+     *
+     * @return string 
+     */
+    public function getRutSinFormato()
+    {
+        return preg_replace("/[^Kk0-9]/",'',$this->rut);
+    }
+    
+    /**
      * Set numeroTelefono
      *
      * @param string $numeroTelefono

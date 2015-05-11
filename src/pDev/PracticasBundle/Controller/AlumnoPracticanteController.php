@@ -237,15 +237,11 @@ class AlumnoPracticanteController extends Controller
         
         // Generamos el formulario nuevo
         $organizacion = new Organizacion();
-        $supervisor = new Supervisor();
-        
         $organizacion_form = $this->createForm(new OrganizacionType(), $organizacion);
-        $supervisor_form = $this->createForm(new SupervisorOrganizacionType(), $supervisor);
         
         return array(
             'form' => $form->createView(),
             'organizacion_form' => $organizacion_form->createView(),
-            'supervisor_form' => $supervisor_form->createView(),
         );
     }
     
@@ -253,7 +249,6 @@ class AlumnoPracticanteController extends Controller
      * Creates a new AlumnoPracticante entity.
      *
      * @Route("/create", name="practicas_alumno_create")
-     * @Route("/create/{id}", name="practicas_alumno_create_source")
      * @Method("POST")
      * @Template("pDevPracticasBundle:AlumnoPracticante:new.html.twig")
      */
@@ -278,16 +273,12 @@ class AlumnoPracticanteController extends Controller
             
         // Generamos el formulario nuevo
         $organizacion = new Organizacion();
-        $supervisor = new Supervisor();
-        
         $organizacion_form = $this->createForm(new OrganizacionType(), $organizacion);
-        $supervisor_form = $this->createForm(new SupervisorOrganizacionType(), $supervisor);
         
         if($request->isMethod('POST'))
         {
             $form->submit($request);
             $organizacion_form->submit($request);
-            $supervisor_form->submit($request);
             
             if($form->isValid())
             {
@@ -296,68 +287,20 @@ class AlumnoPracticanteController extends Controller
                 
                 if(!$organizacion)
                     throw $this->createNotFoundException('Unable to find Organizacion entity.');                   
-                    
-                return $this->redirect($this->generateUrl('practicas_alumno_new_datos', array('idOrganizacion' => $organizacion->getId())));
             }
-            elseif($organizacion_form->isValid() and $supervisor_form->isValid())
+            elseif($organizacion_form->isValid())
             {
-                // Creamos el usuario
-                $userManager = $this->container->get('fos_user.user_manager');
-                $user = $userManager->createUser();
-                $user->setRut($supervisor->getRut());
-                $user->setEmail($supervisor->getEmail());
-                $user->setNombres($supervisor->getNombres());
-                $user->setApellidoPaterno($supervisor->getApellidoPaterno());
-                $user->setApellidoMaterno($supervisor->getApellidoMaterno());
-                $user->setUsername($user->getEmail());
-                $user->setExternal(true);
-                $user->setEnabled(true);
-                
-                // Guardamos los datos del supervisor y organizacion
-                $supervisor->addOrganizacion($organizacion);
-                $supervisor->setUsuario($user);
-                
-                // Creamos el contacto
-                $contacto = new Contacto();
-                $contacto->setRut($supervisor->getRut());
-                $contacto->setNombres($supervisor->getNombres());
-                $contacto->setApellidoPaterno($supervisor->getApellidoPaterno());
-                $contacto->setApellidoMaterno($supervisor->getApellidoMaterno());
-                $contacto->setEmail($supervisor->getEmail());
-                $contacto->setUsuario($user);
-                
-                // Seteamos la contraseña
-                $password = $user->getPassword();
-                $user->setSalt(md5(time()));
-                $factory = $this->get('security.encoder_factory');
-                $encoder = $factory->getEncoder($user);
-                $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-                $user->setPassword($password);
-                $user->addRole("ROLE_USER");
-                
-                // Creamos el usuario y mandamos el mail
-                $tokenGenerator = $this->get('fos_user.util.token_generator');
-                $user->setConfirmationToken($tokenGenerator->generateToken());
-                $this->get('fos_user.mailer')->sendResettingEmailMessage($user);
-                $user->setPasswordRequestedAt(new \DateTime());
-                $this->get('fos_user.user_manager')->updateUser($user);
-                
-                // Guardamos
-                $em->persist($user);
-                $em->persist($contacto);
                 $em->persist($organizacion);
-                $em->persist($supervisor);
                 $em->flush();
-                
-                return $this->redirect($this->generateUrl('practicas_alumno_new_datos_supervisor', array('idOrganizacion' => $organizacion->getId(), 'idSupervisor' => $supervisor->getId())));
             }
+            
+            return $this->redirect($this->generateUrl('practicas_alumno_new_datos', array('idOrganizacion' => $organizacion->getId())));
         }
           
         return array(
             'entity' => $entity,
             'form' => $form->createView(),
             'organizacion_form' => $organizacion_form->createView(),
-            'supervisor_form' => $supervisor_form->createView(),
         );
     }
     
@@ -414,10 +357,9 @@ class AlumnoPracticanteController extends Controller
      * Displays a form to create a new AlumnoPracticante entity.
      *
      * @Route("/new/datos/organizacion/{idOrganizacion}", name="practicas_alumno_new_datos")
-     * @Route("/new/datos/organizacion/{idOrganizacion}/supervisor/{idSupervisor}", name="practicas_alumno_new_datos_supervisor")
      * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
      */
-    public function datosNewAction(Request $request, $idOrganizacion, $idSupervisor = null)
+    public function datosNewAction(Request $request, $idOrganizacion)
     {
         $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
@@ -436,26 +378,10 @@ class AlumnoPracticanteController extends Controller
             throw $this->createNotFoundException('Unable to find organizacion entity.');
         }
         
-        // Establecemos la ruta
-        $ruta = $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion));
-        
         // Seteamos los datos
         $entity = new AlumnoPracticante();
         $entity->setAlumno($alumno);
         $entity->setOrganizacion($organizacion);
-        
-        // Buscamos al supervisor
-        if($idSupervisor)
-        {
-            $supervisor = $em->getRepository('pDevPracticasBundle:Supervisor')->find($idSupervisor);
-            if (!$supervisor) {
-                throw $this->createNotFoundException('Unable to find Supervisor entity.');
-            }
-            $entity->setSupervisor($supervisor);
-            
-            // Generamos la nueva ruta
-            $ruta = $this->generateUrl('practicas_alumno_create_datos_supervisor', array('idOrganizacion' => $idOrganizacion, 'idSupervisor' => $idSupervisor));
-        }
         
         // Generamos los datos defecto
         if($entity->getDesafios()->count() == 0){
@@ -490,7 +416,7 @@ class AlumnoPracticanteController extends Controller
           
         return array(
             'entity' => $entity,
-            'ruta'   => $ruta,
+            'ruta'   => $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion)),
             'form' => $form->createView(),
         );
     }
@@ -499,11 +425,10 @@ class AlumnoPracticanteController extends Controller
      * Creates a new AlumnoPracticante entity.
      *
      * @Route("/create/datos/organizacion/{idOrganizacion}", name="practicas_alumno_create_datos")
-     * @Route("/create/datos/organizacion/{idOrganizacion}/supervisor/{idSupervisor}", name="practicas_alumno_create_datos_supervisor")
      * @Method("POST")
      * @Template("pDevPracticasBundle:AlumnoPracticante:datos.html.twig")
      */
-    public function datosCreateAction(Request $request, $idOrganizacion, $idSupervisor = null)
+    public function datosCreateAction(Request $request, $idOrganizacion)
     {
         $pm = $this->get('permission.manager');
         $user = $pm->getUser();
@@ -522,26 +447,10 @@ class AlumnoPracticanteController extends Controller
             throw $this->createNotFoundException('Unable to find organizacion entity.');
         }
         
-        // Establecemos la ruta
-        $ruta = $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion));
-        
         // Seteamos los datos
         $entity = new AlumnoPracticante();
         $entity->setAlumno($alumno);
         $entity->setOrganizacion($organizacion);
-        
-        // Buscamos al supervisor
-        if($idSupervisor)
-        {
-            $supervisor = $em->getRepository('pDevPracticasBundle:Supervisor')->find($idSupervisor);
-            if (!$supervisor) {
-                throw $this->createNotFoundException('Unable to find Supervisor entity.');
-            }
-            $entity->setSupervisor($supervisor);
-            
-            // Generamos la nueva ruta
-            $ruta = $this->generateUrl('practicas_alumno_create_datos_supervisor', array('idOrganizacion' => $idOrganizacion, 'idSupervisor' => $idSupervisor));
-        }
         
         // Generamos los datos defecto
         if($entity->getDesafios()->count() == 0){
@@ -582,6 +491,18 @@ class AlumnoPracticanteController extends Controller
             $tomorrow = new \DateTime();
             $tomorrow->modify('+1 day');
             
+            // Revisamos si el supervisor existe, 
+            $supervisor = $entity->getSupervisor();
+            $supervisorBuscado = $em->getRepository('pDevPracticasBundle:Supervisor')->findOneByRut($supervisor->getRutSinFormato());
+        
+            // Guardamos al supervisor sea el caso
+            if($supervisorBuscado) {
+                $entity->setSupervisor($supervisorBuscado);
+            }
+            else {
+                $em->persist($supervisor);
+            }
+            
             // Creamos las tareas si no las posee
             foreach($entity->getProyectos() as $proyecto)
             {
@@ -606,7 +527,7 @@ class AlumnoPracticanteController extends Controller
 
         return array(
             'entity' => $entity,
-            'ruta'   => $ruta,
+            'ruta'   => $this->generateUrl('practicas_alumno_create_datos', array('idOrganizacion' => $idOrganizacion)),
             'form'   => $form->createView(),
         );
     }
@@ -925,15 +846,69 @@ class AlumnoPracticanteController extends Controller
         }
         
         // Revisamos que el usuario pueda editarlo
-        /*if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && ($entity->hasAlumno($alumno) or $isCoordinacion)){
+        if($entity->getEstado() !== AlumnoPracticante::ESTADO_BORRADOR && !($entity->hasAlumno($alumno) or $isCoordinacion)){
             return $this->redirect($this->generateUrl('practicas_alumno_show', array('id' => $id)));
-        }*/
+        }
         
         // Creamos el formulario y aceptamos la respuesta
         $confirmForm = $this->createConfirmForm($id);
         $confirmForm->submit($request);
 
-        if ($confirmForm->isValid()) {
+        if ($confirmForm->isValid()) 
+        {
+            // Vemos si el supevisor tiene un usuario asociado
+            $supervisor = $entity->getSupervisor();
+            if($supervisor->getUsuario() === null)
+            {
+                // Creamos el usuario
+                $userManager = $this->container->get('fos_user.user_manager');
+                $user = $userManager->createUser();
+                $user->setRut($supervisor->getRut());
+                $user->setEmail($supervisor->getEmail());
+                $user->setNombres($supervisor->getNombres());
+                $user->setApellidoPaterno($supervisor->getApellidoPaterno());
+                $user->setApellidoMaterno($supervisor->getApellidoMaterno());
+                $user->setUsername($user->getEmail());
+                $user->setExternal(true);
+                $user->setEnabled(true);
+                
+                // Guardamos los datos del supervisor y organizacion
+                $supervisor->addOrganizacion($entity->getOrganizacion());
+                $supervisor->setUsuario($user);
+                
+                // Asociamos al supervisor como el contacto
+                $contacto = new Contacto();
+                $contacto->setRut($supervisor->getRut());
+                $contacto->setNombres($supervisor->getNombres());
+                $contacto->setApellidoPaterno($supervisor->getApellidoPaterno());
+                $contacto->setApellidoMaterno($supervisor->getApellidoMaterno());
+                $contacto->setEmail($supervisor->getEmail());
+                $contacto->setUsuario($user);
+                
+                // Seteamos la contraseña
+                $password = $user->getPassword();
+                $user->setSalt(md5(time()));
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($user);
+                $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+                $user->setPassword($password);
+                $user->addRole("ROLE_USER");
+                
+                // Creamos el usuario y mandamos el mail
+                $tokenGenerator = $this->get('fos_user.util.token_generator');
+                $user->setConfirmationToken($tokenGenerator->generateToken());
+                $this->get('fos_user.mailer')->sendResettingEmailMessage($user);
+                $user->setPasswordRequestedAt(new \DateTime());
+                $this->get('fos_user.user_manager')->updateUser($user);
+                
+                // Guardamos
+                $em->persist($user);
+                $em->persist($contacto);
+                $em->persist($organizacion);
+                $em->persist($supervisor);
+            }
+            
+            // Guardamos
             $entity->setEstado(AlumnoPracticante::ESTADO_ENVIADA);
             $em->persist($entity);
             $em->flush();

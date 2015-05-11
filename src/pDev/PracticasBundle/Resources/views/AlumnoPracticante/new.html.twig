@@ -51,13 +51,9 @@
             <form id="form2" class="form-well form-horizontal" action="{{ path('practicas_alumno_create') }}" method="post" {{ form_enctype(form) }}>
                 <table style="width: 100%;">
                     <tr>
-                        <td width="50%">
+                        <td width="100%">
                             <h3>Organización</h3>
                             {{ form_widget(organizacion_form) }}
-                        </td>
-                        <td style="vertical-align: top;">
-                            <h3>Supervisor</h3>
-                            {{ form_widget(supervisor_form) }}
                         </td>
                     </tr>
                     <tr>

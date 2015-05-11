@@ -12,6 +12,9 @@ $(document).ready(function() {
         }
     });
     
+    // Aplicamos el validador de rut
+    $('input[id$="_rut"]').Rut();
+    
 });
 
 function p_initialize(parentag)

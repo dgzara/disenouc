@@ -20,7 +20,6 @@
         {% elseif entity.organizacion %}
             <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.organizacion }}</strong><br>
-            Supervisor: {{ entity.supervisor }}<br>
            </div>
            {% if form.tipo is defined %}
             {{ form_row(form.tipo) }}
@@ -266,6 +265,49 @@
             $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").change(desplegarHorario);
             $("#pdev_practicasbundle_alumnopracticantetype_duracionUnidad").change(desplegarHorario);
             desplegarHorario();
+            
+            // Validador de rut Supervisor
+            $("input[id$='supervisor_rut']").focusout(function() 
+	        {
+		        var $rut = $(this);
+		        var rut = $.Rut.quitarFormato($rut.val());
+                
+                if(rut != '')
+                {
+	                $.ajax({
+		                url: Routing.generate('practicas_supervisor_rut', {'rut': rut}),
+		                type: "POST",
+		                beforeSend: function(){
+			                var div = '<span class="loader"></span>';
+			                $rut.before(div);
+		                },
+		                success: function(data){
+			                if(data.status == 200){
+				                $("input[id$='supervisor_nombres']").val(data.nombres).prop('disabled', true);
+				                $("input[id$='supervisor_apellidoPaterno']").val(data.apellidoPaterno).prop('disabled', true);
+				                $("input[id$='supervisor_apellidoMaterno']").val(data.apellidoMaterno).prop('disabled', true);
+				                $("input[id$='supervisor_cargo']").val(data.cargo).prop('disabled', true);
+				                $("input[id$='supervisor_email']").val(data.email).prop('disabled', true);
+				                $("input[id$='supervisor_profesion']").val(data.profesion).prop('disabled', true);
+				                $('.loader').remove();
+			                }
+			                else{
+			                    $("input[id$='supervisor_nombres']").val('').prop('disabled', false);
+				                $("input[id$='supervisor_apellidoPaterno']").val('').prop('disabled', false);
+				                $("input[id$='supervisor_apellidoMaterno']").val('').prop('disabled', false);
+				                $("input[id$='supervisor_cargo']").val('').prop('disabled', false);
+				                $("input[id$='supervisor_email']").val('').prop('disabled', false);
+				                $("input[id$='supervisor_profesion']").val('').prop('disabled', false);
+				                $('.loader').remove();
+			                }
+		                },
+		                error: function(jqXHR, textStatus, errorThrown){
+			                alert(textStatus);
+			                $('.loader').remove();
+		                }
+	                });
+		        }
+	        }); 
         });
         
         var desplegarHorario = function () {
