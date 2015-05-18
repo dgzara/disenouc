@@ -124,9 +124,7 @@ Planes de práctica donde es supervisor evaluador
         <tbody>
         {% for organizacion in organizaciones %}
             <tr>
-                <td>{% for alias in organizacion.aliases %}{{ alias.nombre }}<br/>{% endfor %}</td>
-                
-                
+                <td>{{ organizacion.nombre }}</td>
                 <td>{{ organizacion.rubro }}</td>
                 <td>{{ organizacion.web }}</td>
                 <td>
