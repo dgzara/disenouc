@@ -15,16 +15,16 @@
 
 {% block sidebar %}
     <img src="{{ entity.webPath | imagine_filter('thumb300') }}" alt="">
+    {% if permiso %}
     <div id="form_ordenar" class="well clearfix" style="margin:0">
-        {% if permiso %}
         <a href="{{ path('practicas_organizacion_edit', { 'id': entity.id }) }}"  class="pull-left btn btn-primary">
             <span class="glyphicon glyphicon-edit"></span> Modificar
         </a>
-        {% endif %}
         <a href="{{ path('practicas_new_organizacion', {'id': entity.id}) }}"  class="pull-left btn btn-primary">
             <span class="glyphicon glyphicon-plus-sign"></span> Solicitar practicante
         </a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -52,7 +52,7 @@
             </tr>
             <tr>
                 <th>Dirección web</th>
-                <td><a href="{{ entity.web }}">{{ entity.web }}</a></td>
+                <td><a href="{{ entity.web }}" target="_blank">{{ entity.web }}</a></td>
             </tr>
             <tr>
                 <th>Número de personas que trabajan en la organización</th>
@@ -66,7 +66,10 @@
     </table>
 
     <h4>Contactos asociados
-        {% if permiso %}<a class="onmodal" href="{{ path('practicas_organizacion_add_contacto', {'id': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>{% endif %}
+        {% if permiso %}
+            <a class="onmodal" href="{{ path('practicas_organizacion_add_contacto', {'id': entity.id }) }}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>Buscar contacto existente</a>
+            <a class="onmodal" href="{{ path('practicas_contacto_new_modal', {'organizacionId': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Crear nuevo contacto</a>
+        {% endif %}
     </h4>
     <table class="table table-bordered">
         <thead>
@@ -86,16 +89,10 @@
                 <td>{{ contacto.email }}</td>                
                 <td>{{ contacto.area }}</td>
                 <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('persona_show', { 'id': contacto.id, 'tipo':'contacto' }) }}">Ver</a>
-                    </li> 
+                    <a class="btn btn-default" href="{{ path('persona_show', { 'id': contacto.id, 'tipo':'contacto' }) }}">Ver</a>
                     {% if contacto.usuario.id != app.user.id %}
-                    <li>
-                        <a class="onmodal" href="{{ path('practicas_organizacion_remove_contacto', { 'id': entity.id, 'contactoId': contacto.id }) }}">Borrar</a>
-                    </li>                   
+                    <a class="btn btn-danger onmodal" href="{{ path('practicas_organizacion_remove_contacto', { 'id': entity.id, 'contactoId': contacto.id }) }}">Borrar</a>
                     {% endif %}
-                </ul>
                 </td>
             </tr>
         {% else %}
@@ -109,7 +106,10 @@
     </table>
     
     <h4>Supervisores asociados
-        {% if permiso %}<a class="onmodal" href="{{ path('practicas_organizacion_add_supervisor', {'id': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>{% endif %}
+        {% if permiso %}
+        <a class="onmodal" href="{{ path('practicas_organizacion_add_supervisor', {'id': entity.id }) }}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>Buscar supervisor existente</a>
+        <a class="onmodal" href="{{ path('practicas_supervisor_new_modal', {'organizacionId': entity.id }) }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Crear nuevo supervisor</a>
+        {% endif %}
     </h4>
     <table class="table table-bordered">
         <thead>
@@ -129,16 +129,10 @@
                 <td>{{ supervisor.email }}</td>                
                 <td>{{ supervisor.cargo }}</td>
                 <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('persona_show', { 'id': supervisor.id,'tipo':'supervisor' }) }}">Ver</a>
-                    </li> 
+                    <a class="btn btn-default" href="{{ path('persona_show', { 'id': supervisor.id,'tipo':'supervisor' }) }}">Ver</a>
                     {% if supervisor.usuario.id != app.user.id %}
-                    <li>
-                        <a class="onmodal" href="{{ path('practicas_organizacion_remove_supervisor', { 'id': entity.id, 'supervisorId': supervisor.id }) }}">Borrar</a>
-                    </li>                   
+                    <a class="onmodal btn btn-danger" href="{{ path('practicas_organizacion_remove_supervisor', { 'id': entity.id, 'supervisorId': supervisor.id }) }}">Borrar</a>
                     {% endif %}                   
-                </ul>
                 </td>
             </tr>
         {% else %}

@@ -1,12 +1,24 @@
 <div class="modal-dialog">
     <div class="modal-content">
-    <form id="formContacto" class="form-horizontal form-small form-well" action="{{ path('practicas_organizacion_create_modal') }}" method="post" {{ form_enctype(form) }}>
+    <form id="formContacto" action="{{ path('practicas_organizacion_create_modal') }}" method="post" {{ form_enctype(form) }}>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id="myModalLabel">Crear organización</h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="padding:20px">
+            {{ form_row(form.rut) }}
+            {{ form_row(form.nombre) }}
+            {{ form_row(form.rubro) }}
+            {{ form_row(form.descripcion) }}
+            {{ form_row(form.profilePic) }}
+            <div class="hide">
             {{ form_rest(form) }}
+            </div>
+            {% javascripts combine=true
+                '@pDevPracticasBundle/Resources/public/js/organizacion.js' 
+            %}
+                <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Registrar</button>

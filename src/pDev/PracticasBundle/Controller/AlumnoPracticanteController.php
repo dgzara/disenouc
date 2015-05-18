@@ -136,7 +136,7 @@ class AlumnoPracticanteController extends Controller
             'isExterno'=> $isExterno,
             'idAlumno'  => $isAlumno?$alumno->getId():false,
             'isAlumno' => $isAlumno,
-            'isSupervisor'=> $isSupervisor,            
+            'isSupervisor'=> $isSupervisor,
         );
     }
     

@@ -34,11 +34,11 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
         $userpersona = $manager->getRepository('pDevUserBundle:Funcionario')->findOneByRut("166284740");
         if(!$userpersona)
             $userPersona = new Funcionario();
-        $userPersona->setNombres("Diego Alonso");
-        $userPersona->setApellidoPaterno("Gómez");
-        $userPersona->setApellidoMaterno("Zará");
+        $userPersona->setNombres("María Rosa");
+        $userPersona->setApellidoPaterno("Domper");
+        $userPersona->setApellidoMaterno("Rodríguez");
         $userPersona->setEmail("coordinador@uc.cl");
-        $userPersona->setRut("166284740");
+        $userPersona->setRut("101940020");
         
         $manager->persist($userPersona);
         
@@ -51,9 +51,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, OrderedF
         $userAdmin->setEnabled(true);
         $userAdmin->addPersona($userPersona);
         $userAdmin->setNombres("María Rosa");
-        $userAdmin->setApellidoPaterno("Domper");
+        $userAdmin->setApellidoPaterno("Rodríguez");
         $userAdmin->setApellidoMaterno("");
-        $userAdmin->setRut("166284740");
+        $userAdmin->setRut("101940020");
         $userPersona->setUsuario($userAdmin);
         $userAdmin->addRole('ROLE_SUPER_ADMIN');
         

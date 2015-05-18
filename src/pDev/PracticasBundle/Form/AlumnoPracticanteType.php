@@ -14,7 +14,7 @@ class AlumnoPracticanteType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $width = '40px';
+        $width = '55px';
         $builder
             ->add('organizacion')
             ->add('supervisor', new SupervisorOrganizacionType())

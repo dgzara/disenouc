@@ -1,46 +1,163 @@
 {% extends 'pDevPracticasBundle::layout.html.twig' %}
 
-{%block breadcrumb%}
+{% block breadcrumb %}
     {{ parent() }}
-    <li><a href="{{ path('practicas') }}">Prácticas</a></li>
-    <li><a href="{{ path('practicas_edit', { 'id': entity.id }) }}" class="active">Editar</a></li>
-{%endblock%}
+    <li><a href="{{ path('practicas_edit', { 'id': entity.id }) }}">Modificar práctica</a></li>
+{% endblock %}
 
+{% block styles %}
+    {{ parent() }}
+    <link href="{{ asset('/css/typeahead.css') }}" rel="stylesheet">
+{% endblock %}
 
-{% block header%}Prácticas{%endblock%}
-{% block lead%}Periodo académico {%endblock%}
+{% block javascript %}
+    <script src="{{ asset('/externals/self/pdev.submit.js') }}"></script>
+{% endblock %}
+        
+{% block header %}
+    Modificar oferta "{{ entity.nombre }}"
+{% endblock %}
+
+{% block lead %}Detalles de la práctica{%endblock%}
 
 {% block content %}
-    <form class="well form-horizontal" action="{{ path('practicas_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-        <input type="hidden" name="_method" value="PUT" />
-        {{ form_row(edit_form.nombre) }}
-        {% if edit_form.tipo is defined %}
-            {{ form_row(edit_form.tipo) }}
-        {% endif %}
-        {% if edit_form.contacto is defined %}
-            {{ form_row(edit_form.contacto) }}
-        {% endif %}
-        {{ form_row(edit_form.descripcion) }}
-        {{ form_row(edit_form.jornadas) }}
-        {{ form_row(edit_form.fechaInicio) }}
-        {{ form_label(edit_form.duracionCantidad) }}<br>
-        {{ form_widget(edit_form.duracionCantidad) }}{{ form_widget(edit_form.duracionUnidad) }}
-        <div id="endDate"></div>
-        {{ form_rest(edit_form) }}
-        <p class="pull-right">
-            <a href="{{ path('practicas_show', { 'id': entity.id }) }}" class="btn btn-default">Volver</a>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-        </p>
-        <div class="clearfix"></div>
-    </form>
+    <div class="col-md-7">
+        <form id="form_practica" action="{{ path('practicas_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <input type="hidden" name="_method" value="PUT" />
+            {{ form_row(edit_form.nombre) }}
+            {{ form_row(edit_form.descripcion) }}
+            {{ form_row(edit_form.jornadas) }}
+            <hr class="clearfix"/>
+            <div style="position: relative">
+                {{ form_row(edit_form.fechaInicio) }}
+                <div class="form-inline">
+                    <div class="form-group">
+                        {{ form_label(edit_form.duracionCantidad) }}{{ form_widget(edit_form.duracionCantidad) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(edit_form.duracionUnidad) }}
+                    </div>
+                </div>
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; position: absolute; top: 0; right: -400px;">
+                    <h4>Duración de la práctica</h4>
+                    <p>Fecha estimada de término debe calcular 240 horas, dependiendo de la jornada y de si trabaja por dia semanas o meses, sin considerar sábados y domingos.</p>
+                </div>
+                <div id="endDate"></div>
+            </div>
+            <hr class="clearfix"/>
+            
+            {% if edit_form.contacto is defined %} 
+            <h4>Datos contacto</h4>
+            {{ form_widget(edit_form.contacto) }}
+            <hr class="clearfix"/>
+            {% endif %}
+            
+            <h4>Datos supervisor</h4>
+            {{ form_widget(edit_form.supervisor) }}
+            <hr/>
+            
+            <div style="position: relative">
+                {{ form_row(edit_form.tipo) }}
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; position: absolute; top: 0; right: -400px;">
+                    <h4>Tipos de práctica</h4>
+                    <ul>
+                        <li>Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas.</li> 
+                        <li>Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político</li>
+                    </ul>
+                </div> 
+            </div>
+            
+            {{ form_rest(edit_form) }}
+            <p class="pull-right">            
+                <button id="_submit" class="hide" type="submit"></button>         
+                <a class="btn" onClick="document.forms.form_practica.reset()">Limpiar</a>
+                <a href="#form_practica" class="btn btn-primary submitform">Enviar solicitud</a>
+            </p>
+            <div class="clearfix"></div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    {% javascripts combine=true
+        '@typeahead_js' 
+        '@pDevPracticasBundle/Resources/public/js/supervisor.js'
+        '@pDevPracticasBundle/Resources/public/js/contacto2.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('/externals/handlebars-v2.0.0.js') }}"></script>
     <script>
         var fechaIn = $('input#pdev_practicasbundle_practicatype_fechaInicio');
         var duracionCantidad = $('input#pdev_practicasbundle_practicatype_duracionCantidad');    
         var duracionUnidad = $('#pdev_practicasbundle_practicatype_duracionUnidad');    
+        
+        {% if edit_form.organizacion is defined %}
+        var organizacionId = $("#pdev_practicasbundle_practicatype_organizacion");
+        var divPosition = organizacionId.offset();
+        
+        $('.typeahead').typeahead('destroy');
+        
+        var organizaciones = new Bloodhound({
+            datumTokenizer: function(organizaciones) {
+                return Bloodhound.tokenizers.whitespace(organizaciones.value);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '{{ path("practicas_organizacion_json") }}',
+        });
+         
+        organizaciones.clearPrefetchCache();
+        organizaciones.initialize();
+         
+        $('#remote .typeahead').typeahead(null, {
+            name: 'best-pictures',
+            displayKey: 'value',
+            valueKey: 'id',
+            source: organizaciones.ttAdapter(),
+            templates: {
+                empty: [
+                '<div class="empty-message">',
+                'No hay organizaciones registradas',
+                '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('{% raw %}<strong>{{value}}</strong>{% endraw %}')
+            } 
+        }); 
+        
+        var numSelectedHandler = function (eventObject, suggestionObject, suggestionDataset) {
+            organizacionId.val(suggestionObject.id);
+        };
+
+        $('#remote .typeahead').on('typeahead:selected', numSelectedHandler);
+        $('#remote .typeahead').on('typeahead:opened', function(){
+            $(this).val("");
+            organizacionId.val("");
+            $(".error1").hide();
+        });
+        $('#remote .typeahead').on('typeahead:closed', function(){
+            if($('.tt-suggestion').length === 0){
+                $(this).val("");;
+            }
+        });
+        $('#remote .typeahead').on('keyup', function () {
+            if($('.tt-suggestion').length === 0){
+                organizacionId.val("");
+            }
+        });
+        
+        $("#form_practica").submit(function( event ) {
+            if($('#remote .typeahead').typeahead('val') == "")
+                organizacionId.val("");    
+        
+            if(organizacionId.val() != "" ) {
+                return;
+            }
+            $(".error1").text("Ingrese una organización").show();
+            $('html, body').animate({scrollTop: divPosition.top}, "slow");
+            event.preventDefault();
+        });
+        {% endif %}
         
         jQuery(document).ready(function() {
             daysBetween();

@@ -17,6 +17,7 @@
 {% block lead %}{{ entity.organizacion }}{%endblock%}
 
 {% block sidebar %}
+    <img src="{{ entity.organizacion.webPath | imagine_filter('thumb128') }}" alt="">
     {% if app.user.hasPersona('TYPE_ALUMNO') %}
     {% if alumnoPractica == false and entity.estado == 'estado.aprobada' %}
     <div class="alert alert-info">
@@ -25,7 +26,7 @@
     {% elseif alumnoPractica %}
         {% if alumnoPractica.estado == 'estado.postulado' %}
         <div class="alert alert-warning">
-            Práctica postulada.
+            Práctica postulada, debes esperar notificación de la empresa.
         </div>
         {% elseif alumnoPractica.estado == 'estado.aceptada.contacto' %}
         <div class="alert alert-warning">
@@ -185,31 +186,37 @@
             <tbody>
                 <tr>
                     <td width="35%">Nombre</td>
-                    <td>{{ entity.organizacion.nombre }}</td>
+                    <td>{{ entity.organizacion.nombre is empty ? '-' : entity.organizacion.nombre }}</td>
                 </tr>
                 <tr>
                     <td>Rubro</td>
-                    <td>{{ entity.organizacion.rubro }}</td>
+                    <td>{{ entity.organizacion.rubro is empty ? '-' : entity.organizacion.rubro }}</td>
                 </tr>
                 <tr>
                     <td>Descripción</td>
-                    <td>{{ entity.organizacion.descripcion }}</td>
+                    <td>{{ entity.organizacion.descripcion is empty ? '-' : entity.organizacion.descripcion }}</td>
                 </tr>
                 <tr>
                     <td>País</td>
-                    <td>{{ entity.organizacion.pais }}</td>
+                    <td>{{ entity.organizacion.pais is empty ? '-' : entity.organizacion.pais }}</td>
                 </tr>
                 <tr>
                     <td>Web</td>
-                    <td>{{ entity.organizacion.web }}</td>
+                    <td>
+                        {% if entity.organizacion.web %}
+                        <a href="{{ entity.organizacion.web }}" target="_blank">{{ entity.organizacion.web }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td>Número de personas que trabajan en la organización</td>
-                    <td>{{ entity.organizacion.personasTotal }}</td>
+                    <td>{{ entity.organizacion.personasTotal is empty ? '-' : entity.organizacion.personasTotal }}</td>
                 </tr>
                 <tr>
                     <td>Antiguedad</td>
-                    <td>{{ entity.organizacion.antiguedad }}</td>
+                    <td>{{ entity.organizacion.antiguedad is empty ? '-' : entity.organizacion.antiguedad }}</td>
                 </tr>
             </tbody>
         </table>
@@ -224,10 +231,6 @@
                     <td>{{ entity.contacto.nombreCompleto }}</td>
                 </tr>
                 <tr>
-                    <td>Dirección</td>
-                    <td></td>
-                </tr>
-                <tr>
                     <td>Teléfono</td>
                     <td>{{ entity.contacto.numeroTelefono }}</td>
                 </tr>
@@ -239,14 +242,28 @@
         </table>
     </div>
     
-    {% if entity.estado != "estado.finalizada" %}
-    <form class="hide" id="form_delete" action="{{ path('practicas_delete', { 'id': entity.id }) }}" method="post">
-        <input type="hidden" name="_method" value="DELETE" />
-        {{ form_widget(delete_form) }}
-        <button id="_submit" type="submit">Eliminar</button>
-    </form>
+    {% if (isCoordinacion or isContacto) %}
+    <h4>Información del supervisor</h4>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td width="35%">Nombre</td>
+                    <td>{{ entity.supervisor.nombreCompleto }}</td>
+                </tr>
+                <tr>
+                    <td>Teléfono</td>
+                    <td>{{ entity.supervisor.numeroTelefono }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ entity.supervisor.email }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     {% endif %}
-        
+    
 {% endblock %}
 
 {% block javascripts %}

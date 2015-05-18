@@ -60,7 +60,7 @@ class Persona
     /**
      * @var string
      *
-     * @ORM\Column(name="rut", type="string", length=9, nullable=true)
+     * @ORM\Column(name="rut", type="string", length=20, nullable=true)
      */
     protected $rut;
     
@@ -236,6 +236,12 @@ class Persona
      */
     public function setRut($rut)
     {
+        $rut = str_replace("-","",$rut);    // Eliminamos los guiones
+        $rut = str_replace(".","",$rut);    // Eliminamos los puntos
+        $rut = str_replace(",","",$rut);    // Eliminamos las comas
+        $rut = str_replace(" ","",$rut);    // Eliminamos los espacios
+        $rut = strtoupper($rut);            // Mayúsculas para las K
+        
         $this->rut = $rut;
     
         return $this;
@@ -249,6 +255,16 @@ class Persona
     public function getRut()
     {
         return $this->rut;
+    }
+    
+    /**
+     * Get rut sin formato
+     *
+     * @return string 
+     */
+    public function getRutSinFormato()
+    {
+        return preg_replace("/[^Kk0-9]/",'',$this->rut);
     }
     
     /**

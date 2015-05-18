@@ -82,6 +82,7 @@ class MenuController extends Controller
                 $admin_items[] = $this->createItem('Preguntas frecuentes',$this->generateUrl('preguntafrecuente'));
                 $admin_items[] = $this->createItem('Documentos',$this->generateUrl('documento'));
                 $admin_items[] = $this->createItem('Ajustes generales',$this->generateUrl('configuracion'));
+                $admin_items[] = $this->createItem('Contacto',$this->generateUrl('contacto_edit'));
             }
             // merge menu
             

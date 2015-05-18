@@ -10,23 +10,19 @@
 {%block lead%}{%endblock%}
 
 {%block content %}
-    <form id="form_edit" class="well form-horizontal" action="{{ path('practicas_organizacion_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-        <input type="hidden" name="_method" value="PUT" />
-        {{ form_widget(edit_form) }}
-        <p>
-            <button class="hide" id="_submit" type="submit">Guardar</button>
-            
-            <a href="#form_edit"  class="pull-right btn btn-primary submitform">
-                <span class="glyphicon glyphicon-edit"></span> Guardar
-            </a>
-            
-        </p>
-        <div class="clearfix"></div>
-    </form>
-    
-    <form class="hide" id="form_delete" action="{{ path('practicas_organizacion_delete', { 'id': entity.id }) }}" method="post">
-        <input type="hidden" name="_method" value="DELETE" />
-        {{ form_widget(delete_form) }}
-        <button id="_submit" type="submit">Delete</button>
-    </form>
+    <div class="col-md-7">
+        <form id="form_edit" class="form-horizontal" action="{{ path('practicas_organizacion_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <input type="hidden" name="_method" value="PUT" />
+            {{ form_widget(edit_form) }}
+            <p>
+                <button class="hide" id="_submit" type="submit">Guardar</button>
+                
+                <a href="#form_edit"  class="pull-right btn btn-primary submitform">
+                    <span class="glyphicon glyphicon-edit"></span> Guardar
+                </a>
+                
+            </p>
+            <div class="clearfix"></div>
+        </form>
+    </div>  
 {% endblock %}

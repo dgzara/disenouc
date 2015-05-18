@@ -16,7 +16,7 @@
 {%block lead%}{%endblock%}
 
 {% block content %}
-    {% if isContacto %}
+    {% if isContacto or isCoordinacion %}
     <div id="form_ordenar" class="well no-margin">
         <div class="btn-group">
             <a href="{{ path('practicas_new') }}" class="pull-left btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Publicar nueva oferta</a>        
@@ -45,7 +45,12 @@
             <tr>
                 <td>{{ entity.id }}</td>
                 <td><a href="{{ path('practicas_show', { 'id': entity.id }) }}">{{ entity.nombre }}</a></td>
-                <td>{{ entity.organizacion.nombre }}</td>
+                <td>
+                    <a target="_blank" href="{{ path('practicas_organizacion_show', { 'id': entity.organizacion.id }) }}">
+                        <img src="{{ entity.organizacion.webPath | imagine_filter('thumb32') }}" />
+                        {{ entity.organizacion.nombre }}
+                    </a>
+                </td>
                 <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
                 <td>{% if entity.duracionCantidad %}{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}{% endif %}</td>
                 <td>{{ entity.tipo is empty ? 'Por definir' : entity.tipo }}</td>

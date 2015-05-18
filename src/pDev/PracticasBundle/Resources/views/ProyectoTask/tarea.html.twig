@@ -15,7 +15,6 @@
                     url: refresh_url,
                     success: function(data){
                         ganttData = data;
-                        console.log('jaja');
                         p_gantt_redraw();
                         p_destroyModal();
                         $("#eventMessage").text('Guardado.');

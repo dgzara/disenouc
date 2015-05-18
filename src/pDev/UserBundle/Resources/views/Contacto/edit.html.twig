@@ -1,0 +1,44 @@
+{% extends 'pDevUserBundle::layout.html.twig' %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+    <link href="{{ asset('externals/wysihtml5/bootstrap-wysihtml5.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('externals/wysihtml5/wysihtml5-0.3.0.js') }}"></script>
+    <script src="{{ asset('externals/wysihtml5/bootstrap-wysihtml5.js') }}"></script>
+    <script src="{{ asset('externals/wysihtml5/bootstrap-wysihtml5.es-ES.js') }}"></script>
+    <script>
+        $('#pdev_userbundle_contacto_text').wysihtml5({
+	        "locale": "es-ES",
+	        "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+	        "emphasis": true, //Italics, bold, etc. Default true
+	        "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+	        "html": true, //Button which allows you to edit the generated HTML. Default false
+	        "link": true, //Button to insert a link. Default true
+	        "image": true, //Button to insert an image. Default true,
+	        "color": false //Button to change color of font
+        });
+    </script>
+{% endblock %}
+
+{% block header%}Contacto{%endblock%}
+{% block lead%}Modificar datos de contacto{% endblock %}
+
+{% block content -%}
+    {{ form(edit_form) }}
+    <hr/>
+    <ul class="record_actions">
+        <li>
+            <a class="btn btn-default" href="{{ path('contacto') }}">
+                Volver
+            </a>
+        </li>
+    </ul>
+{% endblock %}

@@ -174,12 +174,21 @@ class PracticaController extends Controller
         }
         
         $securityContext = $this->container->get('security.context');
-        $form = $this->createForm(new PracticaType($securityContext), $entity);
         $ruta = $this->generateUrl('practicas_create');
+        
+        // Creamos el formulario
+        $form = $this->createForm(new PracticaType($securityContext, null), $entity);
                     
-        if($isContacto){
+        // Si es un contacto, lo agrega
+        $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");         
+        if($isContacto)
+        {   
+            // Creamos el campo
             $form->remove('contacto');
             $form->remove('tipo');
+            
+            $contacto = $user->getPersona('TYPE_PRACTICAS_CONTACTO');
+            $entity->setContacto($contacto);
         }
         
         // Comprobamos si fue realizada desde una organizacion
@@ -190,7 +199,11 @@ class PracticaController extends Controller
                 throw $this->createNotFoundException('Unable to find Organizacion entity.');
             }
             $entity->setOrganizacion($organizacion);
+            
+            // Creamos el formulario
+            $form = $this->createForm(new PracticaType($securityContext, $organizacion), $entity);
             $form->remove('organizacion');
+
             $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
         }
         
@@ -200,6 +213,132 @@ class PracticaController extends Controller
         {   
             $em = $this->getDoctrine()->getManager();
             $entity->setCreador($this->getUser());
+            
+            // Comprobamos que el supervisor existe
+            $supervisor = $entity->getSupervisor();
+            
+            // Buscamos primero por email
+            $supervisorBuscado = $em->getRepository('pDevPracticasBundle:Supervisor')->findOneByEmail($supervisor->getEmail());
+            
+            // Si existe, lo añadimos
+            if($supervisorBuscado)
+            {
+                $entity->setSupervisor($supervisorBuscado);
+                $supervisorBuscado->addPractica($entity);
+                $em->persist($supervisorBuscado);
+            }
+            else
+            {
+                // Creamos al supervisor
+                $em->persist($supervisor);
+                
+                // Revisamos si el correo / rut está asociado a un usuario.
+                $usuario = $em->getRepository('pDevUserBundle:User')->findOneByEmail($supervisor->getEmail());
+                
+                // Probamos con el rut
+                if(!$usuario)
+                    $usuario = $em->getRepository('pDevUserBundle:User')->findOneByRut($supervisor->getRut()); 
+                
+                // Si lo encuentra, lo añade
+                if($usuario){
+                    $supervisor->setUsuario($usuario);
+                } else {
+                    // Creamos el usuario
+                    $userManager = $this->container->get('fos_user.user_manager');
+                    $usuario = $userManager->createUser();
+                    $usuario->setRut($supervisor->getRut());
+                    $usuario->setEmail($supervisor->getEmail());
+                    $usuario->setNombres($supervisor->getNombres());
+                    $usuario->setApellidoPaterno($supervisor->getApellidoPaterno());
+                    $usuario->setApellidoMaterno($supervisor->getApellidoMaterno());
+                    $usuario->setUsername($supervisor->getEmail());
+                    $usuario->setExternal(true);
+                    $usuario->setEnabled(true);
+                    
+                    // Establecemos el usuario a este supervisor
+                    $supervisor->setUsuario($usuario);
+                    
+                    // Seteamos la contraseña
+                    $password = $usuario->getPassword();
+                    $usuario->setSalt(md5(time()));
+                    $factory = $this->get('security.encoder_factory');
+                    $encoder = $factory->getEncoder($usuario);
+                    $password = $encoder->encodePassword($usuario->getPassword(), $usuario->getSalt());
+                    $usuario->setPassword($password);
+                    $usuario->addRole("ROLE_USER");
+                    
+                    // Creamos el usuario y mandamos el mail
+                    $tokenGenerator = $this->get('fos_user.util.token_generator');
+                    $usuario->setConfirmationToken($tokenGenerator->generateToken());
+                    $this->get('fos_user.mailer')->sendResettingEmailMessage($usuario);
+                    $usuario->setPasswordRequestedAt(new \DateTime());
+                    $this->get('fos_user.user_manager')->updateUser($usuario);
+                    $em->persist($usuario);
+                }
+            }
+            
+            // Comprobamos que el contacto existe
+            $contacto = $entity->getContacto();
+            
+            // Buscamos primero por email
+            $contactoBuscado = $em->getRepository('pDevPracticasBundle:Contacto')->findOneByEmail($contacto->getEmail());
+            
+            // Si existe, lo añadimos
+            if($contactoBuscado)
+            {
+                $entity->setContacto($contactoBuscado);
+                $contactoBuscado->addPractica($entity);
+                $em->persist($contactoBuscado);
+            }
+            else
+            {
+                // Creamos al contacto
+                $em->persist($contacto);
+                
+                // Revisamos si el correo / rut está asociado a un usuario.
+                $usuarioContacto = $em->getRepository('pDevUserBundle:User')->findOneByEmail($contacto->getEmail());
+                
+                // Probamos con el rut
+                if(!$usuarioContacto)
+                    $usuarioContacto = $em->getRepository('pDevUserBundle:User')->findOneByRut($contacto->getRut()); 
+                
+                // Si lo encuentra, lo añade
+                if($usuarioContacto){
+                    $contacto->setUsuario($usuarioContacto);
+                } else {
+                    // Creamos el usuario
+                    $userManager = $this->container->get('fos_user.user_manager');
+                    $usuarioContacto = $userManager->createUser();
+                    $usuarioContacto->setRut($contacto->getRut());
+                    $usuarioContacto->setEmail($contacto->getEmail());
+                    $usuarioContacto->setNombres($contacto->getNombres());
+                    $usuarioContacto->setApellidoPaterno($contacto->getApellidoPaterno());
+                    $usuarioContacto->setApellidoMaterno($contacto->getApellidoMaterno());
+                    $usuarioContacto->setUsername($contacto->getEmail());
+                    $usuarioContacto->setExternal(true);
+                    $usuarioContacto->setEnabled(true);
+                    
+                    // Establecemos el usuario a este supervisor
+                    $contacto->setUsuario($usuarioContacto);
+                    
+                    // Seteamos la contraseña
+                    $password = $usuarioContacto->getPassword();
+                    $usuarioContacto->setSalt(md5(time()));
+                    $factory = $this->get('security.encoder_factory');
+                    $encoder = $factory->getEncoder($usuarioContacto);
+                    $password = $encoder->encodePassword($usuarioContacto->getPassword(), $usuarioContacto->getSalt());
+                    $usuarioContacto->setPassword($password);
+                    $usuarioContacto->addRole("ROLE_USER");
+                    
+                    // Creamos el usuario y mandamos el mail
+                    $tokenGenerator = $this->get('fos_user.util.token_generator');
+                    $usuarioContacto->setConfirmationToken($tokenGenerator->generateToken());
+                    $this->get('fos_user.mailer')->sendResettingEmailMessage($usuarioContacto);
+                    $usuarioContacto->setPasswordRequestedAt(new \DateTime());
+                    $this->get('fos_user.user_manager')->updateUser($usuarioContacto);
+                    $em->persist($usuarioContacto);
+                }
+            }
             
             $em->persist($entity);
             $em->flush();
@@ -236,14 +375,16 @@ class PracticaController extends Controller
         $entity = new Practica();
         
         $securityContext = $this->container->get('security.context');
-        $form = $this->createForm(new PracticaType($securityContext), $entity);
         $ruta = $this->generateUrl('practicas_create');
-             
+        
+        // Creamos el formulario
+        $form = $this->createForm(new PracticaType($securityContext, null), $entity);
+        
         // Si es un contacto, lo agrega
         $isContacto = $pm->checkType("TYPE_PRACTICAS_CONTACTO");         
         if($isContacto)
         {   
-            // Removemos los campos especificos
+            // Creamos el campo
             $form->remove('contacto');
             $form->remove('tipo');
             
@@ -259,7 +400,11 @@ class PracticaController extends Controller
                 throw $this->createNotFoundException('Unable to find Organizacion entity.');
             }
             $entity->setOrganizacion($organizacion);
+            
+            // Creamos el formulario
+            $form = $this->createForm(new PracticaType($securityContext, $organizacion), $entity);
             $form->remove('organizacion');
+
             $ruta = $this->generateUrl('practicas_create_organizacion', array('id' => $id));
         }
         
@@ -341,7 +486,7 @@ class PracticaController extends Controller
         
         // Generamos el formulario
         $securityContext = $this->container->get('security.context');
-        $editForm = $this->createForm(new PracticaType($securityContext), $entity);
+        $editForm = $this->createForm(new PracticaType($securityContext, $entity->getOrganizacion()), $entity);
         $editForm->remove('organizacion');
         
         if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
@@ -380,9 +525,16 @@ class PracticaController extends Controller
         if(!$isCoordinacion and !$entity->hasContacto($this->getUser()->getPersona('TYPE_PRACTICAS_CONTACTO'))){
             return $this->redirect($this->generateUrl('practicas_show', array('id' => $id)));
         }
+        
+        // Obtenemos el supervisor original
+        $originalSupervisor = clone $entity->getSupervisor();
+        
+        // Obtenemos el contacto original
+        $originalContacto = clone $entity->getContacto();
 
+        // Creamos el formulario
         $securityContext = $this->container->get('security.context');
-        $editForm = $this->createForm(new PracticaType($securityContext), $entity);
+        $editForm = $this->createForm(new PracticaType($securityContext, $entity->getOrganizacion()), $entity);
         $editForm->remove('organizacion');
         
         if($pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS") === false){
@@ -397,6 +549,149 @@ class PracticaController extends Controller
             // Si la modifica el usuario, nuevamente es enviada al coordinador
             if($this->getUser() === $entity->getCreador())
                 $entity->setEstado(Practica::ESTADO_REVISION);
+            
+            // Comprobamos que el supervisor existe
+            $supervisor = $entity->getSupervisor();
+            
+            // Revisamos si hubo cambio
+            if($supervisor !== $originalSupervisor)
+            {
+                // Sacamos al supervisor Original
+                $originalSupervisor->removePractica($entity);
+                $em->persist($originalSupervisor);
+                
+                // Buscamos primero por email
+                $supervisorBuscado = $em->getRepository('pDevPracticasBundle:Supervisor')->findOneByEmail($supervisor->getEmail());
+                
+                // Si existe, lo añadimos
+                if($supervisorBuscado)
+                {
+                    $entity->setSupervisor($supervisorBuscado);
+                    $supervisorBuscado->addPractica($entity);
+                    $em->persist($supervisorBuscado);
+                }
+                else
+                {
+                    // Creamos al supervisor
+                    $em->persist($supervisor);
+                    
+                    // Revisamos si el correo / rut está asociado a un usuario.
+                    $usuario = $em->getRepository('pDevUserBundle:User')->findOneByEmail($supervisor->getEmail());
+                    
+                    // Probamos con el rut
+                    if(!$usuario)
+                        $usuario = $em->getRepository('pDevUserBundle:User')->findOneByRut($supervisor->getRut()); 
+                    
+                    // Si lo encuentra, lo añade
+                    if($usuario){
+                        $supervisor->setUsuario($usuario);
+                    } else {
+                        // Creamos el usuario
+                        $userManager = $this->container->get('fos_user.user_manager');
+                        $usuario = $userManager->createUser();
+                        $usuario->setRut($supervisor->getRut());
+                        $usuario->setEmail($supervisor->getEmail());
+                        $usuario->setNombres($supervisor->getNombres());
+                        $usuario->setApellidoPaterno($supervisor->getApellidoPaterno());
+                        $usuario->setApellidoMaterno($supervisor->getApellidoMaterno());
+                        $usuario->setUsername($supervisor->getEmail());
+                        $usuario->setExternal(true);
+                        $usuario->setEnabled(true);
+                        
+                        // Establecemos el usuario a este supervisor
+                        $supervisor->setUsuario($usuario);
+                        
+                        // Seteamos la contraseña
+                        $password = $usuario->getPassword();
+                        $usuario->setSalt(md5(time()));
+                        $factory = $this->get('security.encoder_factory');
+                        $encoder = $factory->getEncoder($usuario);
+                        $password = $encoder->encodePassword($usuario->getPassword(), $usuario->getSalt());
+                        $usuario->setPassword($password);
+                        $usuario->addRole("ROLE_USER");
+                        
+                        // Creamos el usuario y mandamos el mail
+                        $tokenGenerator = $this->get('fos_user.util.token_generator');
+                        $usuario->setConfirmationToken($tokenGenerator->generateToken());
+                        $this->get('fos_user.mailer')->sendResettingEmailMessage($usuario);
+                        $usuario->setPasswordRequestedAt(new \DateTime());
+                        $this->get('fos_user.user_manager')->updateUser($usuario);
+                        $em->persist($usuario);
+                    }
+                    
+                }
+            }
+            
+            // Comprobamos que el contacto existe
+            $contacto = $entity->getSupervisor();
+            
+            // Revisamos si hubo cambio
+            if($contacto !== $originalContacto)
+            {
+                // Sacamos al contacto Original
+                $originalContacto->removePractica($entity);
+                $em->persist($originalContacto);
+                
+                // Buscamos primero por email
+                $contactoBuscado = $em->getRepository('pDevPracticasBundle:Contacto')->findOneByEmail($contacto->getEmail());
+                
+                // Si existe, lo añadimos
+                if($contactoBuscado)
+                {
+                    $entity->setContacto($contactoBuscado);
+                    $contactoBuscado->addPractica($entity);
+                    $em->persist($contactoBuscado);
+                }
+                else
+                {
+                    // Creamos al contacto
+                    $em->persist($contacto);
+                    
+                    // Revisamos si el correo / rut está asociado a un usuario.
+                    $usuarioContacto = $em->getRepository('pDevUserBundle:User')->findOneByEmail($contacto->getEmail());
+                    
+                    // Probamos con el rut
+                    if(!$usuarioContacto)
+                        $usuarioContacto = $em->getRepository('pDevUserBundle:User')->findOneByRut($contacto->getRut()); 
+                    
+                    // Si lo encuentra, lo añade
+                    if($usuarioContacto){
+                        $contacto->setUsuario($usuarioContacto);
+                    } else {
+                        // Creamos el usuario
+                        $userManager = $this->container->get('fos_user.user_manager');
+                        $usuarioContacto = $userManager->createUser();
+                        $usuarioContacto->setRut($contacto->getRut());
+                        $usuarioContacto->setEmail($contacto->getEmail());
+                        $usuarioContacto->setNombres($contacto->getNombres());
+                        $usuarioContacto->setApellidoPaterno($contacto->getApellidoPaterno());
+                        $usuarioContacto->setApellidoMaterno($contacto->getApellidoMaterno());
+                        $usuarioContacto->setUsername($contacto->getEmail());
+                        $usuarioContacto->setExternal(true);
+                        $usuarioContacto->setEnabled(true);
+                        
+                        // Establecemos el usuario a este contacto
+                        $contacto->setUsuario($usuarioContacto);
+                        
+                        // Seteamos la contraseña
+                        $password = $usuarioContacto->getPassword();
+                        $usuarioContacto->setSalt(md5(time()));
+                        $factory = $this->get('security.encoder_factory');
+                        $encoder = $factory->getEncoder($usuarioContacto);
+                        $password = $encoder->encodePassword($usuarioContacto->getPassword(), $usuarioContacto->getSalt());
+                        $usuarioContacto->setPassword($password);
+                        $usuarioContacto->addRole("ROLE_USER");
+                        
+                        // Creamos el usuario y mandamos el mail
+                        $tokenGenerator = $this->get('fos_user.util.token_generator');
+                        $usuarioContacto->setConfirmationToken($tokenGenerator->generateToken());
+                        $this->get('fos_user.mailer')->sendResettingEmailMessage($usuarioContacto);
+                        $usuarioContacto->setPasswordRequestedAt(new \DateTime());
+                        $this->get('fos_user.user_manager')->updateUser($usuarioContacto);
+                        $em->persist($usuarioContacto);
+                    }
+                }
+            }
             
             $em->persist($entity);
             $em->flush();

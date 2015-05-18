@@ -34,10 +34,6 @@
                 <td>{{ entity.organizacion }}</td>
             </tr>
             <tr>
-                <th width="30%">Supervisor</th>
-                <td>{{ entity.supervisor }}</td>
-            </tr>
-            <tr>
                 <th>¿Cómo contactó a la organización?</th>
                 <td>{{ entity.comoContacto }}</td>
             </tr>
@@ -83,7 +79,34 @@
         </tbody>
     </table>
     
-    <hr>
+    <hr class="clearfix"/>
+    <h4>Datos del supervisor</h4>
+    <table class="table table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th width="30%">Rut</th>
+                <td>{{ entity.supervisor.rut }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Email</th>
+                <td>{{ entity.supervisor.email }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Nombres</th>
+                <td>{{ entity.supervisor.nombres }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Apellidos</th>
+                <td>{{ entity.supervisor.apellidoPaterno }} {{ entity.supervisor.apellidoMaterno }}</td>
+            </tr>
+            <tr>
+                <th width="30%">Cargo</th>
+                <td>{{ entity.supervisor.cargo }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <hr class="clearfix"/>
     
     <h4>Proyectos y responsabilidades</h4>
     <table class="table table-bordered table-hover">

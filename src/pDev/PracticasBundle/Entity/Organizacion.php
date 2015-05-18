@@ -40,35 +40,35 @@ class Organizacion
     /**
      * @var string
      *
-     * @ORM\Column(name="descripcion", type="text")
+     * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
     private $descripcion;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="rut", type="string", length=255, nullable=true)
+     * @ORM\Column(name="rut", type="string", length=255)
      */
     private $rut;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pais", type="string", length=255)
+     * @ORM\Column(name="pais", type="string", length=255, nullable=true)
      */
     private $pais;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="web", type="string", length=255)
+     * @ORM\Column(name="web", type="string", length=255, nullable=true)
      */
     private $web;
     
     /**
      * @var integer
      *
-     * @ORM\Column(name="personas", type="integer")
+     * @ORM\Column(name="personas", type="integer", nullable=true)
      */
     private $personasTotal;
     
@@ -314,6 +314,12 @@ class Organizacion
      */
     public function setRut($rut)
     {
+        $rut = str_replace("-","",$rut);    // Eliminamos los guiones
+        $rut = str_replace(".","",$rut);    // Eliminamos los puntos
+        $rut = str_replace(",","",$rut);    // Eliminamos las comas
+        $rut = str_replace(" ","",$rut);    // Eliminamos los espacios
+        $rut = strtoupper($rut);            // Mayúsculas para las K
+        
         $this->rut = $rut;
     
         return $this;

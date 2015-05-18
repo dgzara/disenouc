@@ -3,7 +3,8 @@
 {% block title %}Aceptar postulante{% endblock %}
 {% block body %}
     <form id="form_asignar" class="form-horizontal form-modal" action="{{ path('practicas_alumno_postulante_aceptar', {'id': entity.id}) }}" method="post" {{ form_enctype(form) }}>
-        ¿Desea aceptar al alumno {{ entity.alumno }} para la práctica seleccionada ?
+        ¿Desea aceptar al alumno {{ entity.alumno }} como postulante para la práctica seleccionada?<br>
+        Puede aceptar a más de un postulante y los alumnos aceptados se comunicarán con Ud.
         {{ form_widget(form) }}
         <button type="submit" id="_submit" class="hide"></button>
     </form>

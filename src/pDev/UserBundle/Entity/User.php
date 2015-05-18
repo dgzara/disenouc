@@ -79,7 +79,7 @@ class User extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="rut", type="string", length=9, nullable=true)
+     * @ORM\Column(name="rut", type="string", length=20, nullable=true)
      */
     protected $rut;
     

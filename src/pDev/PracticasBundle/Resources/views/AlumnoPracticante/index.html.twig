@@ -31,6 +31,7 @@
                 <th {% if pagination.isSorted('p.tipo') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Tipo de práctica', 'p.tipo') }}</th>
                 <th {% if pagination.isSorted('oa.nombre') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Organización', 'oa.nombre') }}</th>
                 <th {% if pagination.isSorted('p.fechaInicio') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Inicio', 'p.fechaInicio') }}</th>                
+                <th>Duración</th>                
                 <th {% if pagination.isSorted('p.estado') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Estado', 'p.estado') }}</th>
                 <th>···</th>
             </tr>
@@ -40,8 +41,14 @@
             <tr>
                 <td>{{ entity.alumno.nombreCompleto }}</td>
                 <td>{{ entity.tipo }}</td>
-                <td>{{ entity.organizacion.nombre }}</td>
-                <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %} / {% if entity.fechaTermino %}{{ entity.fechaTermino|date('d-m-Y') }}{% endif %}</td>
+                <td>
+                    <a target="_blank" href="{{ path('practicas_organizacion_show', { 'id': entity.organizacion.id }) }}">
+                        <img src="{{ entity.organizacion.webPath | imagine_filter('thumb32') }}" />
+                        {{ entity.organizacion.nombre }}
+                    </a>
+                </td>
+                <td>{% if entity.fechaInicio %}{{ entity.fechaInicio|date('d-m-Y') }}{% endif %}</td>
+                <td>{{ entity.duracionCantidad }} {{ entity.duracionUnidad }}</td>
                 <td>
                     {% include 'pDevPracticasBundle:AlumnoPracticante:estadoLabel.html.twig' %}
                 </td>

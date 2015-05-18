@@ -8,7 +8,8 @@
 {%block lead%}2 de 4: Detalles de la práctica{%endblock%}
 
 {%block content %}
-    <form id="form_alumno_practica" class="form-well form-horizontal" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
+    <div class="col-md-7">
+        <form id="form_alumno_practica" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
         {% if entity.practica %}    
            <div class="alert alert-info" role="alert">
             Postulando a <strong>{{ entity.practica.organizacion }}</strong><br>
@@ -26,8 +27,14 @@
            {% endif %}
            {{ form_row(form.comoContacto) }}
            {{ form_row(form.fechaInicio) }}
-           {{ form_label(form.duracionCantidad) }}<br>
-           {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+            <div class="form-inline">
+                <div class="form-group">
+                    {{ form_label(form.duracionCantidad) }}{{ form_widget(form.duracionCantidad) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.duracionUnidad) }}
+                </div>
+            </div>
            <div id="endDate"></div>
         {% else %}
             {% if form.tipo is defined %}
@@ -35,111 +42,116 @@
             {% endif %}
             {{ form_row(form.organizacion) }}
         {% endif %}
-        
-        <div id="horario" class="row" style="display:none; margin-top:23px; ">
-            <div class="col-md-4">
-                <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="text-align: left !important;">
-                    <h4>Estimador de horas </h4>
-                    <small>Requiere como mínimo 240 horas</small>
-                    <abbr title="Mínimo: 2 veces a la semana. Máximo: 5 veces a la semana. Mínimo diario: 4 horas. Máximo diario: 8 horas." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
-                </label>
-                <div class="controls">
-                    <table>
-                        <tr>
-                            <th>Lun</th>
-                            <th>Mar</th>
-                            <th>Mié</th>
-                            <th>Jue</th>
-                            <th>Vie</th>
-                            <th>Sáb</th>
-                            <th>Horas</th>
-                        </tr>
-                        <tr>
-                            <td>{{ form_widget(form.horasLunes) }}</td>
-                            <td>{{ form_widget(form.horasMartes) }}</td>
-                            <td>{{ form_widget(form.horasMiercoles) }}</td>
-                            <td>{{ form_widget(form.horasJueves) }}</td>
-                            <td>{{ form_widget(form.horasViernes) }}</td>
-                            <td>{{ form_widget(form.horasSabado) }}</td>
-                            <td id="totalHoras"></td>
-                        </tr>
-                    </table>
+            <div id="horario" class="row" style="display:none; margin-top:23px; ">
+                <div class="col-md-7">
+                    <label for="pdev_practicasbundle_alumnopracticantetype_horasLunes" class="control-label" style="text-align: left !important;">
+                        <h4>Estimador de horas </h4>
+                        <small>Requiere como mínimo 240 horas</small>
+                        <abbr title="Mínimo: 2 veces a la semana. Máximo: 5 veces a la semana. Mínimo diario: 4 horas. Máximo diario: 8 horas." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
+                    </label>
+                    <div class="controls">
+                        <table>
+                            <tr>
+                                <th>Lun</th>
+                                <th>Mar</th>
+                                <th>Mié</th>
+                                <th>Jue</th>
+                                <th>Vie</th>
+                                <th>Sáb</th>
+                                <th>Horas</th>
+                            </tr>
+                            <tr>
+                                <td>{{ form_widget(form.horasLunes) }}</td>
+                                <td>{{ form_widget(form.horasMartes) }}</td>
+                                <td>{{ form_widget(form.horasMiercoles) }}</td>
+                                <td>{{ form_widget(form.horasJueves) }}</td>
+                                <td>{{ form_widget(form.horasViernes) }}</td>
+                                <td>{{ form_widget(form.horasSabado) }}</td>
+                                <td id="totalHoras"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <h4>Requisitos</h4>
+                    <ul id="requisitos" class="list-unstyled">
+                        <li id="minimo">Hay dos días con 4 horas de trabajo</li>
+                        <li id="maximo">Ningún día supera las 8 horas</li>
+                        <li id="total">Cumple con 240 horas</li>
+                    </ul>
                 </div>
             </div>
-            <div class="col-md-8">
-                <h4>Requisitos</h4>
-                <ul id="requisitos" class="list-unstyled">
-                    <li id="minimo">Hay dos días con 4 horas de trabajo</li>
-                    <li id="maximo">Ningún día supera las 8 horas</li>
-                    <li id="total">Cumple con 240 horas</li>
-                </ul>
-            </div>
-        </div>
-        
-        <hr/>
-        
-        <h4>Datos del alumno</h4>
-        {{ form_row(form.ultimoTaller) }}
-        {{ form_row(form.ultimoTallerProfesor) }}
-        <hr/>
-        
-        {% if form.supervisor is defined %}
-        <h4>Datos del supervisor</h4>
-        {{ form_row(form.supervisor) }}
-        <hr/>
-        {% endif %}
-        
-        <h4>Proyectos y responsabilidades (en acuerdo con el empleador)
-            <abbr title="Mínimo: 3. Máximo: 5" class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
-        </h4>
-        <table id="proyectos" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th class="add" width="30px"></th>
-                </tr>
-            </thead>
-            <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Proyecto:prototype.html.twig' with {'form': form.proyectos.vars.prototype} %}{% endfilter %}">
-                {% for proyecto in form.proyectos %}
-                <tr class="proyecto">
-                    <td>{{ form_widget(proyecto.nombre) }}</td>
-                    <td>{{ form_widget(proyecto.descripcion) }} {{ form_rest(proyecto) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <hr/>
-        
-        <h4>Desafíos personales que desea lograr el alumno 
-        <abbr title="5 desafíos." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
-        </h4>
-        <table id="desafios" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Desafío</th>
-                    <th class="add" width="30px"></th>
-                </tr>
-            </thead>
-            <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Desafio:prototype.html.twig' with {'form': form.desafios.vars.prototype} %}{% endfilter %}">
-                {% for desafio in form.desafios %}
-                <tr class="desafio">
-                    <td>{{ form_widget(desafio.descripcion) }} {{ form_rest(desafio) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        {{ form_rest(form) }}
-        <p>
-            <button class="btn btn-primary pull-right" type="submit"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Guardar y continuar: Carta gantt</button>
-        </p>
-        <div class="clearfix"></div>
-    </form>
-    
+            
+            <hr class="clearfix"/>
+            
+            <h4>Datos del alumno</h4>
+            {{ form_row(form.ultimoTaller) }}
+            {{ form_row(form.ultimoTallerProfesor) }}
+            <hr class="clearfix"/>
+            
+            {% if form.supervisor is defined %}
+            <h4>Datos del supervisor</h4>
+            {{ form_widget(form.supervisor) }}
+            <hr class="clearfix"/>
+            {% endif %}
+            
+            <h4>Proyectos y responsabilidades (en acuerdo con el empleador)
+                <abbr title="Mínimo: 3. Máximo: 5" class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
+            </h4>
+            <table id="proyectos" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th class="add" width="30px"></th>
+                    </tr>
+                </thead>
+                <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Proyecto:prototype.html.twig' with {'form': form.proyectos.vars.prototype} %}{% endfilter %}">
+                    {% for proyecto in form.proyectos %}
+                    <tr class="proyecto">
+                        <td>{{ form_widget(proyecto.nombre) }}</td>
+                        <td>{{ form_widget(proyecto.descripcion) }} {{ form_rest(proyecto) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <hr/>
+            
+            <h4>Desafíos personales que desea lograr el alumno 
+            <abbr title="5 desafíos." class="tooltip-append" title=""><span class="glyphicon glyphicon-question-sign"></span></abbr>
+            </h4>
+            <table id="desafios" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Desafío</th>
+                        <th class="add" width="30px"></th>
+                    </tr>
+                </thead>
+                <tbody data-prototype="{% filter escape %}{% include 'pDevPracticasBundle:Desafio:prototype.html.twig' with {'form': form.desafios.vars.prototype} %}{% endfilter %}">
+                    {% for desafio in form.desafios %}
+                    <tr class="desafio">
+                        <td>{{ form_widget(desafio.descripcion) }} {{ form_rest(desafio) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {{ form_rest(form) }}
+            <p>
+                <button class="btn btn-primary pull-right" type="submit"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Guardar y continuar: Carta gantt</button>
+            </p>
+            <div class="clearfix"></div>
+        </form>
+    </div>
 {% endblock %}
 
-{% block javascriptload %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts combine=true
+        '@pDevPracticasBundle/Resources/public/js/supervisor.js' 
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
     <script type="text/javascript">
     
         var fields = [];
@@ -265,49 +277,6 @@
             $("#pdev_practicasbundle_alumnopracticantetype_duracionCantidad").change(desplegarHorario);
             $("#pdev_practicasbundle_alumnopracticantetype_duracionUnidad").change(desplegarHorario);
             desplegarHorario();
-            
-            // Validador de rut Supervisor
-            $("input[id$='supervisor_rut']").focusout(function() 
-	        {
-		        var $rut = $(this);
-		        var rut = $.Rut.quitarFormato($rut.val());
-                
-                if(rut != '')
-                {
-	                $.ajax({
-		                url: Routing.generate('practicas_supervisor_rut', {'rut': rut}),
-		                type: "POST",
-		                beforeSend: function(){
-			                var div = '<span class="loader"></span>';
-			                $rut.before(div);
-		                },
-		                success: function(data){
-			                if(data.status == 200){
-				                $("input[id$='supervisor_nombres']").val(data.nombres).prop('disabled', true);
-				                $("input[id$='supervisor_apellidoPaterno']").val(data.apellidoPaterno).prop('disabled', true);
-				                $("input[id$='supervisor_apellidoMaterno']").val(data.apellidoMaterno).prop('disabled', true);
-				                $("input[id$='supervisor_cargo']").val(data.cargo).prop('disabled', true);
-				                $("input[id$='supervisor_email']").val(data.email).prop('disabled', true);
-				                $("input[id$='supervisor_profesion']").val(data.profesion).prop('disabled', true);
-				                $('.loader').remove();
-			                }
-			                else{
-			                    $("input[id$='supervisor_nombres']").val('').prop('disabled', false);
-				                $("input[id$='supervisor_apellidoPaterno']").val('').prop('disabled', false);
-				                $("input[id$='supervisor_apellidoMaterno']").val('').prop('disabled', false);
-				                $("input[id$='supervisor_cargo']").val('').prop('disabled', false);
-				                $("input[id$='supervisor_email']").val('').prop('disabled', false);
-				                $("input[id$='supervisor_profesion']").val('').prop('disabled', false);
-				                $('.loader').remove();
-			                }
-		                },
-		                error: function(jqXHR, textStatus, errorThrown){
-			                alert(textStatus);
-			                $('.loader').remove();
-		                }
-	                });
-		        }
-	        }); 
         });
         
         var desplegarHorario = function () {

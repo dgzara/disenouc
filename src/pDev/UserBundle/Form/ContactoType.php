@@ -1,36 +1,35 @@
 <?php
 
-namespace pDev\PracticasBundle\Form;
+namespace pDev\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class SupervisorOrganizacionType extends AbstractType
+class ContactoType extends AbstractType
 {
-    /**
+        /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('rut', null, array('attr'=>array('autocomplete'=>'off')))
-            ->add('email', null, array('attr'=>array('autocomplete'=>'off'))) 
-            ->add('nombres')
-            ->add('apellidoPaterno')
-            ->add('apellidoMaterno')
-            ->add('cargo')
-            ->add('profesion');
+            ->add('text', null, array(
+                'attr' => array(
+                    'style' => 'width: 810px; height: 200px;',
+                )
+            ))
+        ;
     }
-
+    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'pDev\PracticasBundle\Entity\Supervisor'
+            'data_class' => 'pDev\UserBundle\Entity\Contacto'
         ));
     }
 
@@ -39,6 +38,6 @@ class SupervisorOrganizacionType extends AbstractType
      */
     public function getName()
     {
-        return 'pdev_practicasbundle_supervisortype';
+        return 'pdev_userbundle_contacto';
     }
 }

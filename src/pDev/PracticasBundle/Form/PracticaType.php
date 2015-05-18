@@ -11,10 +11,12 @@ use Doctrine\ORM\EntityRepository;
 class PracticaType extends AbstractType
 {
     private $securityContext;
+    private $organizacion;
 
-    public function __construct(SecurityContext $securityContext)
+    public function __construct(SecurityContext $securityContext, $organizacion = null)
     {
         $this->securityContext = $securityContext;
+        $this->organizacion = $organizacion;        
     }
     
     /**
@@ -24,10 +26,12 @@ class PracticaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $user = $this->securityContext->getToken()->getUser();
+        $organizacion = $this->organizacion;
+        
         $builder
             ->add('nombre', null, array(
-                'label' => 'Nombre de la práctica',
-                'attr' => array('placeholder' => 'jaja')
+                'label' => 'Nombre de la oferta de práctica que solicita',
+                'attr' => array('placeholder' => 'Ingrese un nombre')
             ))
             ->add('organizacion', 'organizacion_selector', array(
                 'label' => 'Organización',
@@ -37,13 +41,37 @@ class PracticaType extends AbstractType
             ->add('tipo', 'choice', array(
                 'choices'   => array('Oficina' => 'Oficina', 'Servicio' => 'Servicio'),
                 'required'  => false,
+                'label' => 'Práctica de oficina o servicio (establecido por Coordinación de Practicas)',
                 'label_attr' => array(  
                     'data-help' => '- Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas. 
 
 - Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político')
-            ))
-            ->add('contacto')
-            ->add('descripcion',null,array('label' => 'Breve descripción de proyectos y responsabilidades'))
+            ));
+            
+        if($organizacion){
+            if($organizacion->getContactos()->count() > 0)
+            {
+                $builder->add('contacto', 'entity' ,array(
+                    'label' => 'Contacto',
+                    'required' => true,
+                    'class'=> 'pDevPracticasBundle:Contacto',
+                    'query_builder' => function ($repository) use ($organizacion)
+                        {                        
+                            return $repository->createQueryBuilder('c')
+                                ->leftjoin('c.organizaciones', 'o')
+                                ->where('o.id = :id')
+                                ->setParameter('id', $organizacion->getId());
+                        },
+                ));
+            }
+            else{
+                $builder->add('contacto', new ContactoOrganizacionType(), array());
+            }
+        }
+            
+        $builder
+            ->add('supervisor', new SupervisorOrganizacionType())
+            ->add('descripcion', null, array('label' => 'Breve descripción de proyectos y responsabilidades'))
             ->add('jornadas', 'choice', array(
                 'choices'   => array(
                     'Part-time' => 'Part-time', 
@@ -69,19 +97,17 @@ class PracticaType extends AbstractType
                     'semanas' => 'semanas',
                     'meses' => 'meses'),
             ))
-            ->add('manejoSoftware',null,array('label' => 'Manejo de software','attr' => array('placeholder' => 'ej.Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
-            ->add('interes',null,array('label' => 'Interés','attr' => array('placeholder' => 'ej.Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
+            ->add('manejoSoftware', null, array('label' => 'Manejo de software','attr' => array('placeholder' => 'ej. Adobe Photoshop, Topsolid, Rhino, Illustrator, etc')))
+            ->add('interes', null, array('label' => 'Interés','attr' => array('placeholder' => 'ej. Industrial, gráfico, ambos, multimedio, estudio usuario, estrategia, diseño comunicacional')))
             ->add('cupos', null, array(
                 'attr' => array('min' => 0)
             ))
-            ->add('entrevista',null,array(
+            ->add('entrevista', null, array(
                 'label' => '¿Requiere entrevista o presentación de un portafolio?',
-                'attr' => array(
-                    'placeholder' => 'ej. presentación portafolio en entrevista predefinida por contacto'
-                )
+                'attr' => array('placeholder' => 'ej. presentación portafolio en entrevista predefinida por contacto')
             ))
-            ->add('remuneraciones',null,array('label' => 'Remuneración','attr' => array('placeholder' => 'monto líquido, si es que hay')))
-            ->add('beneficios',null,array('label' => 'Beneficios','attr' => array('placeholder' => 'locomoción,etc')))
+            ->add('remuneraciones', null, array('label' => 'Remuneración','attr' => array('placeholder' => 'Monto líquido, si es que hay')))
+            ->add('beneficios', null, array('label' => 'Beneficios','attr' => array('placeholder' => 'Locomoción, etc')))
         ;
     }
 

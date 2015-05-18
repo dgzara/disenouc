@@ -335,6 +335,7 @@ class OrganizacionController extends Controller
      */
     public function showAction($id)
     {
+        $pm = $this->get('permission.manager');
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         
@@ -344,7 +345,7 @@ class OrganizacionController extends Controller
             throw $this->createNotFoundException('Unable to find Organizacion entity.');
         }
 
-        $permiso = $user === $entity->getCreador();
+        $permiso = $user === $entity->getCreador() || $pm->isGranted("ROLE_ADMIN","SITE_PRACTICAS");
         
         if($user->hasPersona("TYPE_PRACTICAS_CONTACTO")){
             $contacto = $user->getPersona("TYPE_PRACTICAS_CONTACTO");
@@ -716,6 +717,43 @@ class OrganizacionController extends Controller
             'supervisor'    => $supervisor,
             'delete_form'   => $deleteForm->createView(),
         );
+    }
+    
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/rut/{rut}", name="practicas_organizacion_rut", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function buscarRutAction(Request $request, $rut)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Organizacion')->findOneByRut($rut);
+
+        if($entity)
+        {
+            $return = array(
+                'status' => 200,
+                'id' => $entity->getId(),
+                'value' => $entity->__toString(),
+                'nombre' => $entity->getNombre(),
+                'rubro' => $entity->getRubro(),
+                'descripcion' => $entity->getDescripcion(),
+                'pais' => $entity->getPais(),
+                'web' => $entity->getWeb(),
+                'personasTotal' => $entity->getPersonasTotal(),
+                'antiguedad' => $entity->getAntiguedad(),
+            );
+        }
+        else{
+            $return = array(
+                'status' => 400
+            );
+        }
+                 
+        $response = new Response(json_encode($return));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
     
     /**

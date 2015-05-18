@@ -51,7 +51,16 @@ class DefaultController extends Controller
      */
     public function contactoAction()
     {
-        return array();
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevUserBundle:Contacto')->find(1);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Contacto entity.');
+        }
+
+        return array(
+            'entity'      => $entity,
+        );
     }
     
     /**

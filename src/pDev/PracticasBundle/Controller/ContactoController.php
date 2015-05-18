@@ -83,7 +83,96 @@ class ContactoController extends Controller
             'form'   => $form->createView(),
         );
     }
+    
+    /**
+     * Creates a new Contacto entity.
+     *
+     * @Route("/create/modal/{organizacionId}", name="practicas_contacto_create_modal")
+     * @Method("POST")
+     * @Template("pDevPracticasBundle:Contacto:newModal.html.twig")
+     */
+    public function createModalAction(Request $request, $organizacionId)
+    {
+        $em = $this->getDoctrine()->getManager();
 
+        $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($organizacionId);
+
+        if (!$organizacion) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+        
+        $entity = new Contacto();
+        $entity->addOrganizacion($organizacion);
+        
+        $form = $this->createForm(new ContactoType(), $entity);
+        $form->remove('organizaciones');
+        $form->submit($request);
+
+        if ($form->isValid()) 
+        {
+            $em = $this->getDoctrine()->getManager();
+            
+            // Revisamos si hay un usuario con los mismos datos
+            $usuario = $em->getRepository('pDevUserBundle:User')->findOneByEmail($entity->getEmail());
+            
+            // Probamos con el rut
+            if(!$usuario)
+                $usuario = $em->getRepository('pDevUserBundle:User')->findOneByRut($entity->getRut()); 
+            
+            // Si lo encuentra, lo añade
+            if($usuario){
+                $entity->setUsuario($usuario);
+            } else {
+                // Creamos el usuario
+                $userManager = $this->container->get('fos_user.user_manager');
+                $usuario = $userManager->createUser();
+                $usuario->setRut($entity->getRut());
+                $usuario->setEmail($entity->getEmail());
+                $usuario->setNombres($entity->getNombres());
+                $usuario->setApellidoPaterno($entity->getApellidoPaterno());
+                $usuario->setApellidoMaterno($entity->getApellidoMaterno());
+                $usuario->setUsername($entity->getEmail());
+                $usuario->setExternal(true);
+                $usuario->setEnabled(true);
+                
+                // Establecemos el usuario a este contacto
+                $entity->setUsuario($usuario);
+                
+                // Seteamos la contraseña
+                $password = $usuario->getPassword();
+                $usuario->setSalt(md5(time()));
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($usuario);
+                $password = $encoder->encodePassword($usuario->getPassword(), $usuario->getSalt());
+                $usuario->setPassword($password);
+                $usuario->addRole("ROLE_USER");
+                
+                // Creamos el usuario y mandamos el mail
+                $tokenGenerator = $this->get('fos_user.util.token_generator');
+                $usuario->setConfirmationToken($tokenGenerator->generateToken());
+                $this->get('fos_user.mailer')->sendResettingEmailMessage($usuario);
+                $usuario->setPasswordRequestedAt(new \DateTime());
+                $this->get('fos_user.user_manager')->updateUser($usuario);
+                $em->persist($usuario);
+            }
+                
+            $em->persist($entity);
+            $em->flush();
+
+            // Redirect
+            $array = array('redirect' => $this->generateUrl('practicas_organizacion_show', array('id' => $organizacionId))); // data to return via JSON
+            $response = new Response( json_encode( $array ) );
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return array(
+            'entity' => $entity,
+            'organizacion' => $organizacion,
+            'form'   => $form->createView(),
+        );
+    }
+    
     /**
      * Displays a form to create a new Contacto entity.
      *
@@ -101,7 +190,37 @@ class ContactoController extends Controller
             'form'   => $form->createView(),
         );
     }
+    
+    /**
+     * Displays a form to create a new Contacto entity.
+     *
+     * @Route("/new/modal/{organizacionId}", name="practicas_contacto_new_modal")
+     * @Method("GET")
+     * @Template()
+     */
+    public function newModalAction($organizacionId)
+    {
+        $em = $this->getDoctrine()->getManager();
 
+        $organizacion = $em->getRepository('pDevPracticasBundle:Organizacion')->find($organizacionId);
+
+        if (!$organizacion) {
+            throw $this->createNotFoundException('Unable to find Organizacion entity.');
+        }
+        
+        $entity = new Contacto();
+        $entity->addOrganizacion($organizacion);
+        
+        $form   = $this->createForm(new ContactoType(), $entity);
+        $form->remove('organizaciones');
+
+        return array(
+            'entity' => $entity,
+            'organizacion' => $organizacion,
+            'form'   => $form->createView(),
+        );
+    }
+    
     /**
      * Finds and displays a Contacto entity.
      *
@@ -336,7 +455,76 @@ class ContactoController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
+
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/rut/{rut}", name="practicas_contacto_rut", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function buscarRutAction(Request $request, $rut)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Contacto')->findOneByRut($rut);
+
+        if($entity)
+        {
+            $return = array(
+                'status' => 200,
+                'id' => $entity->getId(),
+                'value' => $entity->__toString(),
+                'nombres' => $entity->getNombres(),
+                'apellidoPaterno' => $entity->getApellidoPaterno(),
+                'apellidoMaterno' => $entity->getApellidoMaterno(),
+                'email' => $entity->getEmail(),
+            );
+        }
+        else{
+            $return = array(
+                'status' => 400
+            );
+        }
+                 
+        $response = new Response(json_encode($return));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
     
+    /**
+     * Displays a form to create a new Organizacion entity.
+     *
+     * @Route("/email/{email}", name="practicas_contacto_email", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function buscarEmailAction(Request $request, $email)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('pDevPracticasBundle:Contacto')->findOneByEmail($email);
+
+        if($entity)
+        {
+            $return = array(
+                'status' => 200,
+                'id' => $entity->getId(),
+                'rut' => $entity->getEmail(),
+                'value' => $entity->__toString(),
+                'nombres' => $entity->getNombres(),
+                'apellidoPaterno' => $entity->getApellidoPaterno(),
+                'apellidoMaterno' => $entity->getApellidoMaterno(),
+                'email' => $entity->getEmail(),
+            );
+        }
+        else{
+            $return = array(
+                'status' => 400
+            );
+        }
+                 
+        $response = new Response(json_encode($return));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+     
     /**
      * Creates a form to delete a Contacto entity by id.
      *

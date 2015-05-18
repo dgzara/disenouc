@@ -9,7 +9,6 @@
 {% block lead %}Informaciones para los estudiantes y empresas{% endblock %}
 
 {% block content %}
-<h2>Reglamento de Prácticas</h2>
 <ul>
     {% for documento in documentos %}
     <li><a href="{{ asset(documento.webPath) }}" target="_blank">{{ documento.nombre }}</a></li>

@@ -16,11 +16,11 @@ class ContactoType extends AbstractType
     {
         $builder
             ->add('rut')
+            ->add('email')
             ->add('nombres')
             ->add('apellidoPaterno')
             ->add('apellidoMaterno') 
             ->add('organizaciones')            
-            ->add('email')
             ->add('area',null,array('label'=>'Área / departamento organización'))
             ->add('numeroTelefono',null,array('label'=>'Número de teléfono'))
             ->add('direccionCalle',null,array('label'=>'Dirección'));

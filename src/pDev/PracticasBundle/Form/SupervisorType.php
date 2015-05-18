@@ -15,12 +15,12 @@ class SupervisorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('rut',null,array('attr'=>array('autocomplete'=>'off')))
+            ->add('rut', null, array('attr'=>array('autocomplete'=>'off')))
+            ->add('email') 
             ->add('nombres')
             ->add('apellidoPaterno')
             ->add('apellidoMaterno')
             ->add('organizaciones')        
-            ->add('email')            
             ->add('cargo')
             ->add('profesion');
     }

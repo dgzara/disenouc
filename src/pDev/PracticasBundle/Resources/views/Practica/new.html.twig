@@ -21,50 +21,83 @@
 {% block lead %}Detalles de la práctica{%endblock%}
 
 {% block content %}
-    <form id="form_practica" class="form-well form-horizontal" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
-        {{ form_row(form.nombre) }}
-        {% if form.organizacion is defined %}
-        {{ form_row(form.organizacion) }}
-        <div id="remote" class="control-group">
-            {{ form_label(form.organizacion) }}
-            <div class="controls">
-                <input class="typeahead" type="text" placeholder="Ingrese el nombre de la organización">
-                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; margin-top: 0; float:right;">
-                    <h4>Registro de organizaciones</h4>
-                    <p>¿No está la organización? Haga click <a class="onmodal" href="{{ path('practicas_organizacion_new_modal') }}">aquí</a> para ingresar una nueva.</p>
-                </div> 
+    <div class="col-md-7">
+        <form id="form_practica" action="{{ ruta }}" method="post" {{ form_enctype(form) }}>
+            {{ form_row(form.nombre) }}
+            {% if form.organizacion is defined %}
+            <div class="form-group">
+                <div style="position: relative">
+                {{ form_row(form.organizacion) }}
+                    {{ form_label(form.organizacion) }}
+                    <div id="remote">
+                        <input class="typeahead form-control" type="text" placeholder="Ingrese el nombre de la organización">
+                    </div>
+                    <div class="error1"></div>
+                    <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; position: absolute; top: 0; right: -400px;">
+                        <h4>Registro de organizaciones</h4>
+                        <p>¿No está la organización? Haga click <a class="onmodal" href="{{ path('practicas_organizacion_new_modal') }}">aquí</a> para ingresar una nueva.</p>
+                    </div> 
+                </div>
             </div>
-            <div class="error1"></div>
-        </div>
-        {% endif %}
-        {{ form_row(form.descripcion) }}
-        {{ form_row(form.jornadas) }}
-        <div id="remote" class="control-group">
-            <div class="controls">
-                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; margin-top: 0; float:right;">
-                    <h4>Duración de la práctica</h4>
-                    <p>Fecha estimada de término debe calcular 240 horas, dependiendo de la jornada y de si trabaja por dia semanas o meses</p>
-                </div> 
+            {% endif %}
+            {{ form_row(form.descripcion) }}
+            {{ form_row(form.jornadas) }}
+            <hr class="clearfix"/>
+            <div style="position: relative">
                 {{ form_row(form.fechaInicio) }}
-                {{ form_label(form.duracionCantidad) }}<br>
-                {{ form_widget(form.duracionCantidad) }}{{ form_widget(form.duracionUnidad) }}
+                <div class="form-inline">
+                    <div class="form-group">
+                        {{ form_label(form.duracionCantidad) }}{{ form_widget(form.duracionCantidad) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.duracionUnidad) }}
+                    </div>
+                </div>
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; position: absolute; top: 0; right: -400px;">
+                    <h4>Duración de la práctica</h4>
+                    <p>Fecha estimada de término debe calcular 240 horas, dependiendo de la jornada y de si trabaja por dia semanas o meses, sin considerar sábados y domingos.</p>
+                </div>
+                <div id="endDate"></div>
             </div>
-            <div id="endDate"></div>
-        </div>
-        {{ form_rest(form) }}
-        <p class="pull-right">            
-            <button id="_submit" class="hide" type="submit"></button>         
-            <a class="btn" onClick="document.forms.form_practica.reset()">Limpiar</a>
-            <a href="#form_practica" class="btn btn-primary submitform">Enviar solicitud</a>
-        </p>
-        <div class="clearfix"></div>
-    </form>
+            <hr class="clearfix"/>
+            
+            {% if form.contacto is defined %} 
+            <h4>Datos contacto</h4>
+            {{ form_widget(form.contacto) }}
+            <hr class="clearfix"/>
+            {% endif %}
+            
+            <h4>Datos supervisor</h4>
+            {{ form_widget(form.supervisor) }}
+            <hr class="clearfix"/>
+            
+            <div style="position: relative">
+                {{ form_row(form.tipo) }}
+                <div id="callout-helper-bg-specificity" class="bs-callout bs-callout-info" style="width:300px; position: absolute; top: 0; right: -400px;">
+                    <h4>Tipos de práctica</h4>
+                    <ul>
+                        <li>Servicio: está orientado a situar al estudiante en la realidad social, enfrentándolo a problemas complejos, donde desde el diseño aporte, con una postura ética, al impacto positivo en el desarrollo sustentable, el beneficio social y la mejora de la calidad de vida de las personas.</li> 
+                        <li>Oficina: está orientada a que el estudiante observe y comprenda desde la experiencia laboral, el valor del diseño en un mercado influenciado por variables de orden social, productivo, económico, ambiental cultural y político</li>
+                    </ul>
+                </div> 
+            </div>
+            {{ form_rest(form) }}
+            <p class="pull-right">            
+                <button id="_submit" class="hide" type="submit"></button>         
+                <a class="btn" onClick="document.forms.form_practica.reset()">Limpiar</a>
+                <a href="#form_practica" class="btn btn-primary submitform">Enviar solicitud</a>
+            </p>
+            <div class="clearfix"></div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     {% javascripts combine=true
         '@typeahead_js' 
+        '@pDevPracticasBundle/Resources/public/js/supervisor.js'
+        '@pDevPracticasBundle/Resources/public/js/contacto2.js'
     %}
         <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
@@ -174,7 +207,7 @@
                 
             }
             
-            if(isNaN(endDate.getTime()) === false)
+            if(isNaN(endDate.getTime()) === false && dCantidad != '')
                 $("#endDate").html("Fecha estimada de término: " + endDate.toLocaleDateString());
         };
         
